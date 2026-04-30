@@ -1,0 +1,105 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>4.3 · Survival Analysis — ML Strategy Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;--cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;--accent:#8b2500;--accent2:#c4440d;--accent3:#e8c4a0;--blue:#1a3a5c;--blue2:#2d5f8a;--green:#1a4a2e;--green2:#2d7a4a;--gold:#7a5a00;--border:#d4cdc4;--border2:#c4bdb4;--serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.page{max-width:860px;margin:0 auto;padding:40px 32px 80px}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--ink4);text-decoration:none;margin-bottom:32px;border:1px solid var(--border);padding:5px 12px;border-radius:3px}
+.back-link:hover{color:var(--ink);border-color:var(--border2)}
+.nb-header{border-bottom:2px solid var(--ink);padding-bottom:24px;margin-bottom:36px}
+.nb-num{font-family:var(--mono);font-size:11px;color:var(--accent2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.nb-title{font-family:var(--display);font-size:36px;font-weight:700;line-height:1.15;margin-bottom:12px;letter-spacing:-.02em}
+.nb-meta{display:flex;flex-wrap:wrap;gap:16px;font-family:var(--mono);font-size:10px;color:var(--ink4);margin-bottom:16px}
+.nb-meta span em{color:var(--ink2);font-style:normal;font-weight:600}
+.nb-intro{font-size:15px;color:var(--ink3);line-height:1.7;border-left:3px solid var(--accent3);padding-left:16px;max-width:680px}
+.toc{background:#fff;border:1px solid var(--border);border-radius:6px;padding:20px 24px;margin:28px 0}
+.toc-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px}
+.toc ol{list-style:none;padding:0;counter-reset:toc}
+.toc li{counter-increment:toc;padding:5px 0;border-bottom:1px solid var(--cream3);font-size:13px}
+.toc li:last-child{border-bottom:none}
+.toc li::before{content:counter(toc,decimal-leading-zero)". ";font-family:var(--mono);font-size:10px;color:var(--ink4);margin-right:6px}
+.toc a{color:var(--ink2);text-decoration:none}.toc a:hover{color:var(--accent2)}
+.stage{margin:40px 0 0;padding-top:28px;border-top:2px solid var(--border)}
+.stage-num{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.stage-title{font-family:var(--display);font-size:22px;font-weight:600;margin-bottom:12px}
+.stage-intro{font-size:14px;color:var(--ink3);line-height:1.7;margin-bottom:22px;max-width:700px}
+.workflow{margin:0 0 22px;padding:0;list-style:none;counter-reset:wf}
+.workflow li{counter-increment:wf;padding:10px 14px 10px 48px;position:relative;border-left:2px solid var(--cream3);margin-bottom:6px;font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.workflow li::before{content:counter(wf);position:absolute;left:-13px;top:10px;width:24px;height:24px;background:var(--ink);color:var(--cream);font-family:var(--mono);font-size:10px;font-weight:600;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;line-height:24px}
+.workflow li strong{color:var(--ink);display:block;margin-bottom:2px}
+.workflow li em{color:var(--ink4);font-style:normal;font-size:12px}
+.output-block{background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin:16px 0 28px}
+.output-label{background:var(--ink);color:var(--cream2);font-family:var(--mono);font-size:10px;padding:7px 14px;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+.out-type{font-size:9px;padding:1px 7px;border-radius:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.output-inner{padding:18px 20px}
+.out-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.out-table th{background:var(--cream2);padding:7px 12px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.04em;color:var(--ink3);border-bottom:2px solid var(--border)}
+.out-table td{padding:7px 12px;border-bottom:1px solid var(--cream3);color:var(--ink2)}
+.out-table tr:last-child td{border-bottom:none}
+.out-table .pos{color:#2d7a4a;font-weight:600}.out-table .neg{color:#c4440d;font-weight:600}.out-table .hi{color:var(--ink);font-weight:600}
+.out-text{font-family:var(--mono);font-size:12px;line-height:1.9;color:var(--ink2);white-space:pre-wrap}
+.callout{padding:14px 18px;border-radius:4px;margin:16px 0;font-size:13.5px;line-height:1.65;border-left:3px solid}
+.callout-insight{background:#faf5ee;border-color:#c49a00;color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:#f0f5fa;border-color:var(--blue2);color:var(--ink2)}
+.callout strong{font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:4px;opacity:.7}
+.interpret{background:var(--cream2);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin:14px 0}
+.interpret-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:10px}
+.interpret ul{list-style:none;padding:0}
+.interpret li{font-size:13px;color:var(--ink2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.6}
+.interpret li:last-child{border-bottom:none}
+.interpret li::before{content:"→ ";color:var(--accent2);font-weight:700}
+.kpi-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.kpi{flex:1;min-width:110px;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:4px;border-top:3px solid}
+.kpi-val{font-family:var(--display);font-size:26px;font-weight:700;line-height:1;margin-bottom:4px}
+.kpi-label{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.05em;text-transform:uppercase}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.qa-box{padding:14px 16px;border-radius:4px;font-size:13px}
+.qa-good{background:#f0f7f3;border:1px solid #bde0ca}
+.qa-bad{background:#fef5f0;border:1px solid #f4c4aa}
+.qa-box h5{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;font-family:var(--mono)}
+.qa-good h5{color:#1a4a2e}.qa-bad h5{color:#8b2500}
+.qa-box ul{list-style:none;padding:0}
+.qa-box li{padding:3px 0;line-height:1.55;color:var(--ink2)}
+.qa-good li::before{content:"✓  ";color:#2d7a4a;font-weight:700}
+.qa-bad li::before{content:"✗  ";color:#c4440d;font-weight:700}
+.ext-list{list-style:none;padding:0;counter-reset:ext}
+.ext-list li{counter-increment:ext;padding:9px 14px 9px 38px;position:relative;border-bottom:1px solid var(--cream3);font-size:13px;color:var(--ink2);line-height:1.6}
+.ext-list li::before{content:counter(ext);position:absolute;left:0;top:9px;width:22px;height:22px;background:var(--cream3);color:var(--ink3);font-family:var(--mono);font-size:10px;border-radius:50%;text-align:center;line-height:22px}
+.ext-list li strong{color:var(--ink);display:block}
+.nb-footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media(max-width:600px){.page{padding:24px 16px 60px}.nb-title{font-size:26px}.qa-grid{grid-template-columns:1fr}}
+</style></head><body><div class="page">
+<a href="../ML_Strategy_Playbook.html#survival" class="back-link">← Back to Master Playbook · 4.3 Survival Analysis</a>
+<div class="nb-header"><div class="nb-num">Notebook 4.3</div><h1 class="nb-title">Survival Analysis</h1>
+<div class="nb-meta"><span>Question: <em>How long until an event occurs?</em></span><span>Output: <em>Survival curve + hazard ratios</em></span><span>Dataset: <em>survival.csv (800 rows)</em></span><span>Use case: <em>Customer lifetime modelling · Churn timing · Equipment failure · Loan default timing</em></span></div>
+<p class="nb-intro">Pipeline walkthrough — analyst workflow steps, pre-populated outputs, and business interpretation at each stage.</p></div>
+<div class="stage" id="s1"><div class="stage-num">Stage 01</div><h2 class="stage-title">Time-to-Event Problem Setup</h2><p class="stage-intro">Survival analysis models the time until an event (churn, default, equipment failure) rather than whether the event happens. It correctly handles censored observations — customers who have not yet churned when you run the analysis.</p><ul class="workflow"><li><strong>Understand censoring</strong> A customer who joined 6 months ago and has not yet churned is censored: you know they survived at least 6 months, but you don't know when they'll churn. Standard classification ignores this information — survival analysis uses it correctly.<em><em>Using logistic regression on tenure-restricted data without handling censoring underestimates churn risk for newer cohorts.</em></em></li><li><strong>Set up the survival dataset</strong> Two key columns: T = time to event (or time to censoring), E = event indicator (1 = churned, 0 = censored/still active). Every customer needs both.</li><li><strong>Choose the survival model</strong> Kaplan-Meier: non-parametric, produces survival curves without assumptions. Cox PH: semi-parametric, produces hazard ratios for features (like logistic regression coefficients). Accelerated Failure Time: parametric, directly models time-to-event.</li></ul><div class="output-block"><div class="output-label">Output: Dataset Structure <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">Survival dataset (survival.csv, 800 customers):
+  Columns required:
+    customer_id:     identifier
+    T:               months until churn or last observation date
+    E:               1 = churned, 0 = censored (still active)
+    [features]:      covariates for Cox model
+
+  Dataset summary:
+    Total customers:      800
+    Observed churns:      172  (E=1, 21.5%)
+    Censored (active):    628  (E=0, 78.5%)
+    Median follow-up:     34.2 months
+    Min / Max T:          1 / 72 months
+
+  Censoring is NOT missing data — it is partial information.
+  Survival analysis uses it; logistic regression discards it.</div></div></div></div><div class="stage" id="s2"><div class="stage-num">Stage 02</div><h2 class="stage-title">Kaplan-Meier Survival Curve</h2><p class="stage-intro">The Kaplan-Meier curve answers: 'What fraction of customers survive to each time point?' It is the primary descriptive tool before any modelling.</p><ul class="workflow"><li><strong>Fit KaplanMeierFitter on the full dataset</strong> Produces a step function: probability of survival (P(T > t)) at each observed event time.</li><li><strong>Plot survival curve with confidence intervals</strong> X-axis = months. Y-axis = probability of survival (not yet churned). Confidence interval widens over time as fewer customers remain at risk.</li><li><strong>Stratify by key variables</strong> Fit separate KM curves for high vs low tenure cohorts, Gold vs Silver tier, or phone vs digital channel. Log-rank test determines whether curves are statistically different.</li></ul><div class="output-block"><div class="output-label">Output: Kaplan-Meier Key Milestones <span class="out-type">Table</span></div><div class="output-inner"><table class="out-table"><thead><tr><th>Time point</th><th>Survival probability</th><th>Customers at risk</th><th>Events to date</th><th>Interpretation</th></tr></thead><tbody><tr><td>6 months</td><td>92%</td><td>736</td><td>64</td><td>8% churned in first 6 months</td></tr><tr><td>12 months</td><td>83%</td><td>664</td><td>136</td><td>17% churned in first year</td></tr><tr><td>24 months</td><td>71%</td><td>568</td><td>229</td><td>29% churned by 2 years</td></tr><tr><td>36 months</td><td>63%</td><td>456</td><td>296</td><td>37% churned by 3 years</td></tr><tr><td>48 months</td><td>57%</td><td>312</td><td>344</td><td>43% churned by 4 years</td></tr><tr><td>60 months</td><td>53%</td><td>148</td><td>376</td><td>47% churned by 5 years</td></tr></tbody></table><div style="font-size:11px;color:var(--ink4);margin-top:8px;font-family:var(--mono)">Median survival time: ~62 months (month at which survival probability crosses 0.50)</div></div></div><div class="output-block"><div class="output-label">Output: Stratified KM — Gold vs Silver Tier <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">Log-rank test: Gold tier vs Silver tier survival curves
+  Gold tier:   median survival 78 months  (hazard lower)
+  Silver tier: median survival 51 months  (hazard higher)
+  Bronze tier: median survival 36 months  (hazard highest)
+
+  Log-rank test p-value: 0.0003  ← statistically significant
+  Interpretation: tier is a strong predictor of survival time.
+  Gold customers survive 27 months longer than Silver on average.</div></div></div><div class="interpret"><div class="interpret-title">What this tells you</div><ul><li>The survival curve shows the churn problem is front-loaded: 17% churn in the first year, but only 9% more in years 2-3. Early-life retention is the highest-ROI investment.</li><li>Gold tier's survival advantage is significant (p=0.0003) and large (+27 months median survival). Tier upgrade programmes have a measurable impact on customer lifetime.</li><li>Median survival of 62 months means the expected customer lifetime is ~5 years — this is the denominator for CLTV calculations.</li></ul></div><div class="callout callout-rule"><strong>Survival analysis ≠ hazard at a single time point</strong>A logistic regression churn model tells you P(churn | alive at month 12). Survival analysis tells you the full time profile. For cohort-level revenue planning, you need the full curve — a single-point classifier loses the timing information that drives cash flow modelling.</div></div><div class="stage" id="s3"><div class="stage-num">Stage 03</div><h2 class="stage-title">Cox Proportional Hazards Model</h2><p class="stage-intro">The Cox model estimates the effect of features on the hazard rate — how much each feature accelerates or decelerates the time to churn. Output is hazard ratios, analogous to odds ratios in logistic regression.</p><ul class="workflow"><li><strong>Fit CoxPHFitter with key covariates</strong> Fit on features: tenure_months, support_calls, logins_per_week, cltv, tier, channel. Model estimates the hazard ratio for each feature.<em><em>Hazard ratio interpretation: HR > 1 = increases churn rate. HR < 1 = decreases churn rate. HR = 0.6 means 40% lower hazard of churning at any point in time.</em></em></li><li><strong>Check the proportional hazards assumption</strong> Cox PH assumes that the hazard ratio between groups is constant over time. Test with Schoenfeld residuals. If violated, use time-varying coefficients or stratify the model.</li><li><strong>Compare to logistic regression coefficients</strong> Cox HRs and LR ORs should point in the same direction. Disagreement suggests a violation of assumptions or data quality issue in one model.</li></ul><div class="output-block"><div class="output-label">Output: Cox Model — Hazard Ratios <span class="out-type">Table</span></div><div class="output-inner"><table class="out-table"><thead><tr><th>Feature</th><th>Hazard Ratio</th><th>95% CI</th><th>p-value</th><th>Interpretation</th></tr></thead><tbody><tr><td>tenure_months</td><td>0.48</td><td>[0.39, 0.59]</td><td><0.001</td><td>Longer tenure → 52% lower hazard at any time</td></tr><tr><td>support_calls</td><td>1.84</td><td>[1.61, 2.10]</td><td><0.001</td><td>Each additional call → 84% higher hazard</td></tr><tr><td>logins_per_week</td><td>0.71</td><td>[0.63, 0.80]</td><td><0.001</td><td>More logins → 29% lower hazard</td></tr><tr><td>cltv</td><td>0.82</td><td>[0.74, 0.91]</td><td><0.001</td><td>Higher value → 18% lower hazard</td></tr><tr><td>tier_Gold</td><td>0.58</td><td>[0.44, 0.76]</td><td><0.001</td><td>Gold tier → 42% lower hazard vs base</td></tr><tr><td>channel_Phone</td><td>0.79</td><td>[0.64, 0.97]</td><td>0.024</td><td>Phone channel → 21% lower hazard</td></tr><tr><td>age</td><td>0.91</td><td>[0.86, 0.97]</td><td>0.003</td><td>Older age → 9% lower hazard per 1σ</td></tr></tbody></table><div style="font-size:11px;color:var(--ink4);margin-top:8px;font-family:var(--mono)">PH assumption check: Schoenfeld residuals p-values all > 0.05 → assumption holds</div></div></div><div class="output-block"><div class="output-label">Output: QA Checklist <span class="out-type">Checklist</span></div><div class="output-inner"><div class="qa-grid"><div class="qa-box qa-good"><h5>Good</h5><ul><li>Censoring correctly handled (E=0 for active customers)</li><li>KM curve plotted before Cox model</li><li>PH assumption tested with Schoenfeld residuals</li><li>Cox HRs consistent in direction with logistic regression ORs</li><li>Median survival time reported as key business metric</li></ul></div><div class="qa-box qa-bad"><h5>Red flags</h5><ul><li>Logistic regression used on survival data without handling censoring</li><li>PH assumption not tested</li><li>Model reported only on subset of customers with complete churn (ignores censored observations entirely)</li><li>Hazard ratios interpreted as probabilities (they are relative rates, not probabilities)</li></ul></div></div></div></div></div>
+<div class="nb-footer"><span>4.3 · Survival Analysis · ML Strategy Playbook · Archishman Bandyopadhyay</span>
+<a href="../ML_Strategy_Playbook.html#survival" style="color:var(--ink4);text-decoration:none">← Back</a></div>
+</div></body></html>

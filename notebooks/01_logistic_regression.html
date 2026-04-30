@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>01 · Logistic Regression — ML Strategy Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;--cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;--accent:#8b2500;--accent2:#c4440d;--accent3:#e8c4a0;--blue:#1a3a5c;--blue2:#2d5f8a;--green:#1a4a2e;--green2:#2d7a4a;--gold:#7a5a00;--border:#d4cdc4;--border2:#c4bdb4;--serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.page{max-width:860px;margin:0 auto;padding:40px 32px 80px}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--ink4);text-decoration:none;margin-bottom:32px;border:1px solid var(--border);padding:5px 12px;border-radius:3px}
+.back-link:hover{color:var(--ink);border-color:var(--border2)}
+.nb-header{border-bottom:2px solid var(--ink);padding-bottom:24px;margin-bottom:36px}
+.nb-num{font-family:var(--mono);font-size:11px;color:var(--accent2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.nb-title{font-family:var(--display);font-size:36px;font-weight:700;line-height:1.15;margin-bottom:12px;letter-spacing:-.02em}
+.nb-meta{display:flex;flex-wrap:wrap;gap:16px;font-family:var(--mono);font-size:10px;color:var(--ink4);margin-bottom:16px}
+.nb-meta span em{color:var(--ink2);font-style:normal;font-weight:600}
+.nb-intro{font-size:15px;color:var(--ink3);line-height:1.7;border-left:3px solid var(--accent3);padding-left:16px;max-width:680px}
+.toc{background:#fff;border:1px solid var(--border);border-radius:6px;padding:20px 24px;margin:28px 0}
+.toc-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px}
+.toc ol{list-style:none;padding:0;counter-reset:toc}
+.toc li{counter-increment:toc;padding:5px 0;border-bottom:1px solid var(--cream3);font-size:13px}
+.toc li:last-child{border-bottom:none}
+.toc li::before{content:counter(toc,decimal-leading-zero)". ";font-family:var(--mono);font-size:10px;color:var(--ink4);margin-right:6px}
+.toc a{color:var(--ink2);text-decoration:none}.toc a:hover{color:var(--accent2)}
+.stage{margin:40px 0 0;padding-top:28px;border-top:2px solid var(--border)}
+.stage-num{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.stage-title{font-family:var(--display);font-size:22px;font-weight:600;margin-bottom:12px}
+.stage-intro{font-size:14px;color:var(--ink3);line-height:1.7;margin-bottom:22px;max-width:700px}
+.workflow{margin:0 0 22px;padding:0;list-style:none;counter-reset:wf}
+.workflow li{counter-increment:wf;padding:10px 14px 10px 48px;position:relative;border-left:2px solid var(--cream3);margin-bottom:6px;font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.workflow li::before{content:counter(wf);position:absolute;left:-13px;top:10px;width:24px;height:24px;background:var(--ink);color:var(--cream);font-family:var(--mono);font-size:10px;font-weight:600;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;line-height:24px}
+.workflow li strong{color:var(--ink);display:block;margin-bottom:2px}
+.workflow li em{color:var(--ink4);font-style:normal;font-size:12px}
+.output-block{background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin:16px 0 28px}
+.output-label{background:var(--ink);color:var(--cream2);font-family:var(--mono);font-size:10px;padding:7px 14px;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+.out-type{font-size:9px;padding:1px 7px;border-radius:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.output-inner{padding:18px 20px}
+.out-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.out-table th{background:var(--cream2);padding:7px 12px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.04em;color:var(--ink3);border-bottom:2px solid var(--border)}
+.out-table td{padding:7px 12px;border-bottom:1px solid var(--cream3);color:var(--ink2)}
+.out-table tr:last-child td{border-bottom:none}
+.out-table .pos{color:#2d7a4a;font-weight:600}.out-table .neg{color:#c4440d;font-weight:600}.out-table .hi{color:var(--ink);font-weight:600}
+.out-text{font-family:var(--mono);font-size:12px;line-height:1.9;color:var(--ink2);white-space:pre-wrap}
+.callout{padding:14px 18px;border-radius:4px;margin:16px 0;font-size:13.5px;line-height:1.65;border-left:3px solid}
+.callout-insight{background:#faf5ee;border-color:#c49a00;color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:#f0f5fa;border-color:var(--blue2);color:var(--ink2)}
+.callout strong{font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:4px;opacity:.7}
+.interpret{background:var(--cream2);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin:14px 0}
+.interpret-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:10px}
+.interpret ul{list-style:none;padding:0}
+.interpret li{font-size:13px;color:var(--ink2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.6}
+.interpret li:last-child{border-bottom:none}
+.interpret li::before{content:"→ ";color:var(--accent2);font-weight:700}
+.kpi-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.kpi{flex:1;min-width:110px;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:4px;border-top:3px solid}
+.kpi-val{font-family:var(--display);font-size:26px;font-weight:700;line-height:1;margin-bottom:4px}
+.kpi-label{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.05em;text-transform:uppercase}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.qa-box{padding:14px 16px;border-radius:4px;font-size:13px}
+.qa-good{background:#f0f7f3;border:1px solid #bde0ca}
+.qa-bad{background:#fef5f0;border:1px solid #f4c4aa}
+.qa-box h5{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;font-family:var(--mono)}
+.qa-good h5{color:#1a4a2e}.qa-bad h5{color:#8b2500}
+.qa-box ul{list-style:none;padding:0}
+.qa-box li{padding:3px 0;line-height:1.55;color:var(--ink2)}
+.qa-good li::before{content:"✓  ";color:#2d7a4a;font-weight:700}
+.qa-bad li::before{content:"✗  ";color:#c4440d;font-weight:700}
+.ext-list{list-style:none;padding:0;counter-reset:ext}
+.ext-list li{counter-increment:ext;padding:9px 14px 9px 38px;position:relative;border-bottom:1px solid var(--cream3);font-size:13px;color:var(--ink2);line-height:1.6}
+.ext-list li::before{content:counter(ext);position:absolute;left:0;top:9px;width:22px;height:22px;background:var(--cream3);color:var(--ink3);font-family:var(--mono);font-size:10px;border-radius:50%;text-align:center;line-height:22px}
+.ext-list li strong{color:var(--ink);display:block}
+.nb-footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media(max-width:600px){.page{padding:24px 16px 60px}.nb-title{font-size:26px}.qa-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<a href="../ML_Strategy_Playbook.html#logistic" class="back-link">← Back to Master Playbook · 1.1 Logistic Regression</a>
+
+<div class="nb-header">
+  <div class="nb-num">Notebook 01 · Classification</div>
+  <h1 class="nb-title">Logistic Regression</h1>
+  <div class="nb-meta">
+    <span>Business question: <em>Who will churn / convert / default?</em></span>
+    <span>Output: <em>Probability 0–1</em></span>
+    <span>Dataset: <em>customers.csv (800 rows, 12 features)</em></span>
+    <span>Use case: <em>Churn propensity model</em></span>
+  </div>
+  <p class="nb-intro">This guide walks through the complete analysis pipeline for a logistic regression churn model — from raw data to a calibrated, deployment-ready scorer. Each stage shows the workflow steps an analyst takes, followed by the exact outputs you should expect and how to read them.</p>
+</div>
+
+<div class="toc">
+  <div class="toc-title">Pipeline Stages</div>
+  <ol>
+    <li><a href="#s1">Data Loading & Exploratory Analysis</a></li>
+    <li><a href="#s2">Feature Engineering & Preprocessing</a></li>
+    <li><a href="#s3">Train / Validation / Test Split</a></li>
+    <li><a href="#s4">Train Model & Interpret Coefficients</a></li>
+    <li><a href="#s5">Calibration Check</a></li>
+    <li><a href="#s6">Threshold Selection</a></li>
+    <li><a href="#s7">Cross-Validation & Stability</a></li>
+    <li><a href="#s8">Leakage & Feature Audit</a></li>
+    <li><a href="#s9">QA: Good vs Red-Flag Output</a></li>
+    <li><a href="#s10">Extension Directions</a></li>
+  </ol>
+</div>
+
+<!-- ══ STAGE 1 ══ -->
+<div class="stage" id="s1">
+  <div class="stage-num">Stage 01</div>
+  <h2 class="stage-title">Data Loading & Exploratory Analysis</h2>
+  <p class="stage-intro">Before any modelling, the analyst loads the dataset and answers three questions: What does the target variable look like? Are features usable? Are there data quality issues that will corrupt the model?</p>
+
+  <ul class="workflow">
+    <li><strong>Load and inspect the dataset</strong> Read the CSV into a dataframe. Check shape, column names, and data types. Confirm the target column (churned: 1/0).<em>What to watch: columns that are IDs, dates, or free text — these need special handling or exclusion.</em></li>
+    <li><strong>Check the target variable distribution</strong> Count the split between churned (1) and retained (0). Calculate the base event rate as a percentage.<em>This tells you immediately whether class imbalance is a problem.</em></li>
+    <li><strong>Profile each feature</strong> For numeric features: min, max, mean, median, % missing. For categoricals: unique values, most frequent.<em>Flag features with >30% missing, extreme outliers, or near-zero variance.</em></li>
+    <li><strong>Visualise feature distributions by churn status</strong> Plot histograms split by churned vs retained. Look for features where the two distributions clearly separate — these will be strong predictors.<em>Strong visual separation = high feature importance in the model.</em></li>
+    <li><strong>Check correlations between features</strong> Produce a correlation matrix for numeric features. Flag pairs with |r| > 0.7 as multicollinear — these need regularisation (Ridge) or one to be dropped.<em>Multicollinear features don't cause errors but make coefficient interpretation unreliable.</em></li>
+  </ul>
+
+  <div class="output-block">
+    <div class="output-label">Output: Dataset Shape & Target Distribution <span class="out-type">Console</span></div>
+    <div class="output-inner">
+      <div class="out-text">Dataset shape: (800, 13)
+Columns: customer_id, age, tenure_months, logins_per_week, support_calls,
+         cltv, monthly_spend, channel, region, tier, plan_type, contract_length, churned
+
+Target variable — churned:
+  Retained (0):   628   (78.5%)
+  Churned  (1):   172   (21.5%)
+  Class ratio:    3.65 : 1   ← moderate imbalance, manageable
+
+Missing values:
+  support_calls     14  (1.8%)
+  monthly_spend      6  (0.8%)
+  All others:        0
+
+Feature types:
+  Numeric (8):   age, tenure_months, logins_per_week, support_calls,
+                 cltv, monthly_spend, contract_length, [customer_id excluded]
+  Categorical (3): channel, region, tier, plan_type</div>
+    </div>
+  </div>
+
+  <div class="output-block">
+    <div class="output-label">Output: Feature Distributions by Churn Status <span class="out-type">Chart</span></div>
+    <div class="output-inner">
+      <svg viewBox="0 0 740 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:'Source Serif 4',serif">
+        <text x="370" y="18" text-anchor="middle" font-size="13" font-weight="600" fill="#1a1714">Feature Distributions — Churned vs Retained</text>
+        <!-- tenure_months -->
+        <text x="90" y="40" text-anchor="middle" font-size="11" fill="#7a7060">tenure_months</text>
+        <rect x="30" y="50" width="120" height="80" rx="3" fill="#f7f4ef" stroke="#d4cdc4"/>
+        <!-- retained bars -->
+        <rect x="35" y="105" width="10" height="20" fill="#2d5f8a" opacity=".7"/>
+        <rect x="47" y="90" width="10" height="35" fill="#2d5f8a" opacity=".7"/>
+        <rect x="59" y="72" width="10" height="53" fill="#2d5f8a" opacity=".7"/>
+        <rect x="71" y="65" width="10" height="60" fill="#2d5f8a" opacity=".7"/>
+        <rect x="83" y="75" width="10" height="50" fill="#2d5f8a" opacity=".7"/>
+        <rect x="95" y="88" width="10" height="37" fill="#2d5f8a" opacity=".7"/>
+        <rect x="107" y="100" width="10" height="25" fill="#2d5f8a" opacity=".7"/>
+        <rect x="119" y="112" width="10" height="13" fill="#2d5f8a" opacity=".7"/>
+        <!-- churned bars -->
+        <rect x="35" y="95" width="10" height="10" fill="#c4440d" opacity=".7"/>
+        <rect x="47" y="80" width="10" height="10" fill="#c4440d" opacity=".7"/>
+        <rect x="59" y="82" width="10" height="23" fill="#c4440d" opacity=".7"/>
+        <rect x="71" y="90" width="10" height="15" fill="#c4440d" opacity=".7"/>
+        <rect x="83" y="98" width="10" height="7" fill="#c4440d" opacity=".7"/>
+        <rect x="95" y="120" width="10" height="5" fill="#c4440d" opacity=".7"/>
+        <text x="40" y="142" font-size="9" fill="#b0a898">Low</text>
+        <text x="118" y="142" font-size="9" fill="#b0a898" text-anchor="end">High</text>
+        <text x="90" y="155" text-anchor="middle" font-size="9" fill="#7a7060">Churners concentrate at LOW tenure</text>
+        <!-- support_calls -->
+        <text x="270" y="40" text-anchor="middle" font-size="11" fill="#7a7060">support_calls</text>
+        <rect x="210" y="50" width="120" height="80" rx="3" fill="#f7f4ef" stroke="#d4cdc4"/>
+        <rect x="215" y="60" width="10" height="65" fill="#2d5f8a" opacity=".7"/>
+        <rect x="227" y="78" width="10" height="47" fill="#2d5f8a" opacity=".7"/>
+        <rect x="239" y="92" width="10" height="33" fill="#2d5f8a" opacity=".7"/>
+        <rect x="251" y="105" width="10" height="20" fill="#2d5f8a" opacity=".7"/>
+        <rect x="263" y="115" width="10" height="10" fill="#2d5f8a" opacity=".7"/>
+        <rect x="275" y="120" width="10" height="5" fill="#2d5f8a" opacity=".7"/>
+        <rect x="215" y="90" width="10" height="35" fill="#c4440d" opacity=".7"/>
+        <rect x="227" y="75" width="10" height="50" fill="#c4440d" opacity=".7"/>
+        <rect x="239" y="68" width="10" height="57" fill="#c4440d" opacity=".7"/>
+        <rect x="251" y="78" width="10" height="47" fill="#c4440d" opacity=".7"/>
+        <rect x="263" y="92" width="10" height="33" fill="#c4440d" opacity=".7"/>
+        <rect x="275" y="105" width="10" height="20" fill="#c4440d" opacity=".7"/>
+        <text x="270" y="155" text-anchor="middle" font-size="9" fill="#7a7060">Churners have MORE support calls</text>
+        <!-- logins_per_week -->
+        <text x="450" y="40" text-anchor="middle" font-size="11" fill="#7a7060">logins_per_week</text>
+        <rect x="390" y="50" width="120" height="80" rx="3" fill="#f7f4ef" stroke="#d4cdc4"/>
+        <rect x="395" y="65" width="10" height="60" fill="#c4440d" opacity=".7"/>
+        <rect x="407" y="73" width="10" height="52" fill="#c4440d" opacity=".7"/>
+        <rect x="419" y="85" width="10" height="40" fill="#c4440d" opacity=".7"/>
+        <rect x="431" y="98" width="10" height="27" fill="#c4440d" opacity=".7"/>
+        <rect x="443" y="110" width="10" height="15" fill="#c4440d" opacity=".7"/>
+        <rect x="455" y="118" width="10" height="7" fill="#c4440d" opacity=".7"/>
+        <rect x="395" y="95" width="10" height="30" fill="#2d5f8a" opacity=".7"/>
+        <rect x="407" y="80" width="10" height="45" fill="#2d5f8a" opacity=".7"/>
+        <rect x="419" y="65" width="10" height="60" fill="#2d5f8a" opacity=".7"/>
+        <rect x="431" y="60" width="10" height="65" fill="#2d5f8a" opacity=".7"/>
+        <rect x="443" y="72" width="10" height="53" fill="#2d5f8a" opacity=".7"/>
+        <rect x="455" y="85" width="10" height="40" fill="#2d5f8a" opacity=".7"/>
+        <text x="450" y="155" text-anchor="middle" font-size="9" fill="#7a7060">Retained customers login MORE frequently</text>
+        <!-- legend -->
+        <rect x="560" y="68" width="12" height="10" fill="#2d5f8a" opacity=".7"/>
+        <text x="576" y="78" font-size="11" fill="#3d3830">Retained</text>
+        <rect x="560" y="86" width="12" height="10" fill="#c4440d" opacity=".7"/>
+        <text x="576" y="96" font-size="11" fill="#3d3830">Churned</text>
+        <!-- correlation note -->
+        <rect x="540" y="115" width="180" height="60" rx="4" fill="#faf5ee" stroke="#c49a00"/>
+        <text x="630" y="132" text-anchor="middle" font-size="10" font-weight="600" fill="#7a5a00">Strongest visual separations:</text>
+        <text x="630" y="148" text-anchor="middle" font-size="10" fill="#3d3830">tenure_months (churners: lower)</text>
+        <text x="630" y="162" text-anchor="middle" font-size="10" fill="#3d3830">support_calls (churners: higher)</text>
+        <text x="630" y="176" text-anchor="middle" font-size="10" fill="#3d3830">logins_per_week (churners: lower)</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="interpret">
+    <div class="interpret-title">What this tells you</div>
+    <ul>
+      <li>21.5% churn rate — usable without aggressive resampling. Class weights recommended but not critical.</li>
+      <li>Tenure, support calls, and logins are visually discriminating features. These will likely appear as top predictors.</li>
+      <li>1.8% missing on support_calls — safe to impute with median. No columns need dropping.</li>
+      <li>customer_id must be excluded before training — it is an identifier, not a feature.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══ STAGE 2 ══ -->
+<div class="stage" id="s2">
+  <div class="stage-num">Stage 02</div>
+  <h2 class="stage-title">Feature Engineering & Preprocessing</h2>
+  <p class="stage-intro">Raw data is never model-ready. The preprocessing pipeline transforms features into the format the model expects: numeric features standardised, categoricals encoded, missings imputed. Standardisation is mandatory for logistic regression — without it, coefficients are not comparable.</p>
+
+  <ul class="workflow">
+    <li><strong>Separate target and features</strong> Remove the target column (churned) and any identifiers (customer_id) from the feature set. Identify numeric vs categorical columns programmatically.<em>Always exclude IDs, timestamps, and post-event variables from features.</em></li>
+    <li><strong>Impute missing values</strong> Numeric: replace with median (robust to outliers). Categorical: replace with most frequent value.<em>Use median over mean for business data — spend and frequency metrics are usually right-skewed.</em></li>
+    <li><strong>Standardise numeric features</strong> Subtract mean, divide by standard deviation (StandardScaler). All numeric features now have mean=0, std=1.<em>This step is mandatory — without it, a coefficient of 0.02 on revenue (range 0–100K) is not comparable to a coefficient of 2.0 on age (range 18–80).</em></li>
+    <li><strong>Encode categorical features</strong> One-hot encode categorical columns (channel, region, tier, plan_type). Each category becomes a binary 0/1 column.<em>Drop the first category from each group to avoid the dummy variable trap (perfect multicollinearity).</em></li>
+    <li><strong>Bundle into a Pipeline</strong> Wrap all steps into a single sklearn Pipeline object. This ensures the same transformations are applied identically to train, validation, and test data — preventing data leakage from the preprocessing steps.</li>
+  </ul>
+
+  <div class="output-block">
+    <div class="output-label">Output: Preprocessing Pipeline Summary <span class="out-type">Console</span></div>
+    <div class="output-inner">
+      <div class="out-text">Pipeline structure:
+  ColumnTransformer
+  ├── numeric (8 features)
+  │   ├── Step 1: SimpleImputer(strategy='median')
+  │   └── Step 2: StandardScaler()
+  └── categorical (4 features → 14 dummy columns)
+      ├── Step 1: SimpleImputer(strategy='most_frequent')
+      └── Step 2: OneHotEncoder(drop='first', handle_unknown='ignore')
+
+Post-preprocessing feature count: 22 features
+  (8 numeric, standardised) + (14 one-hot dummies, drop-first applied)
+
+Standardisation result (numeric features after scaling):
+  Feature            Original mean    Original std    Post-scale mean    Post-scale std
+  tenure_months            38.4            18.2              0.000              1.000
+  support_calls             2.1             1.8              0.000              1.000
+  logins_per_week           4.3             2.6              0.000              1.000
+  cltv                   1840             960               0.000              1.000
+  monthly_spend           182              94               0.000              1.000
+  age                      41.2            12.8              0.000              1.000
+  contract_length          14.6             8.1              0.000              1.000</div>
+    </div>
+  </div>
+
+  <div class="callout callout-rule">
+    <strong>The standardisation rule</strong>
+    After scaling, every numeric feature has the same unit. A coefficient of +0.45 on support_calls means the same magnitude of effect as a coefficient of -0.45 on tenure_months. Without scaling, a coefficient on revenue (raw units) would look tiny just because the scale is large.
+  </div>
+</div>
+
+<!-- ══ STAGE 3 ══ -->
+<div class="stage" id="s3">
+  <div class="stage-num">Stage 03</div>
+  <h2 class="stage-title">Train / Validation / Test Split</h2>
+  <p class="stage-intro">The data must be divided into three non-overlapping sets before any modelling. This is a governance step, not just a technical one — it is the only way to get an honest estimate of production performance.</p>
+
+  <ul class="workflow">
+    <li><strong>Hold out a test set immediately</strong> Set aside 20% of data as the test set. This set is locked — it will not be seen until the final evaluation. Stratify by the target so both sets have the same churn rate.<em>If the analyst reports performance "on the training data", that is not a valid performance estimate.</em></li>
+    <li><strong>Create a validation set from training data</strong> Split the remaining 80% into 80% train / 20% validation. The validation set is used for hyperparameter tuning (choosing regularisation strength C).<em>Alternatively: use cross-validation (5-fold) instead of a fixed validation set.</em></li>
+    <li><strong>Confirm event rates are preserved</strong> Check that churn rate is approximately equal across train, validation, and test. Large differences indicate a stratification problem.<em>Typical variance: ±2–3 percentage points is acceptable.</em></li>
+  </ul>
+
+  <div class="output-block">
+    <div class="output-label">Output: Split Sizes & Event Rates <span class="out-type">Console</span></div>
+    <div class="output-inner">
+      <div class="out-text">Data split summary (stratified by churn):
+
+  Split         Rows     Churn rate     Churned     Retained
+  ─────────────────────────────────────────────────────────
+  Train          512       21.3%           109         403
+  Validation     128       21.9%            28         100
+  Test           160       21.3%            34         126
+  ─────────────────────────────────────────────────────────
+  Total          800       21.5%           171         629
+
+  ✓ Churn rates consistent across splits (21.3% / 21.9% / 21.3%)
+  ✓ Test set locked — not to be used until final evaluation</div>
+    </div>
+  </div>
+
+  <div class="callout callout-warning">
+    <strong>Common mistake — peeking at the test set</strong>
+    Any decision made after looking at test set performance (including threshold choice, feature selection, or hyperparameter tuning) invalidates the test set. The test set should be opened exactly once — at the end. This is the single most important governance control in model validation.
+  </div>
+</div>
+
+<!-- ══ STAGE 4 ══ -->
+<div class="stage" id="s4">
+  <div class="stage-num">Stage 04</div>
+  <h2 class="stage-title">Train Model & Interpret Coefficients</h2>
+  <p class="stage-intro">This is the core analytical step. The model is trained on the training set, and the resulting coefficients are read as business drivers. Standardised coefficients are the primary output for stakeholder communication — they show which features matter and in which direction.</p>
+
+  <ul class="workflow">
+    <li><strong>Select regularisation type and strength</strong> Default: Ridge (L2 penalty, C=0.1). The analyst may tune C on the validation set — smaller C = stronger regularisation = simpler model. L1 (Lasso) is used if feature selection is the goal.<em>For a first model, C=0.1 with L2 is a safe, stable starting point.</em></li>
+    <li><strong>Fit the pipeline on training data</strong> The pipeline runs preprocessing then trains the logistic regression. The model learns the weight (coefficient) for each of the 22 features that minimises prediction error on the training set.</li>
+    <li><strong>Extract and interpret coefficients</strong> Retrieve the coefficient vector from the trained model. Because features are standardised, coefficients are directly comparable: larger absolute value = stronger driver. Positive = increases P(churn), negative = decreases P(churn).<em>Convert to odds ratios: exp(coefficient). An odds ratio of 1.5 means the odds of churn increase by 50% for each 1 standard deviation increase in that feature.</em></li>
+    <li><strong>Build the coefficient chart</strong> Sort features by coefficient value. Plot a horizontal bar chart — red for positive (churn drivers), blue for negative (churn protectors). Annotate each bar with the odds ratio.<em>This chart is the primary deliverable for a CMO or retention team briefing.</em></li>
+    <li><strong>Sanity-check the direction of each coefficient</strong> Does each coefficient make business sense? Higher support calls should increase churn risk. Higher tenure should reduce it. Any counter-intuitive result needs investigation before presenting results.</li>
+  </ul>
+
+  <div class="output-block">
+    <div class="output-label">Output: Coefficients Table <span class="out-type">Table</span></div>
+    <div class="output-inner">
+      <table class="out-table">
+        <thead><tr><th>Feature</th><th>Coefficient (standardised)</th><th>Odds Ratio</th><th>Interpretation</th></tr></thead>
+        <tbody>
+          <tr><td>support_calls</td><td class="neg">+0.68</td><td class="neg">1.97</td><td>Each 1σ increase → odds of churn nearly double</td></tr>
+          <tr><td>customer_id_C0525*</td><td class="neg">+0.54</td><td class="neg">1.72</td><td>⚠ ID feature — leakage flag (see Stage 8)</td></tr>
+          <tr><td>monthly_spend_low</td><td class="neg">+0.38</td><td class="neg">1.46</td><td>Low-spend customers 46% more likely to churn</td></tr>
+          <tr><td>channel_Phone</td><td class="pos">−0.41</td><td class="pos">0.66</td><td>Phone-acquired customers 34% less likely to churn</td></tr>
+          <tr><td>logins_per_week</td><td class="pos">−0.43</td><td class="pos">0.65</td><td>Each 1σ more logins → 35% lower churn odds</td></tr>
+          <tr><td>tier_Gold</td><td class="pos">−0.47</td><td class="pos">0.62</td><td>Gold tier 38% lower churn odds vs base tier</td></tr>
+          <tr><td>region_East</td><td class="pos">−0.49</td><td class="pos">0.61</td><td>Eastern region customers less likely to churn</td></tr>
+          <tr><td>age</td><td class="pos">−0.51</td><td class="pos">0.60</td><td>Older customers less likely to churn</td></tr>
+          <tr><td>cltv</td><td class="pos">−0.52</td><td class="pos">0.60</td><td>Higher lifetime value customers less likely to churn</td></tr>
+          <tr><td class="hi">tenure_months</td><td class="pos">−0.75</td><td class="pos">0.47</td><td><strong>Strongest protector: each 1σ more tenure → 53% lower churn odds</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="output-block">
+    <div class="output-label">Output: Coefficient Chart <span class="out-type">Chart</span></div>
+    <div class="output-inner">
+      <svg viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:'Source Serif 4',serif">
+        <text x="340" y="18" text-anchor="middle" font-size="13" font-weight="600" fill="#1a1714">Logistic Regression — Churn Drivers</text>
+        <text x="340" y="34" text-anchor="middle" font-size="11" fill="#7a7060">(Red = increases churn risk · Blue = decreases churn risk)</text>
+        <!-- y axis labels -->
+        <text x="168" y="64" text-anchor="end" font-size="11" fill="#3d3830">support_calls</text>
+        <text x="168" y="90" text-anchor="end" font-size="11" fill="#7a7060">monthly_spend_low</text>
+        <text x="168" y="116" text-anchor="end" font-size="11" fill="#7a7060">plan_type_Monthly</text>
+        <text x="168" y="142" text-anchor="end" font-size="11" fill="#3d3830">logins_per_week</text>
+        <text x="168" y="168" text-anchor="end" font-size="11" fill="#3d3830">tier_Gold</text>
+        <text x="168" y="194" text-anchor="end" font-size="11" fill="#3d3830">region_East</text>
+        <text x="168" y="220" text-anchor="end" font-size="11" fill="#3d3830">age</text>
+        <text x="168" y="246" text-anchor="end" font-size="11" fill="#3d3830">cltv</text>
+        <text x="168" y="272" text-anchor="end" font-size="11" fill="#1a1714" font-weight="600">tenure_months</text>
+        <!-- zero line -->
+        <line x1="340" y1="48" x2="340" y2="285" stroke="#1a1714" stroke-width="1.5"/>
+        <!-- positive bars (red = churn risk) -->
+        <rect x="340" y="52" width="105" height="20" rx="2" fill="#c4440d" opacity=".85"/>
+        <text x="450" y="66" font-size="10" fill="#c4440d">OR=1.97</text>
+        <rect x="340" y="78" width="60" height="20" rx="2" fill="#c4440d" opacity=".6"/>
+        <text x="404" y="92" font-size="10" fill="#c4440d">OR=1.46</text>
+        <rect x="340" y="104" width="40" height="20" rx="2" fill="#c4440d" opacity=".5"/>
+        <text x="384" y="118" font-size="10" fill="#c4440d">OR=1.28</text>
+        <!-- negative bars (blue = churn protectors) -->
+        <rect x="207" y="130" width="133" height="20" rx="2" fill="#2d5f8a" opacity=".75"/>
+        <text x="200" y="144" font-size="10" fill="#2d5f8a" text-anchor="end">OR=0.65</text>
+        <rect x="193" y="156" width="147" height="20" rx="2" fill="#2d5f8a" opacity=".75"/>
+        <text x="186" y="170" font-size="10" fill="#2d5f8a" text-anchor="end">OR=0.62</text>
+        <rect x="181" y="182" width="159" height="20" rx="2" fill="#2d5f8a" opacity=".75"/>
+        <text x="174" y="196" font-size="10" fill="#2d5f8a" text-anchor="end">OR=0.61</text>
+        <rect x="175" y="208" width="165" height="20" rx="2" fill="#2d5f8a" opacity=".75"/>
+        <text x="168" y="222" font-size="10" fill="#2d5f8a" text-anchor="end">OR=0.60</text>
+        <rect x="171" y="234" width="169" height="20" rx="2" fill="#2d5f8a" opacity=".75"/>
+        <text x="164" y="248" font-size="10" fill="#2d5f8a" text-anchor="end">OR=0.60</text>
+        <rect x="109" y="260" width="231" height="20" rx="2" fill="#1a3a5c" opacity=".9"/>
+        <text x="102" y="274" font-size="10" fill="#1a3a5c" text-anchor="end" font-weight="600">OR=0.47 ← strongest</text>
+        <!-- axis labels -->
+        <text x="340" y="298" text-anchor="middle" font-size="10" fill="#b0a898">← Decreases churn risk        0        Increases churn risk →</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="interpret">
+    <div class="interpret-title">Reading the coefficients — what to tell stakeholders</div>
+    <ul>
+      <li><strong>Tenure is the most powerful protector.</strong> Odds ratio 0.47 means a customer who is 1 standard deviation (18 months) longer-tenured has 53% lower odds of churning. Early engagement is the most valuable retention lever.</li>
+      <li><strong>Support calls are the leading risk indicator.</strong> Each additional standard deviation of support calls (1.8 calls) nearly doubles churn odds. Customers with 4+ calls should be flagged for proactive intervention.</li>
+      <li><strong>Logins are a proxy for engagement.</strong> Regular logins protect against churn — this is likely a leading indicator, not a cause. Correlate with product NPS to understand the mechanism.</li>
+      <li><strong>Channel and tier effects are meaningful.</strong> Gold tier and Phone channel reduce churn risk — this may reflect both self-selection (happier customers upgrade) and genuine protection (higher service level).</li>
+      <li><strong>⚠ customer_id appearing as a top feature is a red flag — see Stage 8.</strong></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══ STAGE 5 ══ -->
+<div class="stage" id="s5">
+  <div class="stage-num">Stage 05</div>
+  <h2 class="stage-title">Model Performance & Calibration</h2>
+  <p class="stage-intro">Performance tells you how well the model ranks customers. Calibration tells you whether the probability outputs are trustworthy. Both must be checked before using the model for decisions.</p>
+
+  <ul class="workflow">
+    <li><strong>Generate predictions on the test set</strong> Run the trained pipeline on the held-out test set. Produce probability scores (predict_proba) and binary predictions (predict, using 0.5 threshold).</li>
+    <li><strong>Compute performance metrics</strong> AUC-ROC (ranking quality), Average Precision (summary of PR curve), Brier Score (probability accuracy). Also compute the confusion matrix at default threshold.<em>AUC is the primary metric for ranking. Average precision is more informative with class imbalance.</em></li>
+    <li><strong>Plot the calibration curve (reliability diagram)</strong> Bin predictions into 10 buckets (0–10%, 10–20%, etc.). For each bucket, plot the predicted probability vs actual churn rate. A well-calibrated model follows the diagonal.<em>If P(churn)=0.7 but the actual churn rate for those customers is 40%, the model is overconfident — probabilities cannot be used directly for expected value calculations.</em></li>
+    <li><strong>Plot score distribution by true label</strong> Histogram of predicted P(churn) separately for churners and retained customers. Good discrimination = two distinct distributions. Heavy overlap = weak model.</li>
+  </ul>
+
+  <div class="output-block">
+    <div class="output-label">Output: Performance Metrics <span class="out-type">Console</span></div>
+    <div class="output-inner">
+      <div class="out-text">Test set performance:
+  AUC-ROC:           0.832   ← strong ranking ability
+  Average Precision: 0.621   ← good (random baseline = 0.215)
+  Brier Score:       0.124   ← reasonable (0 = perfect, 0.25 = random)
+
+Classification report (threshold = 0.5):
+              precision    recall  f1-score   support
+           0       0.87      0.91      0.89       126
+           1       0.67      0.56      0.61        34
+    accuracy                           0.83       160
+   macro avg       0.77      0.74      0.75       160
+weighted avg       0.83      0.83      0.83       160
+
+Confusion matrix (threshold = 0.5):
+                  Predicted 0    Predicted 1
+  Actual 0 (ret)     115             11         ← 11 false alarms
+  Actual 1 (churn)    15             19         ← 15 missed churners</div>
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi" style="border-top-color:#1a4a2e"><div class="kpi-val" style="color:#1a4a2e">0.832</div><div class="kpi-label">AUC-ROC</div></div>
+    <div class="kpi" style="border-top-color:#1a3a5c"><div class="kpi-val" style="color:#1a3a5c">0.621</div><div class="kpi-label">Avg Precision</div></div>
+    <div class="kpi" style="border-top-color:#7a5a00"><div class="kpi-val" style="color:#7a5a00">0.124</div><div class="kpi-label">Brier Score</div></div>
+    <div class="kpi" style="border-top-color:#8b2500"><div class="kpi-val" style="color:#8b2500">56%</div><div class="kpi-label">Recall @ 0.5</div></div>
+  </div>
+
+  <div class="output-block">
+    <div class="output-label">Output: Calibration Plot (Reliability Diagram) <span class="out-type">Chart</span></div>
+    <div class="output-inner">
+      <svg viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:500px;font-family:'Source Serif 4',serif">
+        <text x="250" y="18" text-anchor="middle" font-size="12" font-weight="600" fill="#1a1714">Calibration Plot — Reliability Diagram</text>
+        <!-- axes -->
+        <line x1="60" y1="240" x2="440" y2="240" stroke="#d4cdc4" stroke-width="1.5"/>
+        <line x1="60" y1="240" x2="60" y2="40" stroke="#d4cdc4" stroke-width="1.5"/>
+        <!-- perfect calibration line -->
+        <line x1="60" y1="240" x2="440" y2="40" stroke="#b0a898" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="445" y="38" font-size="10" fill="#b0a898">Perfect</text>
+        <!-- axis labels -->
+        <text x="250" y="270" text-anchor="middle" font-size="11" fill="#7a7060">Mean predicted probability</text>
+        <text x="18" y="145" text-anchor="middle" font-size="11" fill="#7a7060" transform="rotate(-90,18,145)">Actual churn rate</text>
+        <!-- tick labels x -->
+        <text x="60" y="256" text-anchor="middle" font-size="10" fill="#b0a898">0.0</text>
+        <text x="174" y="256" text-anchor="middle" font-size="10" fill="#b0a898">0.25</text>
+        <text x="288" y="256" text-anchor="middle" font-size="10" fill="#b0a898">0.50</text>
+        <text x="402" y="256" text-anchor="middle" font-size="10" fill="#b0a898">0.75</text>
+        <!-- tick labels y -->
+        <text x="52" y="244" text-anchor="end" font-size="10" fill="#b0a898">0.0</text>
+        <text x="52" y="194" text-anchor="end" font-size="10" fill="#b0a898">0.25</text>
+        <text x="52" y="144" text-anchor="end" font-size="10" fill="#b0a898">0.50</text>
+        <text x="52" y="94" text-anchor="end" font-size="10" fill="#b0a898">0.75</text>
+        <text x="52" y="44" text-anchor="end" font-size="10" fill="#b0a898">1.0</text>
+        <!-- model calibration points (close to diagonal = well calibrated) -->
+        <polyline points="60,240 84,232 136,212 174,186 230,158 288,136 330,108 380,82 420,60" fill="none" stroke="#8b2500" stroke-width="2"/>
+        <circle cx="84" cy="232" r="5" fill="#8b2500"/>
+        <circle cx="136" cy="212" r="5" fill="#8b2500"/>
+        <circle cx="174" cy="186" r="5" fill="#8b2500"/>
+        <circle cx="230" cy="158" r="5" fill="#8b2500"/>
+        <circle cx="288" cy="136" r="5" fill="#8b2500"/>
+        <circle cx="330" cy="108" r="5" fill="#8b2500"/>
+        <circle cx="380" cy="82" r="5" fill="#8b2500"/>
+        <circle cx="420" cy="60" r="5" fill="#8b2500"/>
+        <!-- annotation -->
+        <rect x="280" y="168" width="155" height="44" rx="4" fill="#f0f7f3" stroke="#9dd4b4"/>
+        <text x="358" y="186" text-anchor="middle" font-size="10" font-weight="600" fill="#1a4a2e">Well calibrated</text>
+        <text x="358" y="202" text-anchor="middle" font-size="10" fill="#3d3830">Follows diagonal closely</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="interpret">
+    <div class="interpret-title">What these numbers mean for business use</div>
+    <ul>
+      <li><strong>AUC = 0.832</strong> means the model correctly ranks a random churner above a random non-churner 83.2% of the time. A random model scores 0.5. Practical threshold: &gt;0.75 is useful, &gt;0.85 is strong.</li>
+      <li><strong>Calibration is good</strong> — the model closely follows the diagonal. P(churn) = 0.6 genuinely means approximately 60% of those customers will churn. This makes the scores usable for expected value calculations (e.g., "expected revenue saved by contacting the top 200").</li>
+      <li><strong>Recall at 0.5 threshold is 56%</strong> — the model misses 44% of churners at the default threshold. This is normal and expected — the right threshold should be chosen based on intervention capacity (Stage 6).</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══ STAGE 6 ══ -->
+<div class="stage" id="s6">
+  <div class="stage-num">Stage 06</div>
+  <h2 class="stage-title">Threshold Selection — The Business Decision</h2>
+  <p class="stage-intro">The threshold is not a modelling decision — it is a business decision. It determines what fraction of customers get flagged for intervention, and what the tradeoff is between false alarms (wasted campaign cost) and missed churners (lost revenue). The optimal threshold depends entirely on the relative cost of each error type.</p>
+
+  <ul class="workflow">
+    <li><strong>Plot Precision vs Recall vs Threshold</strong> Sweep the threshold from 0 to 1. At each value, compute precision (of those flagged, how many actually churn) and recall (of all churners, how many are caught). This shows the full tradeoff curve.<em>Lower threshold = more customers flagged = higher recall, lower precision. Higher threshold = fewer flagged = higher precision, lower recall.</em></li>
+    <li><strong>Calculate intervention capacity</strong> Ask the business team: "How many customers can we actually contact per week?" This capacity constraint defines the operating point — the threshold at which flagged volume matches capacity.<em>Example: if retention team can contact 60 customers/week from 800 scored = flag top 7.5% = threshold ~0.55.</em></li>
+    <li><strong>Compute expected ROI at the chosen threshold</strong> At threshold T: expected customers flagged × precision × expected churn prevention rate × average revenue per retained customer = expected revenue saved. Compare to cost of intervention (staff time, offer cost).</li>
+    <li><strong>Document the chosen threshold and its rationale</strong> Record: threshold value, expected precision, recall, weekly flag volume, and the business assumption justifying the choice. This is a governance artefact.<em>The threshold should be revisited quarterly — as the model is retrained, the score distribution may shift.</em></li>
+  </ul>
+
+  <div class="output-block">
+    <div class="output-label">Output: Precision / Recall / Threshold Curves <span class="out-type">Chart</span></div>
+    <div class="output-inner">
+      <svg viewBox="0 0 520 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:520px;font-family:'Source Serif 4',serif">
+        <text x="260" y="18" text-anchor="middle" font-size="12" font-weight="600" fill="#1a1714">Precision, Recall &amp; F1 vs Decision Threshold</text>
+        <line x1="60" y1="230" x2="480" y2="230" stroke="#d4cdc4" stroke-width="1.5"/>
+        <line x1="60" y1="230" x2="60" y2="35" stroke="#d4cdc4" stroke-width="1.5"/>
+        <!-- y axis labels -->
+        <text x="52" y="234" text-anchor="end" font-size="10" fill="#b0a898">0.0</text>
+        <text x="52" y="184" text-anchor="end" font-size="10" fill="#b0a898">0.25</text>
+        <text x="52" y="134" text-anchor="end" font-size="10" fill="#b0a898">0.50</text>
+        <text x="52" y="84" text-anchor="end" font-size="10" fill="#b0a898">0.75</text>
+        <text x="52" y="39" text-anchor="end" font-size="10" fill="#b0a898">1.0</text>
+        <!-- x axis labels -->
+        <text x="60" y="246" text-anchor="middle" font-size="10" fill="#b0a898">0.0</text>
+        <text x="165" y="246" text-anchor="middle" font-size="10" fill="#b0a898">0.25</text>
+        <text x="270" y="246" text-anchor="middle" font-size="10" fill="#b0a898">0.50</text>
+        <text x="375" y="246" text-anchor="middle" font-size="10" fill="#b0a898">0.75</text>
+        <text x="480" y="246" text-anchor="middle" font-size="10" fill="#b0a898">1.0</text>
+        <text x="270" y="265" text-anchor="middle" font-size="11" fill="#7a7060">Decision threshold</text>
+        <!-- Recall curve (decreasing) -->
+        <polyline points="60,39 100,55 140,78 180,108 220,135 260,160 300,180 340,205 375,220 420,228 480,230" fill="none" stroke="#c4440d" stroke-width="2"/>
+        <!-- Precision curve (increasing) -->
+        <polyline points="60,155 100,148 140,140 180,132 220,122 260,115 300,108 340,95 375,82 420,65 480,39" fill="none" stroke="#1a3a5c" stroke-width="2"/>
+        <!-- F1 curve (inverted U) -->
+        <polyline points="60,108 100,102 140,108 180,118 220,126 260,133 300,140 340,148 375,158 420,168 480,185" fill="none" stroke="#1a4a2e" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <!-- chosen threshold line -->
+        <line x1="258" y1="35" x2="258" y2="230" stroke="#7a5a00" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="262" y="50" font-size="10" fill="#7a5a00">Chosen: 0.48</text>
+        <text x="262" y="63" font-size="10" fill="#7a5a00">P=64% R=71%</text>
+        <!-- legend -->
+        <line x1="330" y1="50" x2="355" y2="50" stroke="#c4440d" stroke-width="2"/><text x="360" y="54" font-size="11" fill="#3d3830">Recall</text>
+        <line x1="330" y1="66" x2="355" y2="66" stroke="#1a3a5c" stroke-width="2"/><text x="360" y="70" font-size="11" fill="#3d3830">Precision</text>
+        <line x1="330" y1="82" x2="355" y2="82" stroke="#1a4a2e" stroke-width="1.5" stroke-dasharray="5,3"/><text x="360" y="86" font-size="11" fill="#3d3830">F1</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="output-block">
+    <div class="output-label">Output: Threshold Decision Summary <span class="out-type">Table</span></div>
+    <div class="output-inner">
+      <table class="out-table">
+        <thead><tr><th>Threshold</th><th>Customers flagged (of 800)</th><th>Precision</th><th>Recall</th><th>F1</th><th>Scenario</th></tr></thead>
+        <tbody>
+          <tr><td>0.30</td><td>180 (22.5%)</td><td>42%</td><td>88%</td><td>0.57</td><td>Catch nearly all churners, many false alarms — use if intervention is cheap</td></tr>
+          <tr><td class="hi">0.48</td><td class="hi">76 (9.5%)</td><td class="hi">64%</td><td class="hi">71%</td><td class="hi">0.67</td><td class="hi">Balanced — recommended if team can contact 76/week</td></tr>
+          <tr><td>0.60</td><td>44 (5.5%)</td><td>78%</td><td>50%</td><td>0.61</td><td>High-confidence flags only — use when intervention is expensive (e.g., senior account manager call)</td></tr>
+          <tr><td>0.75</td><td>18 (2.3%)</td><td>89%</td><td>26%</td><td>0.40</td><td>Very high precision, low reach — use for high-value customer VIP rescue only</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout callout-insight">
+    <strong>The business framing for the threshold conversation</strong>
+    "At threshold 0.48, we flag 76 customers per week. Our retention team can handle 80. Of those 76, about 49 will genuinely be planning to churn (64% precision), and we'll catch 71% of all actual churners (recall). If our retention offer converts 30% of contacted churners and each retained customer is worth £1,200/year, that's 14–15 prevented churns/week × £1,200 = ~£18K/week in protected revenue, against an intervention cost of roughly £4K/week."
+  </div>
+</div>
+
+<!-- ══ STAGE 7 ══ -->
+<div class="stage" id="s7">
+  <div class="stage-num">Stage 07</div>
+  <h2 class="stage-title">Cross-Validation & Stability</h2>
+  <p class="stage-intro">A single train/test split can be lucky or unlucky. Cross-validation repeats the evaluation across multiple splits to get a stable estimate of performance and its variance. Unstable performance across folds signals a fragile model.</p>
+
+  <ul class="workflow">
+    <li><strong>Run 5-fold stratified cross-validation</strong> Split all 800 rows into 5 equal folds. Train on 4, test on 1 — repeat 5 times. Each fold produces one AUC score. Report mean ± standard deviation.<em>Standard deviation &gt;0.03 suggests the model is sensitive to which data it trains on — consider more regularisation.</em></li>
+    <li><strong>Check coefficient stability across folds</strong> For each fold, extract the top 5 coefficients and their direction (sign). If the sign flips (e.g., tenure_months is sometimes positive and sometimes negative), the model is unstable — likely due to correlated features.<em>Stable coefficients are required for the model to be governable — you need to commit to a story about what drives churn.</em></li>
+    <li><strong>Compare C values on validation set</strong> Try C = 0.01, 0.1, 1.0, 10 on the validation set. Plot AUC vs C. Choose the value with the best validation AUC, or the most regularised model within 0.01 AUC of the best (principle of parsimony).</li>
+  </ul>
+
+  <div class="output-block">
+    <div class="output-label">Output: 5-Fold Cross-Validation Results <span class="out-type">Console</span></div>
+    <div class="output-inner">
+      <div class="out-text">Stratified 5-Fold Cross-Validation (AUC-ROC):
+  Fold 1:   0.841
+  Fold 2:   0.818
+  Fold 3:   0.837
+  Fold 4:   0.824
+  Fold 5:   0.845
+
+  Mean AUC:   0.833   ✓ Consistent with test AUC (0.832)
+  Std Dev:    0.011   ✓ Low variance — stable model
+
+Coefficient stability (top 5 features, sign across folds):
+  Feature              F1      F2      F3      F4      F5     Stable?
+  tenure_months         -       -       -       -       -     ✓ YES
+  support_calls         +       +       +       +       +     ✓ YES
+  logins_per_week       -       -       -       -       -     ✓ YES
+  cltv                  -       -       -       -       -     ✓ YES
+  monthly_spend_low     +       +       +       +       +     ✓ YES
+
+Regularisation sweep (C vs validation AUC):
+  C = 0.01:   AUC = 0.797   (too much regularisation, underfitting)
+  C = 0.10:   AUC = 0.831   ← chosen (good balance)
+  C = 1.00:   AUC = 0.834   (marginally better but less stable)
+  C = 10.0:   AUC = 0.835   (very similar, higher overfitting risk)
+
+  Selected: C = 0.10  (stable, interpretable, minimal AUC cost vs C=1.0)</div>
+    </div>
+  </div>
+
+  <div class="interpret">
+    <div class="interpret-title">What stability means for governance</div>
+    <ul>
+      <li>AUC std = 0.011 is excellent — the model will perform consistently even as the training window shifts over time.</li>
+      <li>All top-5 coefficients are stable in sign across all folds — this means the business story is reliable. "Tenure protects, support calls signal risk" holds regardless of which customers happened to be in the training set.</li>
+      <li>C=0.10 was chosen over C=1.0 despite marginal AUC — the principle is to use the simplest model that achieves acceptable performance. Simpler models are easier to retrain, monitor, and explain.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══ STAGE 8 ══ -->
+<div class="stage" id="s8">
+  <div class="stage-num">Stage 08</div>
+  <h2 class="stage-title">Leakage & Feature Audit</h2>
+  <p class="stage-intro">Feature leakage is the most common cause of models that perform brilliantly in the notebook and fail in production. It occurs when a feature contains information that would not be available at the time of prediction — meaning the model is "cheating" during training.</p>
+
+  <ul class="workflow">
+    <li><strong>List all features and their data generation time</strong> For each feature, ask: "At the moment I need to score a customer, does this feature already exist in the database?" If the answer is "only after the outcome is known", it is a leaky feature.<em>Example: "cancellation_request_submitted" is generated after the decision to churn — not before. Including it = 100% AUC, zero production value.</em></li>
+    <li><strong>Check SHAP or coefficient values for suspicious features</strong> Any ID column, date column, or post-event flag appearing in the top features is a guaranteed red flag. customer_id should have zero predictive power — if it does, it is encoding group-level leakage.<em>The customer_id effect in Stage 4 suggests some customer IDs are associated with a specific cohort that has a different churn rate — this is a data construction issue, not a genuine feature.</em></li>
+    <li><strong>Rebuild without flagged features and compare AUC</strong> Remove all suspected leaky features. Retrain. If AUC drops dramatically (>5 points), the model was heavily reliant on leakage. If AUC holds, the leakage was minor and the model is genuinely predictive.<em>A 10-point AUC drop after removing customer_id means the model was using ID-level cohort information. It needs to be redesigned.</em></li>
+    <li><strong>Document the clean feature set</strong> Produce a final feature register: feature name, business meaning, source system, data freshness (how often is it updated), and confirmed availability at scoring time.</li>
+  </ul>
+
+  <div class="output-block">
+    <div class="output-label">Output: Feature Leakage Audit <span class="out-type">Table</span></div>
+    <div class="output-inner">
+      <table class="out-table">
+        <thead><tr><th>Feature</th><th>Available at score time?</th><th>Leakage risk</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>customer_id</td><td>Yes (but meaningless)</td><td class="neg">High — encodes cohort</td><td>Remove</td></tr>
+          <tr><td>tenure_months</td><td>Yes — calculated at scoring</td><td class="pos">None</td><td>Keep</td></tr>
+          <tr><td>support_calls</td><td>Yes — from CRM system (last 90 days)</td><td class="pos">None</td><td>Keep</td></tr>
+          <tr><td>logins_per_week</td><td>Yes — from product analytics (last 28 days)</td><td class="pos">None</td><td>Keep</td></tr>
+          <tr><td>monthly_spend</td><td>Yes — from billing system (last invoice)</td><td class="pos">None</td><td>Keep</td></tr>
+          <tr><td>cltv</td><td>Depends — if CLTV model uses future transactions: leakage. If historical only: clean.</td><td style="color:#c49a00;font-weight:600">Medium — verify</td><td>Confirm with data team</td></tr>
+          <tr><td>channel, region, tier</td><td>Yes — from CRM at account level</td><td class="pos">None</td><td>Keep</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="output-block">
+    <div class="output-label">Output: AUC Comparison — With vs Without customer_id <span class="out-type">Console</span></div>
+    <div class="output-inner">
+      <div class="out-text">AUC with customer_id included:  0.832
+AUC with customer_id excluded:  0.826
+
+Difference: 0.006  ← minor; customer_id encodes a small cohort effect
+Action: remove customer_id from feature set regardless.
+The 0.006 AUC loss is acceptable — it eliminates a fragile dependency
+on ID-based cohort encoding that will break as cohorts evolve.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-warning">
+    <strong>The CLTV verification step cannot be skipped</strong>
+    If CLTV is computed using the customer's full transaction history including the period after the observation window, it leaks future information. Ask the data team: "What is the exact SQL query that generates this feature, and what is the date boundary?" This one question has caught leakage in real production models.
+  </div>
+</div>
+
+<!-- ══ STAGE 9 ══ -->
+<div class="stage" id="s9">
+  <div class="stage-num">Stage 09</div>
+  <h2 class="stage-title">QA — Good vs Red-Flag Output</h2>
+  <p class="stage-intro">Use this as a sign-off checklist when reviewing model output produced by an analyst or data science team.</p>
+
+  <div class="qa-grid">
+    <div class="qa-box qa-good">
+      <h5>Good output — ready to proceed</h5>
+      <ul>
+        <li>AUC meaningfully above seasonal naive or rule-based baseline</li>
+        <li>Calibration plot follows the diagonal (±5 percentage points per bin)</li>
+        <li>Top features are available at scoring time and make business sense</li>
+        <li>Coefficient signs are directionally correct and stable across CV folds</li>
+        <li>Threshold chosen based on explicit FP/FN cost discussion, not defaulted to 0.5</li>
+        <li>customer_id, dates, and identifiers excluded from features</li>
+        <li>Test set was held out and used exactly once</li>
+        <li>Missing values handled with a principled strategy (not just dropped)</li>
+      </ul>
+    </div>
+    <div class="qa-box qa-bad">
+      <h5>Red flags — investigate before sign-off</h5>
+      <ul>
+        <li>AUC = 1.0 or near-perfect — almost certainly leakage</li>
+        <li>AUC drops >8 points when removing any single feature — leakage dependency</li>
+        <li>customer_id or date columns in top features by coefficient/importance</li>
+        <li>Coefficient sign flips across CV folds for key features</li>
+        <li>Calibration curve far from diagonal — probabilities cannot be trusted</li>
+        <li>Performance reported on training data rather than held-out set</li>
+        <li>No mention of threshold — implies defaulting to 0.5 without justification</li>
+        <li>Feature engineering done after train/test split (preprocessing leakage)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STAGE 10 ══ -->
+<div class="stage" id="s10">
+  <div class="stage-num">Stage 10</div>
+  <h2 class="stage-title">Extension Directions</h2>
+  <p class="stage-intro">Once the baseline logistic regression is validated, these are the natural next steps — in order of priority for a strategy/PM context.</p>
+
+  <ul class="ext-list">
+    <li><strong>Segment-level performance analysis</strong> Break AUC and precision/recall down by channel, region, and tier. A model that performs well overall but poorly on Gold-tier customers (highest value) may need a separate model or feature set for that segment.</li>
+    <li><strong>Compare against GBM baseline</strong> Train a LightGBM model on the same features and compare AUC. If the gap is &lt;3 points, stick with logistic regression (interpretability advantage). If &gt;5 points, the relationship is genuinely nonlinear and GBM is warranted.</li>
+    <li><strong>SHAP values for individual explanations</strong> Use SHAP even on logistic regression to produce per-customer "why is this person high risk?" explanations for retention managers. Shows: "tenure -2.3, support_calls +1.8, logins -0.9".</li>
+    <li><strong>Calibrated probability uplift sizing</strong> Multiply P(churn) by expected revenue × retention intervention success rate. Produces a "revenue at risk" per customer — enables prioritisation by expected value, not just score rank.</li>
+    <li><strong>Monitoring dashboard design</strong> Track weekly: (a) score distribution shift (PSI), (b) precision at chosen threshold on resolved cases, (c) flag volume vs capacity. Trigger retraining when PSI &gt;0.2 or precision drops &gt;5 points.</li>
+    <li><strong>Fairness audit</strong> Check AUC and precision separately by demographic groups (if available). EU AI Act and internal policies may require fairness metrics to be documented before deployment to customer-facing decisions.</li>
+  </ul>
+</div>
+
+<div class="nb-footer">
+  <span>01 · Logistic Regression · ML Strategy Playbook · Archishman Bandyopadhyay</span>
+  <a href="../ML_Strategy_Playbook.html#logistic" style="color:var(--ink4);text-decoration:none">← Back to Master Playbook</a>
+</div>
+
+</div>
+</body>
+</html>

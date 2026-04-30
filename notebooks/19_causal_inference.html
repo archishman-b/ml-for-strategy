@@ -1,0 +1,134 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>6.3 · Causal Inference — ML Strategy Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;--cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;--accent:#8b2500;--accent2:#c4440d;--accent3:#e8c4a0;--blue:#1a3a5c;--blue2:#2d5f8a;--green:#1a4a2e;--green2:#2d7a4a;--gold:#7a5a00;--border:#d4cdc4;--border2:#c4bdb4;--serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.page{max-width:860px;margin:0 auto;padding:40px 32px 80px}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--ink4);text-decoration:none;margin-bottom:32px;border:1px solid var(--border);padding:5px 12px;border-radius:3px}
+.back-link:hover{color:var(--ink);border-color:var(--border2)}
+.nb-header{border-bottom:2px solid var(--ink);padding-bottom:24px;margin-bottom:36px}
+.nb-num{font-family:var(--mono);font-size:11px;color:var(--accent2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.nb-title{font-family:var(--display);font-size:36px;font-weight:700;line-height:1.15;margin-bottom:12px;letter-spacing:-.02em}
+.nb-meta{display:flex;flex-wrap:wrap;gap:16px;font-family:var(--mono);font-size:10px;color:var(--ink4);margin-bottom:16px}
+.nb-meta span em{color:var(--ink2);font-style:normal;font-weight:600}
+.nb-intro{font-size:15px;color:var(--ink3);line-height:1.7;border-left:3px solid var(--accent3);padding-left:16px;max-width:680px}
+.toc{background:#fff;border:1px solid var(--border);border-radius:6px;padding:20px 24px;margin:28px 0}
+.toc-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px}
+.toc ol{list-style:none;padding:0;counter-reset:toc}
+.toc li{counter-increment:toc;padding:5px 0;border-bottom:1px solid var(--cream3);font-size:13px}
+.toc li:last-child{border-bottom:none}
+.toc li::before{content:counter(toc,decimal-leading-zero)". ";font-family:var(--mono);font-size:10px;color:var(--ink4);margin-right:6px}
+.toc a{color:var(--ink2);text-decoration:none}.toc a:hover{color:var(--accent2)}
+.stage{margin:40px 0 0;padding-top:28px;border-top:2px solid var(--border)}
+.stage-num{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.stage-title{font-family:var(--display);font-size:22px;font-weight:600;margin-bottom:12px}
+.stage-intro{font-size:14px;color:var(--ink3);line-height:1.7;margin-bottom:22px;max-width:700px}
+.workflow{margin:0 0 22px;padding:0;list-style:none;counter-reset:wf}
+.workflow li{counter-increment:wf;padding:10px 14px 10px 48px;position:relative;border-left:2px solid var(--cream3);margin-bottom:6px;font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.workflow li::before{content:counter(wf);position:absolute;left:-13px;top:10px;width:24px;height:24px;background:var(--ink);color:var(--cream);font-family:var(--mono);font-size:10px;font-weight:600;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;line-height:24px}
+.workflow li strong{color:var(--ink);display:block;margin-bottom:2px}
+.workflow li em{color:var(--ink4);font-style:normal;font-size:12px}
+.output-block{background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin:16px 0 28px}
+.output-label{background:var(--ink);color:var(--cream2);font-family:var(--mono);font-size:10px;padding:7px 14px;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+.out-type{font-size:9px;padding:1px 7px;border-radius:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.output-inner{padding:18px 20px}
+.out-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.out-table th{background:var(--cream2);padding:7px 12px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.04em;color:var(--ink3);border-bottom:2px solid var(--border)}
+.out-table td{padding:7px 12px;border-bottom:1px solid var(--cream3);color:var(--ink2)}
+.out-table tr:last-child td{border-bottom:none}
+.out-table .pos{color:#2d7a4a;font-weight:600}.out-table .neg{color:#c4440d;font-weight:600}.out-table .hi{color:var(--ink);font-weight:600}
+.out-text{font-family:var(--mono);font-size:12px;line-height:1.9;color:var(--ink2);white-space:pre-wrap}
+.callout{padding:14px 18px;border-radius:4px;margin:16px 0;font-size:13.5px;line-height:1.65;border-left:3px solid}
+.callout-insight{background:#faf5ee;border-color:#c49a00;color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:#f0f5fa;border-color:var(--blue2);color:var(--ink2)}
+.callout strong{font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:4px;opacity:.7}
+.interpret{background:var(--cream2);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin:14px 0}
+.interpret-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:10px}
+.interpret ul{list-style:none;padding:0}
+.interpret li{font-size:13px;color:var(--ink2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.6}
+.interpret li:last-child{border-bottom:none}
+.interpret li::before{content:"→ ";color:var(--accent2);font-weight:700}
+.kpi-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.kpi{flex:1;min-width:110px;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:4px;border-top:3px solid}
+.kpi-val{font-family:var(--display);font-size:26px;font-weight:700;line-height:1;margin-bottom:4px}
+.kpi-label{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.05em;text-transform:uppercase}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.qa-box{padding:14px 16px;border-radius:4px;font-size:13px}
+.qa-good{background:#f0f7f3;border:1px solid #bde0ca}
+.qa-bad{background:#fef5f0;border:1px solid #f4c4aa}
+.qa-box h5{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;font-family:var(--mono)}
+.qa-good h5{color:#1a4a2e}.qa-bad h5{color:#8b2500}
+.qa-box ul{list-style:none;padding:0}
+.qa-box li{padding:3px 0;line-height:1.55;color:var(--ink2)}
+.qa-good li::before{content:"✓  ";color:#2d7a4a;font-weight:700}
+.qa-bad li::before{content:"✗  ";color:#c4440d;font-weight:700}
+.ext-list{list-style:none;padding:0;counter-reset:ext}
+.ext-list li{counter-increment:ext;padding:9px 14px 9px 38px;position:relative;border-bottom:1px solid var(--cream3);font-size:13px;color:var(--ink2);line-height:1.6}
+.ext-list li::before{content:counter(ext);position:absolute;left:0;top:9px;width:22px;height:22px;background:var(--cream3);color:var(--ink3);font-family:var(--mono);font-size:10px;border-radius:50%;text-align:center;line-height:22px}
+.ext-list li strong{color:var(--ink);display:block}
+.nb-footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media(max-width:600px){.page{padding:24px 16px 60px}.nb-title{font-size:26px}.qa-grid{grid-template-columns:1fr}}
+</style></head><body><div class="page">
+<a href="../ML_Strategy_Playbook.html#causal" class="back-link">← Back to Master Playbook · 6.3 Causal Inference</a>
+<div class="nb-header"><div class="nb-num">Notebook 6.3</div><h1 class="nb-title">Causal Inference</h1>
+<div class="nb-meta"><span>Question: <em>What is the true effect of this action?</em></span><span>Output: <em>Treatment effect estimate + CI</em></span><span>Dataset: <em>campaign.csv + panel data</em></span><span>Use case: <em>Policy evaluation · A/B test analysis · Pricing policy impact · Offer ROI</em></span></div>
+<p class="nb-intro">Pipeline walkthrough — analyst workflow steps, pre-populated outputs, and business interpretation at each stage.</p></div>
+<div class="stage" id="s1"><div class="stage-num">Stage 01</div><h2 class="stage-title">The Fundamental Distinction: Correlation vs Causation</h2><p class="stage-intro">Causal inference asks: 'What would have happened if we had done something different?' This counterfactual question cannot be answered with standard regression alone — it requires either experimental design or careful observational techniques.</p><ul class="workflow"><li><strong>Understand the counterfactual problem</strong> We observe either the treatment or control outcome for each unit — never both. The 'potential outcome' we do not observe is the counterfactual. Estimating it is the core challenge of causal inference.<em><em>Correlation tells you that A and B co-occur. Causation tells you that changing A produces a change in B. These are genuinely different — and strategy decisions require the latter.</em></em></li><li><strong>Identify your estimand</strong> ATE (Average Treatment Effect): effect averaged over the whole population. ATT (Average Treatment Effect on the Treated): effect on those who actually received treatment. LATE (Local Average Treatment Effect): effect for compliers in an IV design. Know which you need before choosing a method.</li><li><strong>Match your method to your data structure</strong> Randomised experiment (RCT): gold standard, directly estimates ATE. Difference-in-Differences: panel data with pre/post and treatment/control groups. Regression Discontinuity: assignment rule with a threshold. Instrumental Variables: when treatment is endogenous. Propensity Score Matching: observational data, no RCT.</li></ul><div class="output-block"><div class="output-label">Output: Method Selection by Data Structure <span class="out-type">Table</span></div><div class="output-inner"><table class="out-table"><thead><tr><th>Data structure</th><th>Recommended method</th><th>Assumptions required</th><th>Strength</th></tr></thead><tbody><tr><td>Randomised experiment</td><td>A/B test + t-test or regression</td><td>None (by design)</td><td>Gold standard</td></tr><tr><td>Panel data (pre/post, treat/control)</td><td>Difference-in-Differences</td><td>Parallel trends</td><td>Strong</td></tr><tr><td>Assignment by threshold rule</td><td>Regression Discontinuity</td><td>Continuity at threshold</td><td>Strong near cutoff</td></tr><tr><td>Observational, confounders measurable</td><td>Propensity Score Matching / IPW</td><td>No unmeasured confounders</td><td>Moderate</td></tr><tr><td>Endogenous treatment, instrument available</td><td>Instrumental Variables</td><td>Valid instrument</td><td>Strong if IV valid</td></tr></tbody></table></div></div></div><div class="stage" id="s2"><div class="stage-num">Stage 02</div><h2 class="stage-title">Difference-in-Differences (DiD)</h2><p class="stage-intro">DiD is the standard technique for estimating the causal effect of a policy or programme using panel data — where you observe units before and after treatment, with a comparison group.</p><ul class="workflow"><li><strong>Set up the panel structure</strong> Each row = one unit × one time period. Columns: unit_id, period (pre/post), treated (1/0), outcome. Every unit must be observed in both periods.</li><li><strong>Visualise the parallel trends assumption</strong> Plot the average outcome over time for treatment and control groups in the pre-treatment period. If both groups were trending in the same direction before treatment, the parallel trends assumption is plausible.<em><em>Parallel trends is untestable in the post-period, but pre-period divergence is strong evidence against it. If pre-trends differ: DiD is invalid.</em></em></li><li><strong>Estimate the DiD using regression</strong> Regress outcome on: treated (group indicator), post (time indicator), and treated × post (the interaction). The coefficient on the interaction term is the DiD estimate — the causal treatment effect.</li></ul><div class="output-block"><div class="output-label">Output: DiD Setup — Pricing Policy Evaluation <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">Business question:
+  'Did our new discount cap policy (max 10% discount) increase gross margin
+   in the treatment regions, relative to control regions where it was not applied?'
+
+Panel structure:
+  Treatment regions:  5 sales regions where cap was introduced in Q3 2023
+  Control regions:    4 sales regions where cap was NOT introduced
+  Pre-period:  Q1 2023 + Q2 2023 (before cap)
+  Post-period: Q3 2023 + Q4 2023 (after cap)
+  Outcome: average gross margin % per region per quarter
+
+  Data:
+    Region      Group      Period     Avg margin
+    East        Treated    Pre        31.2%
+    East        Treated    Post       36.8%
+    North       Control    Pre        30.8%
+    North       Control    Post       31.4%
+    
+  Parallel trends check (pre-period):
+    Treatment trend Q1→Q2: +0.4pp
+    Control trend Q1→Q2:   +0.3pp
+    Pre-period divergence: 0.1pp → ✓ parallel trends plausible</div></div></div><div class="output-block"><div class="output-label">Output: DiD Regression Results <span class="out-type">Table</span></div><div class="output-inner"><table class="out-table"><thead><tr><th>Variable</th><th>Coefficient</th><th>Std Error</th><th>p-value</th><th>Interpretation</th></tr></thead><tbody><tr><td>Intercept (control pre)</td><td>30.8pp</td><td>0.4</td><td><0.001</td><td>Baseline margin in control pre-period</td></tr><tr><td>treated</td><td>0.4pp</td><td>0.5</td><td>0.43</td><td>Pre-existing treatment effect (not significant — good)</td></tr><tr><td>post</td><td>0.6pp</td><td>0.4</td><td>0.14</td><td>Time trend in control group (not significant)</td></tr><tr><td>treated × post (DiD)</td><td>5.1pp</td><td>0.7</td><td><0.001</td><td>Causal effect of discount cap: +5.1pp margin</td></tr></tbody></table><div style="font-size:11px;color:var(--ink4);margin-top:8px;font-family:var(--mono)">DiD estimate: +5.1pp margin improvement attributable to the discount cap policy (p<0.001, 95% CI: [3.8, 6.4])</div></div></div><div class="output-block"><div class="output-label">Output: Business Translation <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">DiD Causal Estimate: +5.1 percentage points gross margin improvement
+  (attributable to the discount cap, net of time trends and pre-existing differences)
+
+Revenue impact:
+  Treatment regions annual revenue: ~£18M
+  Margin improvement: +5.1pp
+  Annual margin increase: ~£920K
+
+  95% confidence interval: £684K to £1,152K additional margin per year
+
+  Recommendation: roll out discount cap to all regions
+  Expected total annual benefit: ~£2.1M (scaling to all 9 regions)</div></div></div><div class="interpret"><div class="interpret-title">What this tells you</div><ul><li>The DiD estimate of +5.1pp is statistically significant (p<0.001) and economically meaningful — approximately £920K additional annual margin in the treatment regions.</li><li>The parallel trends check passed (pre-period divergence only 0.1pp) — the key assumption of DiD is plausible for this dataset.</li><li>The treated × post interaction is what identifies the causal effect — not just the post-period margin level, which could reflect time trends or other simultaneous changes.</li></ul></div><div class="callout callout-warning"><strong>DiD requires genuine parallel trends — always show the pre-period plot</strong>The single most important validation for DiD is the pre-period trend plot. If treatment and control regions were diverging before the policy was introduced, the DiD estimate is biased by pre-existing trends. Always show this plot explicitly to the audience — it is the credibility test for the causal claim.</div></div><div class="stage" id="s3"><div class="stage-num">Stage 03</div><h2 class="stage-title">A/B Test Analysis & Propensity Score Matching</h2><p class="stage-intro">Two further techniques: A/B test analysis (the cleanest case) and propensity score matching (when randomisation was not possible).</p><ul class="workflow"><li><strong>A/B test: regression with treatment indicator</strong> Regress outcome on treatment indicator (+ any pre-specified covariates for efficiency). The coefficient on the treatment indicator is the ATE. Report 95% CI and p-value.</li><li><strong>Propensity score matching</strong> When randomisation was not possible, match each treated unit to a control unit with similar pre-treatment features (propensity score = P(treated | features)). The matched comparison removes confounding from observable variables. Always test balance after matching.</li><li><strong>Report effect sizes, not just p-values</strong> A statistically significant effect that is economically tiny is not actionable. Always translate coefficients to business units (£, %, customers). A p-value of 0.001 on a +0.3pp margin effect may not justify the cost of a rollout.</li></ul><div class="output-block"><div class="output-label">Output: A/B Test Analysis — Retention Offer <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">A/B Test: Retention Offer (10% discount vs control)
+  Treatment group (T=1): 248 customers, offer sent
+  Control group  (T=0): 252 customers, no offer
+
+  Regression: churn ~ treatment + tenure_months + support_calls + logins_per_week
+  (covariates included for precision gain, not confounding — this was an RCT)
+
+  Results:
+    Treatment coefficient: −0.089  (SE = 0.028, p = 0.002)
+    95% CI: [−0.144, −0.034]
+    Interpretation: the retention offer reduces churn probability by 8.9pp
+    on average across the treated group.
+
+  Business translation:
+    Treatment effect: −8.9pp churn
+    Treated customers: 248
+    Expected prevented churns: 248 × 8.9% = 22 customers
+    Revenue protected: 22 × £1,200 CLTV = £26,400
+    Offer cost: 248 × £15 discount = £3,720
+    Net ROI: £26,400 − £3,720 = £22,680  (6.1× return on offer spend)</div></div></div><div class="output-block"><div class="output-label">Output: QA Checklist <span class="out-type">Checklist</span></div><div class="output-inner"><div class="qa-grid"><div class="qa-box qa-good"><h5>Good</h5><ul><li>Causal method matches data structure (RCT/DiD/RDD/IV)</li><li>Parallel trends visualised for DiD</li><li>Balance check passed for propensity score matching</li><li>Effect size reported in business units (not just coefficient)</li><li>Confidence interval reported — not just point estimate and p-value</li></ul></div><div class="qa-box qa-bad"><h5>Red flags</h5><ul><li>Regression coefficient interpreted as causal without experimental or quasi-experimental design</li><li>Parallel trends assumed without checking pre-period data</li><li>Propensity score matching used without post-matching balance check</li><li>Only p-value reported — no effect size</li><li>Significant result on economically trivial effect size presented as recommendation</li></ul></div></div></div></div></div>
+<div class="nb-footer"><span>6.3 · Causal Inference · ML Strategy Playbook · Archishman Bandyopadhyay</span>
+<a href="../ML_Strategy_Playbook.html#causal" style="color:var(--ink4);text-decoration:none">← Back</a></div>
+</div></body></html>

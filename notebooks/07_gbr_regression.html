@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2.2 · Gradient Boosting Regressor — ML Strategy Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;--cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;--accent:#8b2500;--accent2:#c4440d;--accent3:#e8c4a0;--blue:#1a3a5c;--blue2:#2d5f8a;--green:#1a4a2e;--green2:#2d7a4a;--gold:#7a5a00;--border:#d4cdc4;--border2:#c4bdb4;--serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.page{max-width:860px;margin:0 auto;padding:40px 32px 80px}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--ink4);text-decoration:none;margin-bottom:32px;border:1px solid var(--border);padding:5px 12px;border-radius:3px}
+.back-link:hover{color:var(--ink);border-color:var(--border2)}
+.nb-header{border-bottom:2px solid var(--ink);padding-bottom:24px;margin-bottom:36px}
+.nb-num{font-family:var(--mono);font-size:11px;color:var(--accent2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.nb-title{font-family:var(--display);font-size:36px;font-weight:700;line-height:1.15;margin-bottom:12px;letter-spacing:-.02em}
+.nb-meta{display:flex;flex-wrap:wrap;gap:16px;font-family:var(--mono);font-size:10px;color:var(--ink4);margin-bottom:16px}
+.nb-meta span em{color:var(--ink2);font-style:normal;font-weight:600}
+.nb-intro{font-size:15px;color:var(--ink3);line-height:1.7;border-left:3px solid var(--accent3);padding-left:16px;max-width:680px}
+.toc{background:#fff;border:1px solid var(--border);border-radius:6px;padding:20px 24px;margin:28px 0}
+.toc-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px}
+.toc ol{list-style:none;padding:0;counter-reset:toc}
+.toc li{counter-increment:toc;padding:5px 0;border-bottom:1px solid var(--cream3);font-size:13px}
+.toc li:last-child{border-bottom:none}
+.toc li::before{content:counter(toc,decimal-leading-zero)". ";font-family:var(--mono);font-size:10px;color:var(--ink4);margin-right:6px}
+.toc a{color:var(--ink2);text-decoration:none}.toc a:hover{color:var(--accent2)}
+.stage{margin:40px 0 0;padding-top:28px;border-top:2px solid var(--border)}
+.stage-num{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.stage-title{font-family:var(--display);font-size:22px;font-weight:600;margin-bottom:12px}
+.stage-intro{font-size:14px;color:var(--ink3);line-height:1.7;margin-bottom:22px;max-width:700px}
+.workflow{margin:0 0 22px;padding:0;list-style:none;counter-reset:wf}
+.workflow li{counter-increment:wf;padding:10px 14px 10px 48px;position:relative;border-left:2px solid var(--cream3);margin-bottom:6px;font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.workflow li::before{content:counter(wf);position:absolute;left:-13px;top:10px;width:24px;height:24px;background:var(--ink);color:var(--cream);font-family:var(--mono);font-size:10px;font-weight:600;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;line-height:24px}
+.workflow li strong{color:var(--ink);display:block;margin-bottom:2px}
+.workflow li em{color:var(--ink4);font-style:normal;font-size:12px}
+.output-block{background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin:16px 0 28px}
+.output-label{background:var(--ink);color:var(--cream2);font-family:var(--mono);font-size:10px;padding:7px 14px;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+.out-type{font-size:9px;padding:1px 7px;border-radius:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.output-inner{padding:18px 20px}
+.out-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.out-table th{background:var(--cream2);padding:7px 12px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.04em;color:var(--ink3);border-bottom:2px solid var(--border)}
+.out-table td{padding:7px 12px;border-bottom:1px solid var(--cream3);color:var(--ink2)}
+.out-table tr:last-child td{border-bottom:none}
+.out-table .pos{color:#2d7a4a;font-weight:600}.out-table .neg{color:#c4440d;font-weight:600}.out-table .hi{color:var(--ink);font-weight:600}
+.out-text{font-family:var(--mono);font-size:12px;line-height:1.9;color:var(--ink2);white-space:pre-wrap}
+.callout{padding:14px 18px;border-radius:4px;margin:16px 0;font-size:13.5px;line-height:1.65;border-left:3px solid}
+.callout-insight{background:#faf5ee;border-color:#c49a00;color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:#f0f5fa;border-color:var(--blue2);color:var(--ink2)}
+.callout strong{font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:4px;opacity:.7}
+.interpret{background:var(--cream2);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin:14px 0}
+.interpret-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:10px}
+.interpret ul{list-style:none;padding:0}
+.interpret li{font-size:13px;color:var(--ink2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.6}
+.interpret li:last-child{border-bottom:none}
+.interpret li::before{content:"→ ";color:var(--accent2);font-weight:700}
+.kpi-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.kpi{flex:1;min-width:110px;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:4px;border-top:3px solid}
+.kpi-val{font-family:var(--display);font-size:26px;font-weight:700;line-height:1;margin-bottom:4px}
+.kpi-label{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.05em;text-transform:uppercase}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.qa-box{padding:14px 16px;border-radius:4px;font-size:13px}
+.qa-good{background:#f0f7f3;border:1px solid #bde0ca}
+.qa-bad{background:#fef5f0;border:1px solid #f4c4aa}
+.qa-box h5{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;font-family:var(--mono)}
+.qa-good h5{color:#1a4a2e}.qa-bad h5{color:#8b2500}
+.qa-box ul{list-style:none;padding:0}
+.qa-box li{padding:3px 0;line-height:1.55;color:var(--ink2)}
+.qa-good li::before{content:"✓  ";color:#2d7a4a;font-weight:700}
+.qa-bad li::before{content:"✗  ";color:#c4440d;font-weight:700}
+.ext-list{list-style:none;padding:0;counter-reset:ext}
+.ext-list li{counter-increment:ext;padding:9px 14px 9px 38px;position:relative;border-bottom:1px solid var(--cream3);font-size:13px;color:var(--ink2);line-height:1.6}
+.ext-list li::before{content:counter(ext);position:absolute;left:0;top:9px;width:22px;height:22px;background:var(--cream3);color:var(--ink3);font-family:var(--mono);font-size:10px;border-radius:50%;text-align:center;line-height:22px}
+.ext-list li strong{color:var(--ink);display:block}
+.nb-footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media(max-width:600px){.page{padding:24px 16px 60px}.nb-title{font-size:26px}.qa-grid{grid-template-columns:1fr}}
+</style></head><body><div class="page">
+<a href="../ML_Strategy_Playbook.html#gbr" class="back-link">← Back to Master Playbook · 2.2 Gradient Boosting Regressor</a>
+<div class="nb-header"><div class="nb-num">Notebook 2.2</div><h1 class="nb-title">Gradient Boosting Regressor</h1>
+<div class="nb-meta"><span>Question: <em>How much will this metric be?</em></span><span>Output: <em>Continuous value</em></span><span>Dataset: <em>pricing.csv (600 rows)</em></span><span>Use case: <em>Price elasticity · Claims severity · Demand forecasting</em></span></div>
+<p class="nb-intro">Pipeline walkthrough — analyst workflow steps, followed by pre-populated outputs and business interpretation at each stage.</p></div>
+<div class="stage" id="s1"><div class="stage-num">Stage 01</div><h2 class="stage-title">Nonlinear Regression Setup</h2><p class="stage-intro">GBR is the right tool when the relationship between features and target is genuinely nonlinear. Always establish a Ridge baseline first.</p><ul class="workflow"><li><strong>Establish Ridge baseline</strong> Fit Ridge first. If R2 >= 0.70 and RMSE acceptable, Ridge is sufficient.<em><em>GBR is justified only when it improves R2 by >0.03 AND the use case does not require simple coefficient interpretation.</em></em></li><li><strong>Choose loss function based on error cost</strong> MSE: minimises average squared error. MAE: robust to outliers. Huber: compromise. Quantile: for percentile estimates. Use Huber for claims/costs with rare extreme values.</li><li><strong>Choose library</strong> LightGBM: fastest for large datasets. XGBoost: most tuneable. sklearn GBR: simplest but slowest.</li></ul><div class="output-block"><div class="output-label">Output: Baseline Comparison <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">Dataset: pricing.csv (600 rows, 9 features) | Target: gross_margin (%)
+  Mean prediction (baseline):  RMSE = 8.4pp,  R2 = 0.00
+  Ridge Regression:            RMSE = 4.5pp,  R2 = 0.71
+  GBR (default params):        RMSE = 3.8pp,  R2 = 0.79  (+0.08 lift)
+  GBR (tuned):                 RMSE = 3.4pp,  R2 = 0.84  (+0.13 lift)
+Decision: GBR lift of +0.13 R2 is meaningful for complex pricing model.</div></div></div></div><div class="stage" id="s2"><div class="stage-num">Stage 02</div><h2 class="stage-title">Train & Feature Importance</h2><p class="stage-intro">Train with early stopping, extract permutation importance, and build partial dependence plots for top features.</p><ul class="workflow"><li><strong>learning_rate=0.05, early stopping</strong> Large n_estimators=1000 with early_stopping_rounds=50. Model stops at optimal point automatically.</li><li><strong>Permutation importance over MDI</strong> Permutation importance: how much does RMSE increase when this feature is shuffled? Unbiased across feature types.</li><li><strong>Partial dependence plots</strong> Fix all other features at median. Vary one feature from min to max. Plot predicted margin at each value. Reveals the nonlinear shape.</li></ul><div class="output-block"><div class="output-label">Output: Training Summary <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">GBR training with early stopping:
+  Best iteration: 287  (from max 1000)
+  Train RMSE: 2.1pp   Val RMSE: 3.4pp   Test RMSE: 3.5pp
+
+Feature importance (permutation, sorted):
+  discount_pct         +2.84pp RMSE increase when shuffled
+  cost_index           +1.93pp
+  list_price           +1.47pp
+  volume_log           +0.89pp
+  channel              +0.72pp
+  competitor_price_idx +0.54pp
+  remaining (3)        <0.20pp each</div></div></div><div class="output-block"><div class="output-label">Output: Partial Dependence — Discount vs Margin <span class="out-type">Chart</span></div><div class="output-inner"><div class="out-text">Partial dependence plot shows:
+  0%  discount → ~44% predicted margin
+  5%  discount → ~42% predicted margin  (−2pp)
+  10% discount → ~35% predicted margin  (−9pp from 0%)
+  15% discount → ~26% predicted margin  (−18pp from 0%)
+  20% discount → ~21% predicted margin  (−23pp from 0%)
+
+Key nonlinear finding:
+  Marginal cost of each additional discount point increases sharply above 10%.
+  First 5pp of discount: loses 2pp margin.
+  Second 5pp (5→10%): loses 7pp margin.
+  Third 5pp (10→15%): loses 9pp more margin.
+  This inflection at 10% is the key business insight — discounts above 10%
+  are disproportionately margin-destructive. An optimal discount cap is ~9-10%.</div></div></div><div class="interpret"><div class="interpret-title">What this tells you</div><ul><li>The partial dependence plot reveals a nonlinear relationship — first 5% of discount loses 2pp margin, but discounts above 10% become disproportionately margin-destructive.</li><li>This inflection point is invisible to Ridge (which assumes constant marginal effect per unit of discount). GBR captures the actual shape.</li><li>The 10% threshold becomes an actionable pricing policy recommendation: set a hard discount cap at 9-10%.</li></ul></div><div class="callout callout-rule"><strong>GBR cannot extrapolate beyond training range</strong>If training discounts ranged 0-20%, predictions at 25% discount are unreliable. The model anchors to the training range. Always check production scoring feature distributions against training boundaries.</div></div><div class="stage" id="s3"><div class="stage-num">Stage 03</div><h2 class="stage-title">QA Checklist</h2><p class="stage-intro">Sign-off before using GBR predictions for pricing decisions.</p><ul class="workflow"></ul><div class="output-block"><div class="output-label">Output: QA <span class="out-type">Checklist</span></div><div class="output-inner"><div class="qa-grid"><div class="qa-box qa-good"><h5>Good output</h5><ul><li>R2 lift vs Ridge > 0.03 (justified complexity)</li><li>Early stopping used — best_iteration confirmed</li><li>PDP shapes make intuitive sense</li><li>Training data feature ranges documented</li></ul></div><div class="qa-box qa-bad"><h5>Red flags</h5><ul><li>No Ridge baseline tested first</li><li>PDPs show implausible shapes</li><li>Model scored data outside training feature range</li><li>MDI (impurity) importance used instead of permutation</li></ul></div></div></div></div></div>
+<div class="nb-footer"><span>2.2 · Gradient Boosting Regressor · ML Strategy Playbook · Archishman Bandyopadhyay</span>
+<a href="../ML_Strategy_Playbook.html#gbr" style="color:var(--ink4);text-decoration:none">← Back</a></div>
+</div></body></html>

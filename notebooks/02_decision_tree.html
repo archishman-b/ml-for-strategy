@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1.2 · Decision Tree — ML Strategy Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;--cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;--accent:#8b2500;--accent2:#c4440d;--accent3:#e8c4a0;--blue:#1a3a5c;--blue2:#2d5f8a;--green:#1a4a2e;--green2:#2d7a4a;--gold:#7a5a00;--border:#d4cdc4;--border2:#c4bdb4;--serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.page{max-width:860px;margin:0 auto;padding:40px 32px 80px}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--ink4);text-decoration:none;margin-bottom:32px;border:1px solid var(--border);padding:5px 12px;border-radius:3px}
+.back-link:hover{color:var(--ink);border-color:var(--border2)}
+.nb-header{border-bottom:2px solid var(--ink);padding-bottom:24px;margin-bottom:36px}
+.nb-num{font-family:var(--mono);font-size:11px;color:var(--accent2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.nb-title{font-family:var(--display);font-size:36px;font-weight:700;line-height:1.15;margin-bottom:12px;letter-spacing:-.02em}
+.nb-meta{display:flex;flex-wrap:wrap;gap:16px;font-family:var(--mono);font-size:10px;color:var(--ink4);margin-bottom:16px}
+.nb-meta span em{color:var(--ink2);font-style:normal;font-weight:600}
+.nb-intro{font-size:15px;color:var(--ink3);line-height:1.7;border-left:3px solid var(--accent3);padding-left:16px;max-width:680px}
+.toc{background:#fff;border:1px solid var(--border);border-radius:6px;padding:20px 24px;margin:28px 0}
+.toc-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px}
+.toc ol{list-style:none;padding:0;counter-reset:toc}
+.toc li{counter-increment:toc;padding:5px 0;border-bottom:1px solid var(--cream3);font-size:13px}
+.toc li:last-child{border-bottom:none}
+.toc li::before{content:counter(toc,decimal-leading-zero)". ";font-family:var(--mono);font-size:10px;color:var(--ink4);margin-right:6px}
+.toc a{color:var(--ink2);text-decoration:none}.toc a:hover{color:var(--accent2)}
+.stage{margin:40px 0 0;padding-top:28px;border-top:2px solid var(--border)}
+.stage-num{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.stage-title{font-family:var(--display);font-size:22px;font-weight:600;margin-bottom:12px}
+.stage-intro{font-size:14px;color:var(--ink3);line-height:1.7;margin-bottom:22px;max-width:700px}
+.workflow{margin:0 0 22px;padding:0;list-style:none;counter-reset:wf}
+.workflow li{counter-increment:wf;padding:10px 14px 10px 48px;position:relative;border-left:2px solid var(--cream3);margin-bottom:6px;font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.workflow li::before{content:counter(wf);position:absolute;left:-13px;top:10px;width:24px;height:24px;background:var(--ink);color:var(--cream);font-family:var(--mono);font-size:10px;font-weight:600;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;line-height:24px}
+.workflow li strong{color:var(--ink);display:block;margin-bottom:2px}
+.workflow li em{color:var(--ink4);font-style:normal;font-size:12px}
+.output-block{background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin:16px 0 28px}
+.output-label{background:var(--ink);color:var(--cream2);font-family:var(--mono);font-size:10px;padding:7px 14px;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+.out-type{font-size:9px;padding:1px 7px;border-radius:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.output-inner{padding:18px 20px}
+.out-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.out-table th{background:var(--cream2);padding:7px 12px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.04em;color:var(--ink3);border-bottom:2px solid var(--border)}
+.out-table td{padding:7px 12px;border-bottom:1px solid var(--cream3);color:var(--ink2)}
+.out-table tr:last-child td{border-bottom:none}
+.out-table .pos{color:#2d7a4a;font-weight:600}.out-table .neg{color:#c4440d;font-weight:600}.out-table .hi{color:var(--ink);font-weight:600}
+.out-text{font-family:var(--mono);font-size:12px;line-height:1.9;color:var(--ink2);white-space:pre-wrap}
+.callout{padding:14px 18px;border-radius:4px;margin:16px 0;font-size:13.5px;line-height:1.65;border-left:3px solid}
+.callout-insight{background:#faf5ee;border-color:#c49a00;color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:#f0f5fa;border-color:var(--blue2);color:var(--ink2)}
+.callout strong{font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:4px;opacity:.7}
+.interpret{background:var(--cream2);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin:14px 0}
+.interpret-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:10px}
+.interpret ul{list-style:none;padding:0}
+.interpret li{font-size:13px;color:var(--ink2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.6}
+.interpret li:last-child{border-bottom:none}
+.interpret li::before{content:"→ ";color:var(--accent2);font-weight:700}
+.kpi-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.kpi{flex:1;min-width:110px;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:4px;border-top:3px solid}
+.kpi-val{font-family:var(--display);font-size:26px;font-weight:700;line-height:1;margin-bottom:4px}
+.kpi-label{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.05em;text-transform:uppercase}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.qa-box{padding:14px 16px;border-radius:4px;font-size:13px}
+.qa-good{background:#f0f7f3;border:1px solid #bde0ca}
+.qa-bad{background:#fef5f0;border:1px solid #f4c4aa}
+.qa-box h5{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;font-family:var(--mono)}
+.qa-good h5{color:#1a4a2e}.qa-bad h5{color:#8b2500}
+.qa-box ul{list-style:none;padding:0}
+.qa-box li{padding:3px 0;line-height:1.55;color:var(--ink2)}
+.qa-good li::before{content:"✓  ";color:#2d7a4a;font-weight:700}
+.qa-bad li::before{content:"✗  ";color:#c4440d;font-weight:700}
+.ext-list{list-style:none;padding:0;counter-reset:ext}
+.ext-list li{counter-increment:ext;padding:9px 14px 9px 38px;position:relative;border-bottom:1px solid var(--cream3);font-size:13px;color:var(--ink2);line-height:1.6}
+.ext-list li::before{content:counter(ext);position:absolute;left:0;top:9px;width:22px;height:22px;background:var(--cream3);color:var(--ink3);font-family:var(--mono);font-size:10px;border-radius:50%;text-align:center;line-height:22px}
+.ext-list li strong{color:var(--ink);display:block}
+.nb-footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media(max-width:600px){.page{padding:24px 16px 60px}.nb-title{font-size:26px}.qa-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="page">
+<a href="../ML_Strategy_Playbook.html#dtree" class="back-link">← Back to Master Playbook · 1.2 Decision Tree</a>
+<div class="nb-header">
+  <div class="nb-num">Notebook 1.2 · Adverse action reason codes</div>
+  <h1 class="nb-title">Decision Tree</h1>
+  <div class="nb-meta">
+    <span>Business question: <em>What decision rule separates this group?</em></span>
+    <span>Output: <em>Class label + readable rule path</em></span>
+    <span>Dataset: <em>customers.csv (800 rows)</em></span>
+    <span>Use case: <em>Adverse action reason codes · Ticket routing</em></span>
+  </div>
+  <p class="nb-intro">This guide walks through the complete analysis pipeline for decision tree — from data to deployment-ready output. Each stage covers the workflow steps, followed by pre-populated example outputs and how to read them in a business context.</p>
+</div>
+<div class="toc">
+  <div class="toc-title">Pipeline Stages</div>
+  <ol><li><a href="#s1">Data & Problem Setup</a></li><li><a href="#s2">Train Shallow Tree (Depth 3)</a></li><li><a href="#s3">Reason Code Generation</a></li><li><a href="#s4">QA — Good vs Red-Flag Output</a></li></ol>
+</div>
+
+<div class="stage" id="s1">
+  <div class="stage-num">Stage 01</div>
+  <h2 class="stage-title">Data & Problem Setup</h2>
+  <p class="stage-intro">Decision trees are most valuable when you need an explainable rule path — for compliance, for policy prototyping, or for communicating segmentation logic. The dataset and target setup is identical to logistic regression.</p>
+  <ul class="workflow"><li><strong>Load data and define target</strong> Same setup as Notebook 01. Target: churned (1/0). Exclude customer_id. Numeric and categorical features.</li><li><strong>Assess interpretability requirements</strong> Ask: what depth makes sense for the audience? A compliance officer needs depth ≤3 (8 terminal nodes max). A product team might accept depth 5.<em><em>Rule of thumb: max 2^depth leaf nodes. Depth 3 = 8 leaves. Depth 5 = 32 leaves. Beyond that, a tree diagram is unreadable.</em></em></li><li><strong>No preprocessing needed for trees</strong> Decision trees do not require feature scaling or imputation for splits. However, encoding categoricals is still required for sklearn's implementation.</li></ul>
+  <div class="output-block">
+  <div class="output-label">Output: Feature Setup <span class="out-type">Console</span></div>
+  <div class="output-inner"><div class="out-text">Target: churned (1/0) | Event rate: 21.5%
+Features: 12 (8 numeric, 4 categorical → 14 after encoding)
+No scaling required for tree splits.
+Depth governance: will test depth 2, 3, 4 and choose minimum useful depth.</div></div>
+</div>
+  
+  
+</div>
+<div class="stage" id="s2">
+  <div class="stage-num">Stage 02</div>
+  <h2 class="stage-title">Train Shallow Tree (Depth 3)</h2>
+  <p class="stage-intro">A depth-3 tree produces at most 8 leaf nodes and generates a fully readable decision flowchart. This is the governance version — suitable for adverse action notices and compliance documentation.</p>
+  <ul class="workflow"><li><strong>Fit DecisionTreeClassifier with max_depth=3</strong> Train with max_depth=3, min_samples_leaf=10 (minimum 10 customers in any leaf), criterion='gini' (default). Fit on training data.<em><em>min_samples_leaf=10 prevents tiny unstable leaves with unreliable probability estimates.</em></em></li><li><strong>Visualise the tree</strong> Export and render the tree diagram. Each node shows: split rule, Gini impurity, sample count, class distribution.</li><li><strong>Compare depth 2, 3, 4 on validation AUC</strong> Train three trees at different depths and compare AUC. The depth that adds <0.02 AUC over the previous depth is the right stopping point.</li></ul>
+  <div class="output-block">
+  <div class="output-label">Output: Tree Validation AUC vs Depth <span class="out-type">Console</span></div>
+  <div class="output-inner"><div class="out-text">Depth    Train AUC    Val AUC    Leaves    Readable?
+  2        0.741        0.724        4        ✓ Yes (simple rule)
+  3        0.784        0.771        8        ✓ Yes (recommended)
+  4        0.812        0.793       16        ⚠ Borderline
+  5        0.841        0.798       32        ✗ No (too complex)
+  8        0.901        0.793       128       ✗ Overfit (train>>val)
+
+Chosen: depth=3  (best readability:performance ratio)
+Val AUC gain from depth 3→4: +0.022 (small, not worth complexity)</div></div>
+</div><div class="output-block">
+  <div class="output-label">Output: Decision Tree Structure (Depth 3) <span class="out-type">Tree Diagram</span></div>
+  <div class="output-inner"><svg viewBox="0 0 620 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:'Source Serif 4',serif">
+<text x="310" y="16" text-anchor="middle" font-size="11" font-weight="600" fill="#1a1714">Decision Tree — Depth 3 (Churn Classification)</text>
+<!-- Root -->
+<rect x="220" y="25" width="180" height="48" rx="4" fill="#eef3f9" stroke="#bdd0e8" stroke-width="1.5"/>
+<text x="310" y="43" text-anchor="middle" font-size="11" font-weight="600" fill="#1a3a5c">tenure_months ≤ 24?</text>
+<text x="310" y="58" text-anchor="middle" font-size="10" fill="#7a7060">n=512  gini=0.336  churn=21%</text>
+<!-- lines L2 -->
+<line x1="250" y1="73" x2="120" y2="120" stroke="#d4cdc4" stroke-width="1.5"/>
+<line x1="370" y1="73" x2="490" y2="120" stroke="#d4cdc4" stroke-width="1.5"/>
+<text x="168" y="106" font-size="10" fill="#c4440d">Yes (short tenure)</text>
+<text x="380" y="106" font-size="10" fill="#1a4a2e">No (long tenure)</text>
+<!-- L2 Left -->
+<rect x="42" y="120" width="160" height="48" rx="4" fill="#fef5f0" stroke="#f4c4aa" stroke-width="1.5"/>
+<text x="122" y="138" text-anchor="middle" font-size="11" font-weight="600" fill="#8b2500">support_calls ≥ 3?</text>
+<text x="122" y="153" text-anchor="middle" font-size="10" fill="#7a7060">n=198  gini=0.446  churn=41%</text>
+<!-- L2 Right -->
+<rect x="418" y="120" width="160" height="48" rx="4" fill="#eef7f2" stroke="#9dd4b4" stroke-width="1.5"/>
+<text x="498" y="138" text-anchor="middle" font-size="11" font-weight="600" fill="#1a4a2e">logins_per_week ≤ 2?</text>
+<text x="498" y="153" text-anchor="middle" font-size="10" fill="#7a7060">n=314  gini=0.210  churn=10%</text>
+<!-- L3 lines -->
+<line x1="90" y1="168" x2="50" y2="215" stroke="#d4cdc4" stroke-width="1.5"/>
+<line x1="155" y1="168" x2="190" y2="215" stroke="#d4cdc4" stroke-width="1.5"/>
+<line x1="460" y1="168" x2="425" y2="215" stroke="#d4cdc4" stroke-width="1.5"/>
+<line x1="536" y1="168" x2="572" y2="215" stroke="#d4cdc4" stroke-width="1.5"/>
+<!-- Leaf nodes -->
+<rect x="14" y="215" width="90" height="52" rx="4" fill="#c4440d" opacity=".15" stroke="#c4440d" stroke-width="1.5"/>
+<text x="59" y="232" text-anchor="middle" font-size="10" font-weight="600" fill="#8b2500">HIGH RISK</text>
+<text x="59" y="246" text-anchor="middle" font-size="10" fill="#3d3830">Churn: 68%</text>
+<text x="59" y="260" text-anchor="middle" font-size="10" fill="#7a7060">n=89</text>
+<rect x="152" y="215" width="90" height="52" rx="4" fill="#faf5ee" stroke="#c49a00" stroke-width="1.5"/>
+<text x="197" y="232" text-anchor="middle" font-size="10" font-weight="600" fill="#7a5a00">MEDIUM</text>
+<text x="197" y="246" text-anchor="middle" font-size="10" fill="#3d3830">Churn: 28%</text>
+<text x="197" y="260" text-anchor="middle" font-size="10" fill="#7a7060">n=109</text>
+<rect x="382" y="215" width="90" height="52" rx="4" fill="#fef5f0" stroke="#f4c4aa" stroke-width="1.5"/>
+<text x="427" y="232" text-anchor="middle" font-size="10" font-weight="600" fill="#c4440d">MEDIUM</text>
+<text x="427" y="246" text-anchor="middle" font-size="10" fill="#3d3830">Churn: 22%</text>
+<text x="427" y="260" text-anchor="middle" font-size="10" fill="#7a7060">n=68</text>
+<rect x="530" y="215" width="90" height="52" rx="4" fill="#1a4a2e" opacity=".12" stroke="#1a4a2e" stroke-width="1.5"/>
+<text x="575" y="232" text-anchor="middle" font-size="10" font-weight="600" fill="#1a4a2e">LOW RISK</text>
+<text x="575" y="246" text-anchor="middle" font-size="10" fill="#3d3830">Churn: 5%</text>
+<text x="575" y="260" text-anchor="middle" font-size="10" fill="#7a7060">n=246</text>
+<!-- rule path annotation -->
+<text x="310" y="300" text-anchor="middle" font-size="10" fill="#7a7060">Highest-risk path: tenure ≤ 24 months AND support_calls ≥ 3 → 68% churn rate</text>
+</svg></div>
+</div>
+  <div class="interpret"><div class="interpret-title">What this tells you</div><ul><li>The most at-risk group: customers with tenure ≤ 24 months AND 3+ support calls. 68% churn rate among 89 customers — these are the top retention priority.</li><li>Long-tenure customers with high logins (top-right leaf) are the safest: 5% churn rate among 246 customers. These do not need retention investment.</li><li>The tree identifies two distinct intervention populations: high-risk new customers and medium-risk inactive customers.</li><li>This tree can be converted directly into a policy rule for a CRM system or call centre routing rule.</li></ul></div>
+  
+</div>
+<div class="stage" id="s3">
+  <div class="stage-num">Stage 03</div>
+  <h2 class="stage-title">Reason Code Generation</h2>
+  <p class="stage-intro">The primary business value of a decision tree over more powerful models is its ability to generate an auditable reason path per customer — essential for compliance, adverse action notices, and collector scripts.</p>
+  <ul class="workflow"><li><strong>Extract decision path per customer</strong> For each customer, trace the path from root to leaf. Record each split decision as a plain-English rule.<em><em>Output: 'Customer 1042: tenure=18 months (≤24) → support_calls=4 (≥3) → HIGH RISK (68%)'</em></em></li><li><strong>Generate reason codes for flagged customers</strong> Convert each path to a ranked list of reasons. Reason 1 = the first split in the path (strongest discriminator). These become the CRM notes or adverse action text.</li></ul>
+  <div class="output-block">
+  <div class="output-label">Output: Sample Reason Codes (Top 5 High-Risk Customers) <span class="out-type">Table</span></div>
+  <div class="output-inner"><table class="out-table"><thead><tr><th>Customer ID</th><th>P(churn)</th><th>Reason 1</th><th>Reason 2</th><th>Action</th></tr></thead><tbody>
+<tr><td>C0412</td><td class="neg">0.74</td><td>Tenure only 14 months (short)</td><td>4 support calls in 90 days</td><td>Priority callback — service issue</td></tr>
+<tr><td>C0287</td><td class="neg">0.71</td><td>Tenure only 8 months (new)</td><td>3 support calls in 90 days</td><td>Onboarding check-in call</td></tr>
+<tr><td>C0551</td><td class="neg">0.69</td><td>Tenure only 21 months</td><td>5 support calls in 90 days</td><td>Escalation to senior account manager</td></tr>
+<tr><td>C0198</td><td class="neg">0.67</td><td>Tenure only 19 months</td><td>3 support calls in 90 days</td><td>Satisfaction survey + discount offer</td></tr>
+<tr><td>C0634</td><td class="neg">0.65</td><td>Tenure only 22 months</td><td>3 support calls in 90 days</td><td>Priority callback — service issue</td></tr>
+</tbody></table></div>
+</div>
+  
+  <div class="callout callout-rule"><strong>Why reason codes matter</strong>In regulated industries (credit, insurance, employment), an adverse decision must be accompanied by a reason code that explains why. Decision trees generate these automatically. A depth-3 tree produces at most 3 reasons per customer — exactly the format required by most adverse action notice regulations.</div>
+</div>
+<div class="stage" id="s4">
+  <div class="stage-num">Stage 04</div>
+  <h2 class="stage-title">QA — Good vs Red-Flag Output</h2>
+  <p class="stage-intro">Sign-off checklist for decision tree outputs.</p>
+  <ul class="workflow"><li><strong>Check depth is appropriate for the audience</strong> A compliance auditor reading a tree must be able to trace any path manually. If the tree requires scrolling to see, it is too deep.</li><li><strong>Verify leaf sample sizes</strong> Leaves with <10 samples produce unreliable probability estimates. Set min_samples_leaf accordingly.</li><li><strong>Validate reason codes with domain experts</strong> Show the top 20 reason codes to a retention manager or underwriter. Any reason that 'doesn't make sense' is a red flag for data quality or feature construction issues.</li></ul>
+  <div class="output-block">
+  <div class="output-label">Output: QA Summary <span class="out-type">Checklist</span></div>
+  <div class="output-inner"><div class="qa-grid">
+<div class="qa-box qa-good"><h5>Good output</h5><ul>
+<li>Tree depth ≤ 4 for compliance contexts</li>
+<li>All leaves have ≥ 10 samples</li>
+<li>Reason codes make intuitive business sense</li>
+<li>Val AUC compared against random forest baseline</li>
+<li>Depth chosen by AUC curve, not intuition</li>
+</ul></div>
+<div class="qa-box qa-bad"><h5>Red flags</h5><ul>
+<li>Depth > 6 (unreadable, unstable)</li>
+<li>Tiny leaf sizes (&lt; 5 samples) — unreliable probabilities</li>
+<li>AUC reported on training data only</li>
+<li>Same split feature appears at every level (overfitting to one correlated feature)</li>
+<li>Tree re-run and top splits change completely (instability)</li>
+</ul></div></div></div>
+</div>
+  
+  
+</div>
+<div class="nb-footer">
+  <span>1.2 · Decision Tree · ML Strategy Playbook · Archishman Bandyopadhyay</span>
+  <a href="../ML_Strategy_Playbook.html#dtree" style="color:var(--ink4);text-decoration:none">← Back to Master Playbook</a>
+</div>
+</div>
+</body>
+</html>

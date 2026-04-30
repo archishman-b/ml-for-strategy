@@ -1,0 +1,113 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>4.2 · UMAP — Nonlinear Visualisation — ML Strategy Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;--cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;--accent:#8b2500;--accent2:#c4440d;--accent3:#e8c4a0;--blue:#1a3a5c;--blue2:#2d5f8a;--green:#1a4a2e;--green2:#2d7a4a;--gold:#7a5a00;--border:#d4cdc4;--border2:#c4bdb4;--serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.page{max-width:860px;margin:0 auto;padding:40px 32px 80px}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--ink4);text-decoration:none;margin-bottom:32px;border:1px solid var(--border);padding:5px 12px;border-radius:3px}
+.back-link:hover{color:var(--ink);border-color:var(--border2)}
+.nb-header{border-bottom:2px solid var(--ink);padding-bottom:24px;margin-bottom:36px}
+.nb-num{font-family:var(--mono);font-size:11px;color:var(--accent2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.nb-title{font-family:var(--display);font-size:36px;font-weight:700;line-height:1.15;margin-bottom:12px;letter-spacing:-.02em}
+.nb-meta{display:flex;flex-wrap:wrap;gap:16px;font-family:var(--mono);font-size:10px;color:var(--ink4);margin-bottom:16px}
+.nb-meta span em{color:var(--ink2);font-style:normal;font-weight:600}
+.nb-intro{font-size:15px;color:var(--ink3);line-height:1.7;border-left:3px solid var(--accent3);padding-left:16px;max-width:680px}
+.toc{background:#fff;border:1px solid var(--border);border-radius:6px;padding:20px 24px;margin:28px 0}
+.toc-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px}
+.toc ol{list-style:none;padding:0;counter-reset:toc}
+.toc li{counter-increment:toc;padding:5px 0;border-bottom:1px solid var(--cream3);font-size:13px}
+.toc li:last-child{border-bottom:none}
+.toc li::before{content:counter(toc,decimal-leading-zero)". ";font-family:var(--mono);font-size:10px;color:var(--ink4);margin-right:6px}
+.toc a{color:var(--ink2);text-decoration:none}.toc a:hover{color:var(--accent2)}
+.stage{margin:40px 0 0;padding-top:28px;border-top:2px solid var(--border)}
+.stage-num{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.stage-title{font-family:var(--display);font-size:22px;font-weight:600;margin-bottom:12px}
+.stage-intro{font-size:14px;color:var(--ink3);line-height:1.7;margin-bottom:22px;max-width:700px}
+.workflow{margin:0 0 22px;padding:0;list-style:none;counter-reset:wf}
+.workflow li{counter-increment:wf;padding:10px 14px 10px 48px;position:relative;border-left:2px solid var(--cream3);margin-bottom:6px;font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.workflow li::before{content:counter(wf);position:absolute;left:-13px;top:10px;width:24px;height:24px;background:var(--ink);color:var(--cream);font-family:var(--mono);font-size:10px;font-weight:600;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;line-height:24px}
+.workflow li strong{color:var(--ink);display:block;margin-bottom:2px}
+.workflow li em{color:var(--ink4);font-style:normal;font-size:12px}
+.output-block{background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin:16px 0 28px}
+.output-label{background:var(--ink);color:var(--cream2);font-family:var(--mono);font-size:10px;padding:7px 14px;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+.out-type{font-size:9px;padding:1px 7px;border-radius:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.output-inner{padding:18px 20px}
+.out-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.out-table th{background:var(--cream2);padding:7px 12px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.04em;color:var(--ink3);border-bottom:2px solid var(--border)}
+.out-table td{padding:7px 12px;border-bottom:1px solid var(--cream3);color:var(--ink2)}
+.out-table tr:last-child td{border-bottom:none}
+.out-table .pos{color:#2d7a4a;font-weight:600}.out-table .neg{color:#c4440d;font-weight:600}.out-table .hi{color:var(--ink);font-weight:600}
+.out-text{font-family:var(--mono);font-size:12px;line-height:1.9;color:var(--ink2);white-space:pre-wrap}
+.callout{padding:14px 18px;border-radius:4px;margin:16px 0;font-size:13.5px;line-height:1.65;border-left:3px solid}
+.callout-insight{background:#faf5ee;border-color:#c49a00;color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:#f0f5fa;border-color:var(--blue2);color:var(--ink2)}
+.callout strong{font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:4px;opacity:.7}
+.interpret{background:var(--cream2);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin:14px 0}
+.interpret-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:10px}
+.interpret ul{list-style:none;padding:0}
+.interpret li{font-size:13px;color:var(--ink2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.6}
+.interpret li:last-child{border-bottom:none}
+.interpret li::before{content:"→ ";color:var(--accent2);font-weight:700}
+.kpi-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.kpi{flex:1;min-width:110px;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:4px;border-top:3px solid}
+.kpi-val{font-family:var(--display);font-size:26px;font-weight:700;line-height:1;margin-bottom:4px}
+.kpi-label{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.05em;text-transform:uppercase}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.qa-box{padding:14px 16px;border-radius:4px;font-size:13px}
+.qa-good{background:#f0f7f3;border:1px solid #bde0ca}
+.qa-bad{background:#fef5f0;border:1px solid #f4c4aa}
+.qa-box h5{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;font-family:var(--mono)}
+.qa-good h5{color:#1a4a2e}.qa-bad h5{color:#8b2500}
+.qa-box ul{list-style:none;padding:0}
+.qa-box li{padding:3px 0;line-height:1.55;color:var(--ink2)}
+.qa-good li::before{content:"✓  ";color:#2d7a4a;font-weight:700}
+.qa-bad li::before{content:"✗  ";color:#c4440d;font-weight:700}
+.ext-list{list-style:none;padding:0;counter-reset:ext}
+.ext-list li{counter-increment:ext;padding:9px 14px 9px 38px;position:relative;border-bottom:1px solid var(--cream3);font-size:13px;color:var(--ink2);line-height:1.6}
+.ext-list li::before{content:counter(ext);position:absolute;left:0;top:9px;width:22px;height:22px;background:var(--cream3);color:var(--ink3);font-family:var(--mono);font-size:10px;border-radius:50%;text-align:center;line-height:22px}
+.ext-list li strong{color:var(--ink);display:block}
+.nb-footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media(max-width:600px){.page{padding:24px 16px 60px}.nb-title{font-size:26px}.qa-grid{grid-template-columns:1fr}}
+</style></head><body><div class="page">
+<a href="../ML_Strategy_Playbook.html#umap" class="back-link">← Back to Master Playbook · 4.2 UMAP — Nonlinear Visualisation</a>
+<div class="nb-header"><div class="nb-num">Notebook 4.2</div><h1 class="nb-title">UMAP — Nonlinear Visualisation</h1>
+<div class="nb-meta"><span>Question: <em>What does my data look like in 2D?</em></span><span>Output: <em>2D projection</em></span><span>Dataset: <em>customers.csv (800 rows)</em></span><span>Use case: <em>Segment structure validation · High-dimensional EDA · Anomaly spotting</em></span></div>
+<p class="nb-intro">Pipeline walkthrough — analyst workflow steps, pre-populated outputs, and business interpretation at each stage.</p></div>
+<div class="stage" id="s1"><div class="stage-num">Stage 01</div><h2 class="stage-title">UMAP vs PCA — When to Use Each</h2><p class="stage-intro">UMAP (Uniform Manifold Approximation and Projection) is a nonlinear dimensionality reduction technique. It preserves local structure — similar customers in high-dimensional space will be close together in 2D UMAP space. PCA preserves global variance; UMAP preserves neighbourhood relationships.</p><ul class="workflow"><li><strong>Choose UMAP when nonlinear structure exists</strong> PCA flattens everything linearly. UMAP will reveal clusters, manifolds, and local groupings that PCA would blur together. For customer data with distinct behavioural segments: UMAP often produces cleaner separations.<em><em>UMAP is a visualisation tool primarily. It is not deterministic — two runs produce different layouts. Do not use raw UMAP coordinates as model features.</em></em></li><li><strong>Understand the two key parameters</strong> n_neighbors: controls local vs global structure balance. Low (5–10): preserves fine local structure, may fragment large clusters. High (30–50): preserves global topology, smoother. min_dist: how tightly points are packed. Low (0.0–0.1): dense clumps. High (0.5+): spread out.</li><li><strong>Install and import UMAP</strong> umap-learn library. Always set random_state for reproducibility.</li></ul><div class="output-block"><div class="output-label">Output: Setup Summary <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">UMAP configuration:
+  n_neighbors = 30    (balance local/global — good starting point)
+  min_dist    = 0.1   (tight clusters — reveals structure)
+  n_components = 2    (2D output for visualisation)
+  random_state = 42   (reproducibility)
+  metric = 'euclidean' (default, after standardisation)
+
+Input: 8 standardised numeric features, 800 customers
+Output: 800 × 2 matrix (UMAP coordinates)
+Fitting time: ~3.2 seconds</div></div></div></div><div class="stage" id="s2"><div class="stage-num">Stage 02</div><h2 class="stage-title">Fit & Visualise</h2><p class="stage-intro">Fit UMAP and interpret the 2D map. The key question: do similar customers cluster together in UMAP space?</p><ul class="workflow"><li><strong>Standardise features first</strong> Same requirement as PCA. UMAP uses distances — scale matters.</li><li><strong>Fit UMAP and extract 2D coordinates</strong> Each customer maps to (x, y) in UMAP space. Nearby points = similar customers in the original 8-dimensional space.</li><li><strong>Colour-code by known labels</strong> Overlay churn label, K-Means cluster, tier, or region. If UMAP has captured the right structure, churned customers should cluster together.</li></ul><div class="output-block"><div class="output-label">Output: UMAP 2D Structure <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">UMAP 2D embedding complete (800 customers):
+
+Cluster structure observed:
+  Region A (lower-left):     ~90 customers — high density, compact cluster
+    Characteristics: short tenure, high support calls, low logins → At-Risk profile
+    Churn rate: 52%  ← maps to K-Means Cluster 2 (At-Risk New)
+
+  Region B (upper-right):    ~185 customers — spread cluster
+    Characteristics: high tenure, high CLTV, low support calls → Champions
+    Churn rate: 6%  ← maps to K-Means Cluster 0 (Champions)
+
+  Region C (centre):         ~380 customers — diffuse
+    Mixed profiles — no single dominant characteristic
+    Churn rate: 18% — approximately average
+
+  Region D (right edge):     ~145 customers — elongated band
+    Low logins, mid-tenure — engagement-gap customers
+    Churn rate: 24%
+
+Conclusion: UMAP reveals the At-Risk New segment as a tight, distinct
+cluster. Champions are also distinct. Mid-tier customers form a diffuse cloud
+— confirming K-Means clusters 1, 3, 4 overlap in feature space.</div></div></div><div class="output-block"><div class="output-label">Output: UMAP vs PCA Comparison <span class="out-type">Table</span></div><div class="output-inner"><table class="out-table"><thead><tr><th>Dimension</th><th>UMAP</th><th>PCA</th><th>When to choose</th></tr></thead><tbody><tr><td>Structure preserved</td><td>Local neighbourhoods</td><td>Global variance</td><td>UMAP for cluster discovery, PCA for compression</td></tr><tr><td>Interpretability</td><td>None (nonlinear)</td><td>Loadings available</td><td>PCA when you need to explain components</td></tr><tr><td>Determinism</td><td>Non-deterministic (seed-dependent)</td><td>Deterministic</td><td>PCA for reproducible pipelines</td></tr><tr><td>Cluster quality</td><td>Excellent — nonlinear separation</td><td>Moderate — linear only</td><td>UMAP for visual EDA</td></tr><tr><td>Speed</td><td>Slow (minutes on large data)</td><td>Fast (seconds)</td><td>PCA for large datasets</td></tr></tbody></table></div></div><div class="interpret"><div class="interpret-title">What this tells you</div><ul><li>UMAP confirms the K-Means clustering result — At-Risk New customers form a genuinely tight cluster in feature space (compact region in UMAP), not just a K-Means artefact.</li><li>The diffuse central cloud confirms that mid-tier customers (Clusters 1, 3, 4) genuinely overlap in behaviour — the K-Means boundaries between them are soft.</li><li>UMAP is best used as a validation and EDA tool: 'does the structure we assumed exist actually exist?' before committing to a segmentation strategy.</li></ul></div><div class="callout callout-warning"><strong>Never use UMAP coordinates as model features</strong>UMAP coordinates change every time you re-fit (even with fixed random seed on different data batches). They are a visualisation output, not stable feature representations. If you need compressed feature inputs for a downstream model, use PCA (deterministic) or an autoencoder (stable across batches).</div></div><div class="stage" id="s3"><div class="stage-num">Stage 03</div><h2 class="stage-title">QA</h2><p class="stage-intro"></p><ul class="workflow"><li><strong>Run with multiple n_neighbors values</strong> n_neighbors=5, 15, 30, 50. The gross structure should be consistent — if results change dramatically, the data may not have stable local structure.</li><li><strong>Validate against K-Means or known labels</strong> UMAP structure should align with known segment membership if those segments are genuine.</li></ul><div class="output-block"><div class="output-label">Output: QA Checklist <span class="out-type">Checklist</span></div><div class="output-inner"><div class="qa-grid"><div class="qa-box qa-good"><h5>Good</h5><ul><li>Features standardised</li><li>random_state set</li><li>Multiple n_neighbors values tested</li><li>UMAP structure validated against K-Means or known labels</li><li>Used as visualisation/EDA only — not as model features</li></ul></div><div class="qa-box qa-bad"><h5>Red flags</h5><ul><li>UMAP coordinates used as input features to another model</li><li>Single n_neighbors value without sensitivity check</li><li>Clusters visible only at one n_neighbors setting</li><li>UMAP presented as the final segmentation model (it is a visualisation)</li></ul></div></div></div></div></div>
+<div class="nb-footer"><span>4.2 · UMAP — Nonlinear Visualisation · ML Strategy Playbook · Archishman Bandyopadhyay</span>
+<a href="../ML_Strategy_Playbook.html#umap" style="color:var(--ink4);text-decoration:none">← Back</a></div>
+</div></body></html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>6.2 · Anomaly Detection — ML Strategy Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;--cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;--accent:#8b2500;--accent2:#c4440d;--accent3:#e8c4a0;--blue:#1a3a5c;--blue2:#2d5f8a;--green:#1a4a2e;--green2:#2d7a4a;--gold:#7a5a00;--border:#d4cdc4;--border2:#c4bdb4;--serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.page{max-width:860px;margin:0 auto;padding:40px 32px 80px}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--ink4);text-decoration:none;margin-bottom:32px;border:1px solid var(--border);padding:5px 12px;border-radius:3px}
+.back-link:hover{color:var(--ink);border-color:var(--border2)}
+.nb-header{border-bottom:2px solid var(--ink);padding-bottom:24px;margin-bottom:36px}
+.nb-num{font-family:var(--mono);font-size:11px;color:var(--accent2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.nb-title{font-family:var(--display);font-size:36px;font-weight:700;line-height:1.15;margin-bottom:12px;letter-spacing:-.02em}
+.nb-meta{display:flex;flex-wrap:wrap;gap:16px;font-family:var(--mono);font-size:10px;color:var(--ink4);margin-bottom:16px}
+.nb-meta span em{color:var(--ink2);font-style:normal;font-weight:600}
+.nb-intro{font-size:15px;color:var(--ink3);line-height:1.7;border-left:3px solid var(--accent3);padding-left:16px;max-width:680px}
+.toc{background:#fff;border:1px solid var(--border);border-radius:6px;padding:20px 24px;margin:28px 0}
+.toc-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px}
+.toc ol{list-style:none;padding:0;counter-reset:toc}
+.toc li{counter-increment:toc;padding:5px 0;border-bottom:1px solid var(--cream3);font-size:13px}
+.toc li:last-child{border-bottom:none}
+.toc li::before{content:counter(toc,decimal-leading-zero)". ";font-family:var(--mono);font-size:10px;color:var(--ink4);margin-right:6px}
+.toc a{color:var(--ink2);text-decoration:none}.toc a:hover{color:var(--accent2)}
+.stage{margin:40px 0 0;padding-top:28px;border-top:2px solid var(--border)}
+.stage-num{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.stage-title{font-family:var(--display);font-size:22px;font-weight:600;margin-bottom:12px}
+.stage-intro{font-size:14px;color:var(--ink3);line-height:1.7;margin-bottom:22px;max-width:700px}
+.workflow{margin:0 0 22px;padding:0;list-style:none;counter-reset:wf}
+.workflow li{counter-increment:wf;padding:10px 14px 10px 48px;position:relative;border-left:2px solid var(--cream3);margin-bottom:6px;font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.workflow li::before{content:counter(wf);position:absolute;left:-13px;top:10px;width:24px;height:24px;background:var(--ink);color:var(--cream);font-family:var(--mono);font-size:10px;font-weight:600;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;line-height:24px}
+.workflow li strong{color:var(--ink);display:block;margin-bottom:2px}
+.workflow li em{color:var(--ink4);font-style:normal;font-size:12px}
+.output-block{background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin:16px 0 28px}
+.output-label{background:var(--ink);color:var(--cream2);font-family:var(--mono);font-size:10px;padding:7px 14px;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+.out-type{font-size:9px;padding:1px 7px;border-radius:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.output-inner{padding:18px 20px}
+.out-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.out-table th{background:var(--cream2);padding:7px 12px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.04em;color:var(--ink3);border-bottom:2px solid var(--border)}
+.out-table td{padding:7px 12px;border-bottom:1px solid var(--cream3);color:var(--ink2)}
+.out-table tr:last-child td{border-bottom:none}
+.out-table .pos{color:#2d7a4a;font-weight:600}.out-table .neg{color:#c4440d;font-weight:600}.out-table .hi{color:var(--ink);font-weight:600}
+.out-text{font-family:var(--mono);font-size:12px;line-height:1.9;color:var(--ink2);white-space:pre-wrap}
+.callout{padding:14px 18px;border-radius:4px;margin:16px 0;font-size:13.5px;line-height:1.65;border-left:3px solid}
+.callout-insight{background:#faf5ee;border-color:#c49a00;color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:#f0f5fa;border-color:var(--blue2);color:var(--ink2)}
+.callout strong{font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:4px;opacity:.7}
+.interpret{background:var(--cream2);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin:14px 0}
+.interpret-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:10px}
+.interpret ul{list-style:none;padding:0}
+.interpret li{font-size:13px;color:var(--ink2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.6}
+.interpret li:last-child{border-bottom:none}
+.interpret li::before{content:"→ ";color:var(--accent2);font-weight:700}
+.kpi-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.kpi{flex:1;min-width:110px;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:4px;border-top:3px solid}
+.kpi-val{font-family:var(--display);font-size:26px;font-weight:700;line-height:1;margin-bottom:4px}
+.kpi-label{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.05em;text-transform:uppercase}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.qa-box{padding:14px 16px;border-radius:4px;font-size:13px}
+.qa-good{background:#f0f7f3;border:1px solid #bde0ca}
+.qa-bad{background:#fef5f0;border:1px solid #f4c4aa}
+.qa-box h5{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;font-family:var(--mono)}
+.qa-good h5{color:#1a4a2e}.qa-bad h5{color:#8b2500}
+.qa-box ul{list-style:none;padding:0}
+.qa-box li{padding:3px 0;line-height:1.55;color:var(--ink2)}
+.qa-good li::before{content:"✓  ";color:#2d7a4a;font-weight:700}
+.qa-bad li::before{content:"✗  ";color:#c4440d;font-weight:700}
+.ext-list{list-style:none;padding:0;counter-reset:ext}
+.ext-list li{counter-increment:ext;padding:9px 14px 9px 38px;position:relative;border-bottom:1px solid var(--cream3);font-size:13px;color:var(--ink2);line-height:1.6}
+.ext-list li::before{content:counter(ext);position:absolute;left:0;top:9px;width:22px;height:22px;background:var(--cream3);color:var(--ink3);font-family:var(--mono);font-size:10px;border-radius:50%;text-align:center;line-height:22px}
+.ext-list li strong{color:var(--ink);display:block}
+.nb-footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media(max-width:600px){.page{padding:24px 16px 60px}.nb-title{font-size:26px}.qa-grid{grid-template-columns:1fr}}
+</style></head><body><div class="page">
+<a href="../ML_Strategy_Playbook.html#anomaly" class="back-link">← Back to Master Playbook · 6.2 Anomaly Detection</a>
+<div class="nb-header"><div class="nb-num">Notebook 6.2</div><h1 class="nb-title">Anomaly Detection</h1>
+<div class="nb-meta"><span>Question: <em>What looks unusual in this data?</em></span><span>Output: <em>Anomaly score + flag</em></span><span>Dataset: <em>anomalies.csv (1,000 rows)</em></span><span>Use case: <em>Fraud detection · Quality control · Operational monitoring · Expense audit</em></span></div>
+<p class="nb-intro">Pipeline walkthrough — analyst workflow steps, pre-populated outputs, and business interpretation at each stage.</p></div>
+<div class="stage" id="s1"><div class="stage-num">Stage 01</div><h2 class="stage-title">Anomaly Detection Problem Setup</h2><p class="stage-intro">Anomaly detection finds observations that do not conform to expected patterns — without requiring labelled examples of what 'anomalous' looks like. This distinguishes it from classification: you cannot train a supervised model if you do not have labelled anomalies.</p><ul class="workflow"><li><strong>Choose the right method for the use case</strong> Isolation Forest: fast, scalable, works on high-dimensional tabular data — best general-purpose choice. One-Class SVM: better on small datasets with clear normal distribution. Autoencoder: best when normal behaviour has complex structure that can be learned. Statistical Z-score: for univariate outliers, no ML needed.<em><em>Start with Isolation Forest — it is the most practically reliable method for business tabular data.</em></em></li><li><strong>Decide on contamination rate</strong> The contamination parameter tells the model what fraction of data is anomalous (default 0.05 = 5%). This directly controls how many anomalies are flagged. Ask the business: 'What fraction of transactions do we expect to be fraudulent / anomalous?' This is a business input, not a data-driven decision.</li><li><strong>Understand the output: anomaly score</strong> Isolation Forest returns an anomaly score: more negative = more anomalous. The threshold maps scores to binary labels. Scores are relative — they only mean something in comparison to other scores in the same dataset.</li></ul><div class="output-block"><div class="output-label">Output: Dataset Setup <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">Anomaly detection dataset (anomalies.csv, 1,000 transactions):
+  Features: transaction_amount, hour_of_day, transactions_last_hour,
+            time_since_last_transaction, merchant_category, 
+            distance_from_home_km, device_change_flag
+  
+  Known anomaly rate: 3% (30 labelled anomalies — used only for validation)
+  Note: labels NOT used during training (unsupervised)
+  
+  Contamination setting: 0.05 (5%) — conservative, flags more
+  Alternative: 0.03 (matches known rate if confident in ground truth)
+  
+  Baseline: flag all transactions > 2 std dev on any single feature
+    Precision: 31%  (many false alarms)
+    Recall: 74%     (catches most anomalies)</div></div></div></div><div class="stage" id="s2"><div class="stage-num">Stage 02</div><h2 class="stage-title">Train Isolation Forest & Score</h2><p class="stage-intro">Isolation Forest builds random trees that isolate points. Anomalies are isolated in fewer splits (they are unusual) — resulting in shorter average path length and a more negative anomaly score.</p><ul class="workflow"><li><strong>Fit IsolationForest(contamination=0.05, n_estimators=200)</strong> 200 trees provides stable scores. contamination=0.05 sets the threshold at the 5th percentile of anomaly scores — 5% of observations will be flagged.</li><li><strong>Compute anomaly scores for all transactions</strong> Each transaction gets a score between -1 (most anomalous) and 0 (normal). Scores below the contamination threshold = flagged as anomaly.</li><li><strong>Validate against known labels (if available)</strong> If you have any labelled anomalies, use them only for validation — never training. Compute precision, recall, and F1 on the labelled subset.</li></ul><div class="output-block"><div class="output-label">Output: Anomaly Score Distribution <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">Isolation Forest — Anomaly Scores (1,000 transactions):
+  Normal transactions:   Scores range −0.08 to +0.04  (narrow band near 0)
+  Anomalous (flagged):   Scores range −0.62 to −0.18  (clearly separated)
+
+  Flagged as anomaly (contamination=0.05): 50 transactions
+  Anomaly score threshold at 5th percentile: −0.18
+
+  Validation against known labels (30 labelled anomalies):
+    Of 50 flagged:   22 are true anomalies  (precision = 44%)
+    Of 30 anomalies: 22 are flagged          (recall = 73%)
+    F1 score: 0.55
+
+  vs Z-score baseline:
+    Precision: 31%   Recall: 74%   F1: 0.43
+  
+  Isolation Forest: +0.12 F1 improvement over statistical baseline</div></div></div><div class="output-block"><div class="output-label">Output: Top-20 Flagged Anomalies — Feature Profile <span class="out-type">Table</span></div><div class="output-inner"><table class="out-table"><thead><tr><th>Rank</th><th>Score</th><th>Amount</th><th>Hour</th><th>Txns last hour</th><th>Time since last (min)</th><th>Device change</th><th>Assessment</th></tr></thead><tbody><tr><td>1</td><td>−0.62</td><td>£4,820</td><td>3:14 AM</td><td>12</td><td>2</td><td>Yes</td><td>High confidence — unusual amount, hour, velocity, device</td></tr><tr><td>2</td><td>−0.58</td><td>£3,140</td><td>2:41 AM</td><td>8</td><td>1</td><td>Yes</td><td>High confidence</td></tr><tr><td>3</td><td>−0.51</td><td>£2,280</td><td>4:02 AM</td><td>15</td><td>0</td><td>No</td><td>High confidence — velocity spike</td></tr><tr><td>4</td><td>−0.44</td><td>£1,840</td><td>11:32 AM</td><td>1</td><td>180</td><td>Yes</td><td>Medium — device change only anomalous signal</td></tr><tr><td>5</td><td>−0.38</td><td>£890</td><td>7:14 PM</td><td>3</td><td>45</td><td>No</td><td>Medium — moderate anomaly score</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>50</td><td>−0.18</td><td>£320</td><td>2:18 PM</td><td>1</td><td>210</td><td>No</td><td>Borderline — review recommended</td></tr></tbody></table><div style="font-size:11px;color:var(--ink4);margin-top:8px;font-family:var(--mono)">Top 3 anomalies show multiple simultaneous anomalous signals — highest confidence flags. Rank 50 is borderline and may be a false alarm.</div></div></div><div class="interpret"><div class="interpret-title">What this tells you</div><ul><li>Precision of 44% means 44% of flags are genuine anomalies — the remainder are false alarms requiring analyst review. This is typical for anomaly detection: precision is usually low.</li><li>Recall of 73% means the model catches 73% of all labelled anomalies. The remaining 27% were not flagged — likely because their anomalous features are subtle or novel.</li><li>The top 3 flags show multiple simultaneous anomalous signals (late night, high velocity, device change) — these are the highest-confidence cases and should be prioritised for investigation.</li><li>Setting contamination=0.03 (matching known rate) would reduce false alarms but also reduce recall — a precision/recall tradeoff that the fraud/risk team must decide.</li></ul></div><div class="callout callout-warning"><strong>Anomaly detection precision is always low — this is expected</strong>Unlike classification, anomaly detection operates without training labels. Precision of 30-60% is typical and acceptable if the cost of review is low relative to the cost of missed anomalies. Frame this to stakeholders as: 'The model surfaces the top 50 transactions most worth reviewing — we estimate 22 of those are genuine. Without the model, you would need to review all 1,000 to find those 22.'</div></div><div class="stage" id="s3"><div class="stage-num">Stage 03</div><h2 class="stage-title">QA & Monitoring</h2><p class="stage-intro">Anomaly detection models require active monitoring — the definition of 'normal' evolves as business patterns change.</p><ul class="workflow"><li><strong>Set contamination rate based on business input</strong> Do not default to 0.05 without asking the business. What fraction of transactions is genuinely expected to be anomalous?</li><li><strong>Track precision and recall over time on resolved cases</strong> As analysts review flagged cases, record outcomes (true/false positive). Use this to track model drift and calibrate the contamination threshold.</li><li><strong>Re-train when normal behaviour shifts</strong> A seasonal business (e.g., retail) will have very different 'normal' transaction patterns in November vs February. Seasonal models or rolling retrain windows are needed.</li></ul><div class="output-block"><div class="output-label">Output: QA Checklist <span class="out-type">Checklist</span></div><div class="output-inner"><div class="qa-grid"><div class="qa-box qa-good"><h5>Good</h5><ul><li>Contamination rate set by business input (not default)</li><li>Model validated against any available labelled anomalies</li><li>Top flags profiled — multiple simultaneous anomalous signals = higher confidence</li><li>Monitoring plan: precision/recall tracked on resolved cases</li><li>Re-training cadence defined</li></ul></div><div class="qa-box qa-bad"><h5>Red flags</h5><ul><li>Default contamination=0.05 used without business validation</li><li>No labelled examples used for validation at all</li><li>Model treats every flagged case as confirmed anomaly (no analyst review)</li><li>Static threshold — not adjusted as normal behaviour evolves</li><li>Only anomaly score reported, not interpretable feature profile per flag</li></ul></div></div></div></div></div>
+<div class="nb-footer"><span>6.2 · Anomaly Detection · ML Strategy Playbook · Archishman Bandyopadhyay</span>
+<a href="../ML_Strategy_Playbook.html#anomaly" style="color:var(--ink4);text-decoration:none">← Back</a></div>
+</div></body></html>

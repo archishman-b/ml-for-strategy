@@ -1,0 +1,110 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>4.4 · Uplift Modelling — ML Strategy Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;--cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;--accent:#8b2500;--accent2:#c4440d;--accent3:#e8c4a0;--blue:#1a3a5c;--blue2:#2d5f8a;--green:#1a4a2e;--green2:#2d7a4a;--gold:#7a5a00;--border:#d4cdc4;--border2:#c4bdb4;--serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.page{max-width:860px;margin:0 auto;padding:40px 32px 80px}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--ink4);text-decoration:none;margin-bottom:32px;border:1px solid var(--border);padding:5px 12px;border-radius:3px}
+.back-link:hover{color:var(--ink);border-color:var(--border2)}
+.nb-header{border-bottom:2px solid var(--ink);padding-bottom:24px;margin-bottom:36px}
+.nb-num{font-family:var(--mono);font-size:11px;color:var(--accent2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.nb-title{font-family:var(--display);font-size:36px;font-weight:700;line-height:1.15;margin-bottom:12px;letter-spacing:-.02em}
+.nb-meta{display:flex;flex-wrap:wrap;gap:16px;font-family:var(--mono);font-size:10px;color:var(--ink4);margin-bottom:16px}
+.nb-meta span em{color:var(--ink2);font-style:normal;font-weight:600}
+.nb-intro{font-size:15px;color:var(--ink3);line-height:1.7;border-left:3px solid var(--accent3);padding-left:16px;max-width:680px}
+.toc{background:#fff;border:1px solid var(--border);border-radius:6px;padding:20px 24px;margin:28px 0}
+.toc-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px}
+.toc ol{list-style:none;padding:0;counter-reset:toc}
+.toc li{counter-increment:toc;padding:5px 0;border-bottom:1px solid var(--cream3);font-size:13px}
+.toc li:last-child{border-bottom:none}
+.toc li::before{content:counter(toc,decimal-leading-zero)". ";font-family:var(--mono);font-size:10px;color:var(--ink4);margin-right:6px}
+.toc a{color:var(--ink2);text-decoration:none}.toc a:hover{color:var(--accent2)}
+.stage{margin:40px 0 0;padding-top:28px;border-top:2px solid var(--border)}
+.stage-num{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.stage-title{font-family:var(--display);font-size:22px;font-weight:600;margin-bottom:12px}
+.stage-intro{font-size:14px;color:var(--ink3);line-height:1.7;margin-bottom:22px;max-width:700px}
+.workflow{margin:0 0 22px;padding:0;list-style:none;counter-reset:wf}
+.workflow li{counter-increment:wf;padding:10px 14px 10px 48px;position:relative;border-left:2px solid var(--cream3);margin-bottom:6px;font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.workflow li::before{content:counter(wf);position:absolute;left:-13px;top:10px;width:24px;height:24px;background:var(--ink);color:var(--cream);font-family:var(--mono);font-size:10px;font-weight:600;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;line-height:24px}
+.workflow li strong{color:var(--ink);display:block;margin-bottom:2px}
+.workflow li em{color:var(--ink4);font-style:normal;font-size:12px}
+.output-block{background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin:16px 0 28px}
+.output-label{background:var(--ink);color:var(--cream2);font-family:var(--mono);font-size:10px;padding:7px 14px;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+.out-type{font-size:9px;padding:1px 7px;border-radius:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.output-inner{padding:18px 20px}
+.out-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.out-table th{background:var(--cream2);padding:7px 12px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.04em;color:var(--ink3);border-bottom:2px solid var(--border)}
+.out-table td{padding:7px 12px;border-bottom:1px solid var(--cream3);color:var(--ink2)}
+.out-table tr:last-child td{border-bottom:none}
+.out-table .pos{color:#2d7a4a;font-weight:600}.out-table .neg{color:#c4440d;font-weight:600}.out-table .hi{color:var(--ink);font-weight:600}
+.out-text{font-family:var(--mono);font-size:12px;line-height:1.9;color:var(--ink2);white-space:pre-wrap}
+.callout{padding:14px 18px;border-radius:4px;margin:16px 0;font-size:13.5px;line-height:1.65;border-left:3px solid}
+.callout-insight{background:#faf5ee;border-color:#c49a00;color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:#f0f5fa;border-color:var(--blue2);color:var(--ink2)}
+.callout strong{font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:4px;opacity:.7}
+.interpret{background:var(--cream2);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin:14px 0}
+.interpret-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:10px}
+.interpret ul{list-style:none;padding:0}
+.interpret li{font-size:13px;color:var(--ink2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.6}
+.interpret li:last-child{border-bottom:none}
+.interpret li::before{content:"→ ";color:var(--accent2);font-weight:700}
+.kpi-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.kpi{flex:1;min-width:110px;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:4px;border-top:3px solid}
+.kpi-val{font-family:var(--display);font-size:26px;font-weight:700;line-height:1;margin-bottom:4px}
+.kpi-label{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.05em;text-transform:uppercase}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.qa-box{padding:14px 16px;border-radius:4px;font-size:13px}
+.qa-good{background:#f0f7f3;border:1px solid #bde0ca}
+.qa-bad{background:#fef5f0;border:1px solid #f4c4aa}
+.qa-box h5{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;font-family:var(--mono)}
+.qa-good h5{color:#1a4a2e}.qa-bad h5{color:#8b2500}
+.qa-box ul{list-style:none;padding:0}
+.qa-box li{padding:3px 0;line-height:1.55;color:var(--ink2)}
+.qa-good li::before{content:"✓  ";color:#2d7a4a;font-weight:700}
+.qa-bad li::before{content:"✗  ";color:#c4440d;font-weight:700}
+.ext-list{list-style:none;padding:0;counter-reset:ext}
+.ext-list li{counter-increment:ext;padding:9px 14px 9px 38px;position:relative;border-bottom:1px solid var(--cream3);font-size:13px;color:var(--ink2);line-height:1.6}
+.ext-list li::before{content:counter(ext);position:absolute;left:0;top:9px;width:22px;height:22px;background:var(--cream3);color:var(--ink3);font-family:var(--mono);font-size:10px;border-radius:50%;text-align:center;line-height:22px}
+.ext-list li strong{color:var(--ink);display:block}
+.nb-footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media(max-width:600px){.page{padding:24px 16px 60px}.nb-title{font-size:26px}.qa-grid{grid-template-columns:1fr}}
+</style></head><body><div class="page">
+<a href="../ML_Strategy_Playbook.html#uplift" class="back-link">← Back to Master Playbook · 4.4 Uplift Modelling</a>
+<div class="nb-header"><div class="nb-num">Notebook 4.4</div><h1 class="nb-title">Uplift Modelling</h1>
+<div class="nb-meta"><span>Question: <em>Who will respond to this intervention?</em></span><span>Output: <em>Individual uplift score</em></span><span>Dataset: <em>campaign.csv (500 rows, RCT design)</em></span><span>Use case: <em>Retention campaign targeting · Promotion response · Pricing offer personalisation</em></span></div>
+<p class="nb-intro">Pipeline walkthrough — analyst workflow steps, pre-populated outputs, and business interpretation at each stage.</p></div>
+<div class="stage" id="s1"><div class="stage-num">Stage 01</div><h2 class="stage-title">Why Uplift — Not Just Churn Propensity</h2><p class="stage-intro">A churn model tells you who is at risk. An uplift model tells you who will respond to an intervention. These are different questions — and the difference directly affects ROI. Targeting high-churn customers who would have stayed anyway wastes budget and may even accelerate churn.</p><ul class="workflow"><li><strong>Understand the four customer groups</strong> Every customer falls into one of four buckets: (1) Persuadables — at risk, intervention works. (2) Sure Things — would stay anyway, intervention wastes money. (3) Lost Causes — will churn regardless. (4) Sleeping Dogs — stable but intervention might disturb them. Only group 1 deserves targeting.<em><em>A churn model alone cannot distinguish Persuadables from Sure Things. Only uplift modelling can.</em></em></li><li><strong>Require a randomised experiment</strong> Uplift modelling requires historical data where some customers were contacted (treatment group) and others were not (control group) — ideally by random assignment. Without this, you cannot estimate counterfactual outcomes.</li><li><strong>Set up the treatment indicator</strong> T=1: customer received intervention (retention call/offer). T=0: customer did not. Y=1: churned. Y=0: retained. Goal: estimate P(Y=0 | T=1) - P(Y=0 | T=0) per customer.</li></ul><div class="output-block"><div class="output-label">Output: Experimental Design Check <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">Uplift dataset (campaign.csv, 500 customers):
+  Treatment (T=1, contacted):   248 customers
+  Control   (T=0, not contacted): 252 customers
+
+  Randomisation check:
+    Feature              Treatment mean    Control mean    p-value
+    tenure_months             36.8              37.2         0.71  ✓ balanced
+    support_calls              2.2               2.1         0.63  ✓ balanced
+    logins_per_week            4.1               4.3         0.54  ✓ balanced
+    cltv                    1,820             1,850          0.58  ✓ balanced
+  
+  All pre-treatment features balanced (p > 0.05) → valid randomisation
+
+  Outcome:
+    Churn rate (Treatment):  15.7%  (treated customers)
+    Churn rate (Control):    24.2%  (untreated customers)
+    ATE (Average Treatment Effect): -8.5pp  ← intervention reduces churn by 8.5pp overall</div></div></div></div><div class="stage" id="s2"><div class="stage-num">Stage 02</div><h2 class="stage-title">Train the Uplift Model</h2><p class="stage-intro">Two common approaches: the Two-Model approach (simple, interpretable) and the Class Transformation approach (single model, theoretically elegant). Start with Two-Model.</p><ul class="workflow"><li><strong>Two-Model approach</strong> Train two separate churn models: one on the treatment group, one on the control group. For each customer, compute: uplift = P(churn | T=1, features) - P(churn | T=0, features). Negative uplift = intervention reduces churn risk.<em><em>Simple and explainable. Works well in practice despite the two-model approximation.</em></em></li><li><strong>Score all customers with uplift estimate</strong> Apply both models to all customers. Subtract treatment model score from control model score. Sort customers by uplift (most negative = most persuadable).</li><li><strong>Build the uplift decile table</strong> Sort customers by uplift score. Group into 10 equal buckets (deciles). For each decile, compute: average treatment effect (churn rate treatment minus churn rate control). The top decile should show the largest treatment effect.</li></ul><div class="output-block"><div class="output-label">Output: Uplift Model — Two-Model Approach <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">Two-Model Uplift:
+  Treatment model (trained on T=1 group, 248 customers):
+    Validation AUC: 0.791
+  Control model (trained on T=0 group, 252 customers):
+    Validation AUC: 0.808
+
+  Uplift score distribution:
+    Min uplift:     -0.48  (strongest Persuadables)
+    Max uplift:     +0.12  (Sleeping Dogs — may react badly to contact)
+    Mean uplift:    -0.087 (consistent with ATE of -8.5pp)
+    % with uplift < -0.05: 42%  (clear Persuadables — worth targeting)
+    % with uplift > 0:     18%  (Sleeping Dogs — do NOT contact)</div></div></div><div class="output-block"><div class="output-label">Output: Uplift Decile Table <span class="out-type">Table</span></div><div class="output-inner"><table class="out-table"><thead><tr><th>Decile</th><th>Uplift score range</th><th>n customers</th><th>Churn (treated)</th><th>Churn (control)</th><th>Actual treatment effect</th><th>Targeting priority</th></tr></thead><tbody><tr><td>1 (top)</td><td>< −0.30</td><td>50</td><td>6%</td><td>38%</td><td>−32pp</td><td>Contact — highest ROI</td></tr><tr><td>2</td><td>−0.30 to −0.20</td><td>50</td><td>10%</td><td>32%</td><td>−22pp</td><td>Contact</td></tr><tr><td>3</td><td>−0.20 to −0.13</td><td>50</td><td>12%</td><td>26%</td><td>−14pp</td><td>Contact</td></tr><tr><td>4</td><td>−0.13 to −0.08</td><td>50</td><td>14%</td><td>21%</td><td>−7pp</td><td>Contact (marginal)</td></tr><tr><td>5</td><td>−0.08 to −0.04</td><td>50</td><td>16%</td><td>20%</td><td>−4pp</td><td>Cost-benefit check</td></tr><tr><td>6–8</td><td>−0.04 to 0.00</td><td>150</td><td>18%</td><td>19%</td><td>−1pp</td><td>Do not target</td></tr><tr><td>9–10</td><td>> 0.00</td><td>100</td><td>22%</td><td>18%</td><td>+4pp</td><td>Do not target (may backfire)</td></tr></tbody></table><div style="font-size:11px;color:var(--ink4);margin-top:8px;font-family:var(--mono)">Uplift decile table: each row shows actual churn difference for treatment vs control in that uplift score bucket. This validates the model.</div></div></div><div class="interpret"><div class="interpret-title">What this tells you</div><ul><li>Top decile: contacting these customers reduces churn by 32 percentage points. At 50 customers × £1,200 CLTV × 32% = £19,200 protected revenue per intervention cycle.</li><li>Bottom two deciles (uplift > 0): contacting these customers appears to increase churn by 4pp. These are Sleeping Dogs — satisfied customers who become aware of switching options when approached.</li><li>The uplift table validates the model: the actual treatment effect decreases monotonically from decile 1 to 10 — the model is correctly ranking customers by persuadability.</li></ul></div><div class="callout callout-insight"><strong>Uplift ROI is 3-5x higher than churn targeting</strong>A churn model targeting the top 20% by risk score might include 50% Sure Things (would have stayed anyway). An uplift model targeting the top 20% by persuadability score reduces that waste significantly. The net ROI improvement is typically 2-5x on retention spend — the most directly business-impactful ML technique in customer retention.</div></div><div class="stage" id="s3"><div class="stage-num">Stage 03</div><h2 class="stage-title">QA</h2><p class="stage-intro">Critical checks before deploying uplift scores for campaign targeting.</p><ul class="workflow"><li><strong>Validate randomisation</strong> Pre-treatment features must be balanced between treatment and control. Any imbalance = biased uplift estimates.</li><li><strong>Check uplift decile monotonicity</strong> The actual treatment effect should decrease as you go down the decile table. Non-monotonic pattern = model is not reliably ranking by persuadability.</li><li><strong>Confirm Sleeping Dog group exists</strong> If no customers have positive uplift, the model may be miscalibrated or the intervention has no negative side effects — unusual and worth questioning.</li></ul><div class="output-block"><div class="output-label">Output: QA Checklist <span class="out-type">Checklist</span></div><div class="output-inner"><div class="qa-grid"><div class="qa-box qa-good"><h5>Good</h5><ul><li>Randomised experiment (or quasi-experimental design documented)</li><li>Pre-treatment feature balance verified</li><li>Uplift deciles show monotonic treatment effect</li><li>Sleeping Dog group identified and excluded from targeting list</li><li>ROI calculation: uplift × CLTV × conversion rate vs cost of intervention</li></ul></div><div class="qa-box qa-bad"><h5>Red flags</h5><ul><li>Observational data used without adjustment (selection bias)</li><li>Only overall ATE reported — no individual-level scores</li><li>Top decile by churn propensity used instead of uplift score</li><li>Sleeping Dogs contacted (may increase churn)</li><li>Uplift validated only on training set, not held-out test set</li></ul></div></div></div></div></div>
+<div class="nb-footer"><span>4.4 · Uplift Modelling · ML Strategy Playbook · Archishman Bandyopadhyay</span>
+<a href="../ML_Strategy_Playbook.html#uplift" style="color:var(--ink4);text-decoration:none">← Back</a></div>
+</div></body></html>

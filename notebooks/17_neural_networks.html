@@ -1,0 +1,119 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>6.1 · Neural Networks (MLP) — ML Strategy Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;--cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;--accent:#8b2500;--accent2:#c4440d;--accent3:#e8c4a0;--blue:#1a3a5c;--blue2:#2d5f8a;--green:#1a4a2e;--green2:#2d7a4a;--gold:#7a5a00;--border:#d4cdc4;--border2:#c4bdb4;--serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.page{max-width:860px;margin:0 auto;padding:40px 32px 80px}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--ink4);text-decoration:none;margin-bottom:32px;border:1px solid var(--border);padding:5px 12px;border-radius:3px}
+.back-link:hover{color:var(--ink);border-color:var(--border2)}
+.nb-header{border-bottom:2px solid var(--ink);padding-bottom:24px;margin-bottom:36px}
+.nb-num{font-family:var(--mono);font-size:11px;color:var(--accent2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.nb-title{font-family:var(--display);font-size:36px;font-weight:700;line-height:1.15;margin-bottom:12px;letter-spacing:-.02em}
+.nb-meta{display:flex;flex-wrap:wrap;gap:16px;font-family:var(--mono);font-size:10px;color:var(--ink4);margin-bottom:16px}
+.nb-meta span em{color:var(--ink2);font-style:normal;font-weight:600}
+.nb-intro{font-size:15px;color:var(--ink3);line-height:1.7;border-left:3px solid var(--accent3);padding-left:16px;max-width:680px}
+.toc{background:#fff;border:1px solid var(--border);border-radius:6px;padding:20px 24px;margin:28px 0}
+.toc-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px}
+.toc ol{list-style:none;padding:0;counter-reset:toc}
+.toc li{counter-increment:toc;padding:5px 0;border-bottom:1px solid var(--cream3);font-size:13px}
+.toc li:last-child{border-bottom:none}
+.toc li::before{content:counter(toc,decimal-leading-zero)". ";font-family:var(--mono);font-size:10px;color:var(--ink4);margin-right:6px}
+.toc a{color:var(--ink2);text-decoration:none}.toc a:hover{color:var(--accent2)}
+.stage{margin:40px 0 0;padding-top:28px;border-top:2px solid var(--border)}
+.stage-num{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.stage-title{font-family:var(--display);font-size:22px;font-weight:600;margin-bottom:12px}
+.stage-intro{font-size:14px;color:var(--ink3);line-height:1.7;margin-bottom:22px;max-width:700px}
+.workflow{margin:0 0 22px;padding:0;list-style:none;counter-reset:wf}
+.workflow li{counter-increment:wf;padding:10px 14px 10px 48px;position:relative;border-left:2px solid var(--cream3);margin-bottom:6px;font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.workflow li::before{content:counter(wf);position:absolute;left:-13px;top:10px;width:24px;height:24px;background:var(--ink);color:var(--cream);font-family:var(--mono);font-size:10px;font-weight:600;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;line-height:24px}
+.workflow li strong{color:var(--ink);display:block;margin-bottom:2px}
+.workflow li em{color:var(--ink4);font-style:normal;font-size:12px}
+.output-block{background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin:16px 0 28px}
+.output-label{background:var(--ink);color:var(--cream2);font-family:var(--mono);font-size:10px;padding:7px 14px;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+.out-type{font-size:9px;padding:1px 7px;border-radius:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.output-inner{padding:18px 20px}
+.out-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.out-table th{background:var(--cream2);padding:7px 12px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.04em;color:var(--ink3);border-bottom:2px solid var(--border)}
+.out-table td{padding:7px 12px;border-bottom:1px solid var(--cream3);color:var(--ink2)}
+.out-table tr:last-child td{border-bottom:none}
+.out-table .pos{color:#2d7a4a;font-weight:600}.out-table .neg{color:#c4440d;font-weight:600}.out-table .hi{color:var(--ink);font-weight:600}
+.out-text{font-family:var(--mono);font-size:12px;line-height:1.9;color:var(--ink2);white-space:pre-wrap}
+.callout{padding:14px 18px;border-radius:4px;margin:16px 0;font-size:13.5px;line-height:1.65;border-left:3px solid}
+.callout-insight{background:#faf5ee;border-color:#c49a00;color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:#f0f5fa;border-color:var(--blue2);color:var(--ink2)}
+.callout strong{font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:4px;opacity:.7}
+.interpret{background:var(--cream2);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin:14px 0}
+.interpret-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:10px}
+.interpret ul{list-style:none;padding:0}
+.interpret li{font-size:13px;color:var(--ink2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.6}
+.interpret li:last-child{border-bottom:none}
+.interpret li::before{content:"→ ";color:var(--accent2);font-weight:700}
+.kpi-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.kpi{flex:1;min-width:110px;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:4px;border-top:3px solid}
+.kpi-val{font-family:var(--display);font-size:26px;font-weight:700;line-height:1;margin-bottom:4px}
+.kpi-label{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.05em;text-transform:uppercase}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.qa-box{padding:14px 16px;border-radius:4px;font-size:13px}
+.qa-good{background:#f0f7f3;border:1px solid #bde0ca}
+.qa-bad{background:#fef5f0;border:1px solid #f4c4aa}
+.qa-box h5{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;font-family:var(--mono)}
+.qa-good h5{color:#1a4a2e}.qa-bad h5{color:#8b2500}
+.qa-box ul{list-style:none;padding:0}
+.qa-box li{padding:3px 0;line-height:1.55;color:var(--ink2)}
+.qa-good li::before{content:"✓  ";color:#2d7a4a;font-weight:700}
+.qa-bad li::before{content:"✗  ";color:#c4440d;font-weight:700}
+.ext-list{list-style:none;padding:0;counter-reset:ext}
+.ext-list li{counter-increment:ext;padding:9px 14px 9px 38px;position:relative;border-bottom:1px solid var(--cream3);font-size:13px;color:var(--ink2);line-height:1.6}
+.ext-list li::before{content:counter(ext);position:absolute;left:0;top:9px;width:22px;height:22px;background:var(--cream3);color:var(--ink3);font-family:var(--mono);font-size:10px;border-radius:50%;text-align:center;line-height:22px}
+.ext-list li strong{color:var(--ink);display:block}
+.nb-footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media(max-width:600px){.page{padding:24px 16px 60px}.nb-title{font-size:26px}.qa-grid{grid-template-columns:1fr}}
+</style></head><body><div class="page">
+<a href="../ML_Strategy_Playbook.html#nn" class="back-link">← Back to Master Playbook · 6.1 Neural Networks (MLP)</a>
+<div class="nb-header"><div class="nb-num">Notebook 6.1</div><h1 class="nb-title">Neural Networks (MLP)</h1>
+<div class="nb-meta"><span>Question: <em>Complex pattern recognition at scale</em></span><span>Output: <em>Probability</em></span><span>Dataset: <em>customers_large (50K rows)</em></span><span>Use case: <em>Deep tabular models · Embedding-based product recommendation · Multi-task prediction</em></span></div>
+<p class="nb-intro">Pipeline walkthrough — analyst workflow steps, pre-populated outputs, and business interpretation at each stage.</p></div>
+<div class="stage" id="s1"><div class="stage-num">Stage 01</div><h2 class="stage-title">When Neural Networks Are — and Are Not — the Right Choice</h2><p class="stage-intro">Neural networks are powerful but demanding. For tabular business data (&lt;100K rows, &lt;50 features), tree-based models (GBM) almost always match or outperform neural networks with far less tuning effort. Know when to reach for this tool.</p><ul class="workflow"><li><strong>Check dataset size first</strong> Neural networks are data-hungry. Rule of thumb: < 10K rows → use GBM or LR. 10K–100K rows → GBM usually wins. > 100K rows → neural networks become competitive. For image, text, or sequence data at any scale: neural networks are the default.<em><em>On the 800-row customers.csv dataset, a neural network will almost certainly underperform LightGBM. The workflow below uses a larger synthetic dataset for demonstration.</em></em></li><li><strong>Understand what you are building</strong> Feedforward network (MLP): the standard. Embedding layers: for high-cardinality categoricals (e.g. 10,000 SKUs). Recurrent (LSTM/GRU): for sequential data. Transformers: for text. For tabular strategy work, MLP with embeddings is the relevant architecture.</li><li><strong>Establish GBM baseline first</strong> Always run LightGBM first. If GBM AUC is within 0.01 of the best neural network, use GBM — it is faster to train, easier to interpret, and requires less infrastructure.</li></ul><div class="output-block"><div class="output-label">Output: Model Selection Decision <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">Dataset: customers_large.csv (50,000 rows synthetic, 20 features)
+Target: churned (1/0)  |  Event rate: 18.4%
+
+Baseline results (same features):
+  Logistic Regression:   AUC = 0.814
+  LightGBM (tuned):      AUC = 0.882  ← strong baseline
+  MLP (2 layers, 64u):   AUC = 0.871  (−0.011 vs GBM)
+  MLP (3 layers, 128u):  AUC = 0.879  (−0.003 vs GBM)
+  MLP + Embeddings:      AUC = 0.884  (+0.002 vs GBM — marginal)
+
+Decision for this dataset:
+  GBM is preferred — 0.002 AUC advantage for MLP+Embeddings does not
+  justify 10× longer training time and deployment complexity.
+  Neural network would be justified if: (a) AUC gap > 0.01, or
+  (b) architecture is needed for a multi-task or sequence objective.</div></div></div></div><div class="stage" id="s2"><div class="stage-num">Stage 02</div><h2 class="stage-title">Build & Train a Feedforward Network</h2><p class="stage-intro">For tabular data, the standard architecture is a feedforward network (MLP): input layer → 2-3 hidden layers with ReLU → dropout for regularisation → sigmoid output for binary classification.</p><ul class="workflow"><li><strong>Define the architecture</strong> Input layer: one node per feature (20 features → 20 inputs). Hidden layers: 2 layers × 128 nodes with ReLU activation. Dropout: 0.3 (drops 30% of nodes each training step to prevent overfitting). Output: single sigmoid node → P(churn).<em><em>Rule of thumb for hidden layer sizing: start with 2× the number of input features. Wider is usually better than deeper for tabular data.</em></em></li><li><strong>Choose optimiser and loss</strong> Adam optimiser with lr=0.001 (adaptive learning rate — standard default). Binary cross-entropy loss for binary classification. Batch size=256 for stability on 50K dataset.</li><li><strong>Set up early stopping callback</strong> Stop training when validation AUC stops improving for 10 epochs. Prevents overfitting to the training set.</li></ul><div class="output-block"><div class="output-label">Output: Training Log <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">MLP Training (50K rows, 20 features):
+  Epoch   Train Loss   Val AUC    Val Loss   LR
+      5     0.421       0.841      0.418     0.001000
+     10     0.382       0.858      0.391     0.001000
+     20     0.344       0.871      0.368     0.001000
+     30     0.318       0.876      0.361     0.000500
+     40     0.297       0.878      0.360     0.000500
+     45     0.287       0.879      0.361     0.000100
+     48     0.281       0.879      0.362   ← Early stop (no improvement 10 epochs)
+
+  Best epoch: 45  |  Final Val AUC: 0.879
+  Training time: 4.2 minutes (GPU) / 28 minutes (CPU)
+  
+  vs LightGBM: AUC 0.882 in 12 seconds training
+  Conclusion: GBM preferred for this dataset</div></div></div><div class="output-block"><div class="output-label">Output: Training Curves <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">Epochs 1-48:
+  Validation AUC climbs steeply through epoch 20 (rapid learning)
+  Plateaus between epochs 30-48 (diminishing returns)
+  No divergence between train and validation loss — no overfitting
+  
+  Red flag pattern (not observed here, but to watch for):
+    Train loss decreasing, val loss increasing → overfitting
+    Both losses flat from epoch 5 → learning rate too low or architecture too small
+    Oscillating val loss → learning rate too high</div></div></div><div class="interpret"><div class="interpret-title">What this tells you</div><ul><li>Early stopping triggered at epoch 48 (patience=10). Training beyond this would have overfit without improving test performance.</li><li>The gap between train loss and val loss is small and stable — a sign the dropout regularisation is working correctly.</li><li>4+ minute training time vs LightGBM's 12 seconds highlights the compute cost for marginal AUC gain on this dataset.</li></ul></div><div class="callout callout-rule"><strong>Neural networks require production infrastructure that GBM does not</strong>Deploying a neural network requires: a serving framework (TensorFlow Serving, ONNX), GPU instances for batch scoring at scale, model versioning infrastructure, and more complex drift monitoring. For strategy analytics work, this overhead is rarely justified unless the AUC gap is > 2-3 points. Use GBM as the default.</div></div><div class="stage" id="s3"><div class="stage-num">Stage 03</div><h2 class="stage-title">Embedding Layers for High-Cardinality Categoricals</h2><p class="stage-intro">The one scenario where neural networks genuinely outperform GBM on tabular data: when you have high-cardinality categorical features (e.g., 10,000 SKUs, 5,000 zip codes). Embedding layers learn a dense vector representation for each category.</p><ul class="workflow"><li><strong>Identify high-cardinality features</strong> Standard one-hot encoding of 10,000 SKUs creates 10,000 sparse columns — impractical for GBM and impossible for linear models. Embedding maps each SKU to a dense vector of 16-32 dimensions.<em><em>Rule of thumb: embedding dimension = min(50, (cardinality + 1) // 2).</em></em></li><li><strong>Build embedding layer per high-cardinality feature</strong> Each categorical feature gets its own embedding lookup table. The embeddings are learned jointly with the rest of the network — they capture similarity between categories implicitly.</li><li><strong>Interpret embeddings</strong> After training, SKUs with similar embeddings have similar customer behaviour patterns. This can be used independently as a product similarity metric.</li></ul><div class="output-block"><div class="output-label">Output: Embedding Impact on Performance <span class="out-type">Table</span></div><div class="output-inner"><table class="out-table"><thead><tr><th>Feature treatment</th><th>Architecture</th><th>Val AUC</th><th>Notes</th></tr></thead><tbody><tr><td>One-hot (10K SKUs)</td><td>MLP 128-128</td><td>0.871</td><td>Sparse input, slow training</td></tr><tr><td>Target encoding (SKU avg churn)</td><td>MLP 128-128</td><td>0.876</td><td>Leakage risk if not done carefully</td></tr><tr><td>Embedding (dim=32)</td><td>MLP + Embed</td><td>0.884</td><td>Best: learns product similarity</td></tr><tr><td>LightGBM (categorical native)</td><td>—</td><td>0.882</td><td>Comparable — no embedding needed</td></tr></tbody></table><div style="font-size:11px;color:var(--ink4);margin-top:8px;font-family:var(--mono)">Embeddings provide 0.013 AUC lift over one-hot and reach parity with LightGBM. Recommended when SKU-level patterns are a key signal.</div></div></div><div class="output-block"><div class="output-label">Output: QA Checklist <span class="out-type">Checklist</span></div><div class="output-inner"><div class="qa-grid"><div class="qa-box qa-good"><h5>Good</h5><ul><li>GBM baseline established and compared</li><li>Early stopping used — training log shows plateau before stopping</li><li>Val loss and train loss both declining (no overfitting)</li><li>Dropout applied (not just L2 regularisation alone)</li><li>Embedding layers used for high-cardinality features (>100 categories)</li></ul></div><div class="qa-box qa-bad"><h5>Red flags</h5><ul><li>No GBM baseline — neural network chosen first</li><li>Training reported only on train loss (not validation)</li><li>Neural network deployed for a 1,000-row dataset</li><li>No early stopping — fixed number of epochs</li><li>AUC advantage over GBM < 0.01 — does not justify infrastructure cost</li></ul></div></div></div></div></div>
+<div class="nb-footer"><span>6.1 · Neural Networks (MLP) · ML Strategy Playbook · Archishman Bandyopadhyay</span>
+<a href="../ML_Strategy_Playbook.html#nn" style="color:var(--ink4);text-decoration:none">← Back</a></div>
+</div></body></html>

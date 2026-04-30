@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2.1 · Ridge / Lasso Regression — ML Strategy Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;--cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;--accent:#8b2500;--accent2:#c4440d;--accent3:#e8c4a0;--blue:#1a3a5c;--blue2:#2d5f8a;--green:#1a4a2e;--green2:#2d7a4a;--gold:#7a5a00;--border:#d4cdc4;--border2:#c4bdb4;--serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.page{max-width:860px;margin:0 auto;padding:40px 32px 80px}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--ink4);text-decoration:none;margin-bottom:32px;border:1px solid var(--border);padding:5px 12px;border-radius:3px}
+.back-link:hover{color:var(--ink);border-color:var(--border2)}
+.nb-header{border-bottom:2px solid var(--ink);padding-bottom:24px;margin-bottom:36px}
+.nb-num{font-family:var(--mono);font-size:11px;color:var(--accent2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.nb-title{font-family:var(--display);font-size:36px;font-weight:700;line-height:1.15;margin-bottom:12px;letter-spacing:-.02em}
+.nb-meta{display:flex;flex-wrap:wrap;gap:16px;font-family:var(--mono);font-size:10px;color:var(--ink4);margin-bottom:16px}
+.nb-meta span em{color:var(--ink2);font-style:normal;font-weight:600}
+.nb-intro{font-size:15px;color:var(--ink3);line-height:1.7;border-left:3px solid var(--accent3);padding-left:16px;max-width:680px}
+.toc{background:#fff;border:1px solid var(--border);border-radius:6px;padding:20px 24px;margin:28px 0}
+.toc-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px}
+.toc ol{list-style:none;padding:0;counter-reset:toc}
+.toc li{counter-increment:toc;padding:5px 0;border-bottom:1px solid var(--cream3);font-size:13px}
+.toc li:last-child{border-bottom:none}
+.toc li::before{content:counter(toc,decimal-leading-zero)". ";font-family:var(--mono);font-size:10px;color:var(--ink4);margin-right:6px}
+.toc a{color:var(--ink2);text-decoration:none}.toc a:hover{color:var(--accent2)}
+.stage{margin:40px 0 0;padding-top:28px;border-top:2px solid var(--border)}
+.stage-num{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.stage-title{font-family:var(--display);font-size:22px;font-weight:600;margin-bottom:12px}
+.stage-intro{font-size:14px;color:var(--ink3);line-height:1.7;margin-bottom:22px;max-width:700px}
+.workflow{margin:0 0 22px;padding:0;list-style:none;counter-reset:wf}
+.workflow li{counter-increment:wf;padding:10px 14px 10px 48px;position:relative;border-left:2px solid var(--cream3);margin-bottom:6px;font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.workflow li::before{content:counter(wf);position:absolute;left:-13px;top:10px;width:24px;height:24px;background:var(--ink);color:var(--cream);font-family:var(--mono);font-size:10px;font-weight:600;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;line-height:24px}
+.workflow li strong{color:var(--ink);display:block;margin-bottom:2px}
+.workflow li em{color:var(--ink4);font-style:normal;font-size:12px}
+.output-block{background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin:16px 0 28px}
+.output-label{background:var(--ink);color:var(--cream2);font-family:var(--mono);font-size:10px;padding:7px 14px;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+.out-type{font-size:9px;padding:1px 7px;border-radius:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.output-inner{padding:18px 20px}
+.out-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.out-table th{background:var(--cream2);padding:7px 12px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.04em;color:var(--ink3);border-bottom:2px solid var(--border)}
+.out-table td{padding:7px 12px;border-bottom:1px solid var(--cream3);color:var(--ink2)}
+.out-table tr:last-child td{border-bottom:none}
+.out-table .pos{color:#2d7a4a;font-weight:600}.out-table .neg{color:#c4440d;font-weight:600}.out-table .hi{color:var(--ink);font-weight:600}
+.out-text{font-family:var(--mono);font-size:12px;line-height:1.9;color:var(--ink2);white-space:pre-wrap}
+.callout{padding:14px 18px;border-radius:4px;margin:16px 0;font-size:13.5px;line-height:1.65;border-left:3px solid}
+.callout-insight{background:#faf5ee;border-color:#c49a00;color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:#f0f5fa;border-color:var(--blue2);color:var(--ink2)}
+.callout strong{font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:4px;opacity:.7}
+.interpret{background:var(--cream2);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin:14px 0}
+.interpret-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:10px}
+.interpret ul{list-style:none;padding:0}
+.interpret li{font-size:13px;color:var(--ink2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.6}
+.interpret li:last-child{border-bottom:none}
+.interpret li::before{content:"→ ";color:var(--accent2);font-weight:700}
+.kpi-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.kpi{flex:1;min-width:110px;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:4px;border-top:3px solid}
+.kpi-val{font-family:var(--display);font-size:26px;font-weight:700;line-height:1;margin-bottom:4px}
+.kpi-label{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.05em;text-transform:uppercase}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.qa-box{padding:14px 16px;border-radius:4px;font-size:13px}
+.qa-good{background:#f0f7f3;border:1px solid #bde0ca}
+.qa-bad{background:#fef5f0;border:1px solid #f4c4aa}
+.qa-box h5{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;font-family:var(--mono)}
+.qa-good h5{color:#1a4a2e}.qa-bad h5{color:#8b2500}
+.qa-box ul{list-style:none;padding:0}
+.qa-box li{padding:3px 0;line-height:1.55;color:var(--ink2)}
+.qa-good li::before{content:"✓  ";color:#2d7a4a;font-weight:700}
+.qa-bad li::before{content:"✗  ";color:#c4440d;font-weight:700}
+.ext-list{list-style:none;padding:0;counter-reset:ext}
+.ext-list li{counter-increment:ext;padding:9px 14px 9px 38px;position:relative;border-bottom:1px solid var(--cream3);font-size:13px;color:var(--ink2);line-height:1.6}
+.ext-list li::before{content:counter(ext);position:absolute;left:0;top:9px;width:22px;height:22px;background:var(--cream3);color:var(--ink3);font-family:var(--mono);font-size:10px;border-radius:50%;text-align:center;line-height:22px}
+.ext-list li strong{color:var(--ink);display:block}
+.nb-footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media(max-width:600px){.page{padding:24px 16px 60px}.nb-title{font-size:26px}.qa-grid{grid-template-columns:1fr}}
+</style></head><body><div class="page">
+<a href="../ML_Strategy_Playbook.html#ridge" class="back-link">← Back to Master Playbook · 2.1 Ridge / Lasso Regression</a>
+<div class="nb-header"><div class="nb-num">Notebook 2.1</div><h1 class="nb-title">Ridge / Lasso Regression</h1>
+<div class="nb-meta"><span>Question: <em>What drives this KPI?</em></span><span>Output: <em>Continuous value</em></span><span>Dataset: <em>pricing.csv (600 rows)</em></span><span>Use case: <em>Margin driver analysis · CLTV modelling</em></span></div>
+<p class="nb-intro">Pipeline walkthrough — analyst workflow steps, followed by pre-populated outputs and business interpretation at each stage.</p></div>
+<div class="stage" id="s1"><div class="stage-num">Stage 01</div><h2 class="stage-title">Driver Analysis Setup</h2><p class="stage-intro">Ridge and Lasso identify what drives a continuous KPI. Key question: explain all drivers (Ridge) or find the minimal set (Lasso)?</p><ul class="workflow"><li><strong>Define continuous target</strong> pricing.csv target = gross_margin %. Features: product category, list_price, discount_pct, volume, channel, competitor_price_index, cost_index.</li><li><strong>Standardise all features first</strong> Mandatory. After scaling, coefficient magnitude is directly comparable across all features.<em><em>Without standardisation a coefficient of 0.02 on revenue and 2.0 on a binary flag are not comparable.</em></em></li><li><strong>Choose Ridge vs Lasso</strong> Ridge: all features contribute, handles multicollinearity. Lasso: zeros out irrelevant features. For driver analysis: Ridge. For feature selection: Lasso.</li></ul><div class="output-block"><div class="output-label">Output: Target Distribution <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">Pricing dataset: 600 transactions
+Target: gross_margin (%)
+  Mean: 34.2%   Median: 33.8%   Std: 8.4%   Min: 8.3%   Max: 61.7%
+Feature correlations with target:
+  discount_pct:          r = -0.68  (strong negative)
+  cost_index:            r = -0.54
+  list_price:            r = +0.41
+  volume_log:            r = +0.28
+  competitor_price_idx:  r = +0.22</div></div></div></div><div class="stage" id="s2"><div class="stage-num">Stage 02</div><h2 class="stage-title">Train & Interpret Coefficients</h2><p class="stage-intro">Fit Ridge with alpha selected via cross-validation. Extract and interpret standardised coefficients.</p><ul class="workflow"><li><strong>Try alpha = 0.01, 0.1, 1, 10, 100 on validation RMSE</strong> CV selects alpha=1.0 as optimal.</li><li><strong>Plot coefficient chart</strong> Horizontal bar chart sorted by magnitude. Positive = increases margin, negative = decreases.</li><li><strong>Sanity-check every coefficient direction</strong> Higher discounts should reduce margin. Lower cost should increase margin. Any counter-intuitive result needs investigation.</li></ul><div class="output-block"><div class="output-label">Output: Standardised Coefficients (Ridge alpha=1.0) <span class="out-type">Table</span></div><div class="output-inner"><table class="out-table"><thead><tr><th>Feature</th><th>Std coef</th><th>Direction</th><th>Business interpretation</th></tr></thead><tbody><tr><td>discount_pct</td><td>-0.61</td><td>↓ Reduces</td><td>Every 1σ increase in discount (~4pp) reduces margin by ~5pp</td></tr><tr><td>cost_index</td><td>-0.44</td><td>↓ Reduces</td><td>Cost increases compress margin directly</td></tr><tr><td>list_price</td><td>+0.38</td><td>↑ Increases</td><td>Premium pricing is the strongest positive driver</td></tr><tr><td>channel_Direct</td><td>+0.29</td><td>↑ Increases</td><td>Direct channel: +2.4pp margin vs distributor</td></tr><tr><td>volume_log</td><td>+0.21</td><td>↑ Increases</td><td>Scale effects: high volume achieves better margin</td></tr><tr><td>competitor_price_idx</td><td>+0.18</td><td>↑ Increases</td><td>Higher relative price vs competitor → higher margin</td></tr><tr><td>contract_Annual</td><td>+0.14</td><td>↑ Increases</td><td>Annual contracts deliver higher margin than monthly</td></tr><tr><td>product_cat_B</td><td>-0.08</td><td>↓ Reduces</td><td>Category B structurally lower margin</td></tr></tbody></table></div></div><div class="output-block"><div class="output-label">Output: Model Performance <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">Ridge (alpha=1.0, standardised):
+  R²:   0.71  (71% of margin variance explained)
+  RMSE: 4.5pp  (average prediction error)
+  MAE:  3.4pp
+Lasso (alpha=0.05, CV-selected):
+  Features zeroed out: 3 (region_West, age_segment_1, sku_code)
+  R²:   0.69  (-0.02 vs Ridge)
+Chosen: Ridge — slightly better R², richer coefficient interpretation</div></div></div><div class="interpret"><div class="interpret-title">What this tells you</div><ul><li>Discount policy is the primary margin lever — 1σ reduction in discount (~4pp improvement) predicts +5pp margin increase.</li><li>Direct channel delivers +2.4pp vs distributor — channel mix shift is a meaningful opportunity.</li><li>R2=0.71 means 29% of margin variance is unexplained — likely by product-specific factors not in the current feature set.</li></ul></div><div class="callout callout-warning"><strong>Causation vs correlation</strong>Coefficients describe association. Higher volume may appear to drive margin due to self-selection (profitable products sell more). Design a test to confirm causal direction before acting on any finding.</div></div><div class="stage" id="s3"><div class="stage-num">Stage 03</div><h2 class="stage-title">Residual Check & QA</h2><p class="stage-intro">Check model assumptions and sign off on the output.</p><ul class="workflow"><li><strong>Plot residuals vs fitted values</strong> Constant variance across the range = heteroscedasticity absent. Funnel shape = needs log transform or weighted regression.</li><li><strong>Compare Ridge vs OLS</strong> Ridge should always match or outperform OLS on hold-out data when features are correlated.</li></ul><div class="output-block"><div class="output-label">Output: Residual Diagnostics <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">Residuals vs fitted: roughly constant variance across range  ✓
+Shapiro-Wilk test:    p=0.12 (approximately normal residuals)  ✓
+Outliers (|std residual|>3): 4 observations (0.7%) — review for data errors
+Conclusion: model assumptions broadly satisfied. Safe to interpret.</div></div></div><div class="output-block"><div class="output-label">Output: QA <span class="out-type">Checklist</span></div><div class="output-inner"><div class="qa-grid"><div class="qa-box qa-good"><h5>Good output</h5><ul><li>Features standardised before coefficient extraction</li><li>Ridge used over plain OLS</li><li>R2 and RMSE compared against intercept-only baseline</li><li>Causation vs correlation explicit in findings</li></ul></div><div class="qa-box qa-bad"><h5>Red flags</h5><ul><li>Coefficients reported in raw unstandardised units</li><li>Top feature is high-cardinality ID or categorical</li><li>RMSE without context vs baseline</li></ul></div></div></div></div></div>
+<div class="nb-footer"><span>2.1 · Ridge / Lasso Regression · ML Strategy Playbook · Archishman Bandyopadhyay</span>
+<a href="../ML_Strategy_Playbook.html#ridge" style="color:var(--ink4);text-decoration:none">← Back</a></div>
+</div></body></html>

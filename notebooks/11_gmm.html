@@ -1,0 +1,106 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>3.3 · Gaussian Mixture Models — ML Strategy Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;--cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;--accent:#8b2500;--accent2:#c4440d;--accent3:#e8c4a0;--blue:#1a3a5c;--blue2:#2d5f8a;--green:#1a4a2e;--green2:#2d7a4a;--gold:#7a5a00;--border:#d4cdc4;--border2:#c4bdb4;--serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.page{max-width:860px;margin:0 auto;padding:40px 32px 80px}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--ink4);text-decoration:none;margin-bottom:32px;border:1px solid var(--border);padding:5px 12px;border-radius:3px}
+.back-link:hover{color:var(--ink);border-color:var(--border2)}
+.nb-header{border-bottom:2px solid var(--ink);padding-bottom:24px;margin-bottom:36px}
+.nb-num{font-family:var(--mono);font-size:11px;color:var(--accent2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.nb-title{font-family:var(--display);font-size:36px;font-weight:700;line-height:1.15;margin-bottom:12px;letter-spacing:-.02em}
+.nb-meta{display:flex;flex-wrap:wrap;gap:16px;font-family:var(--mono);font-size:10px;color:var(--ink4);margin-bottom:16px}
+.nb-meta span em{color:var(--ink2);font-style:normal;font-weight:600}
+.nb-intro{font-size:15px;color:var(--ink3);line-height:1.7;border-left:3px solid var(--accent3);padding-left:16px;max-width:680px}
+.toc{background:#fff;border:1px solid var(--border);border-radius:6px;padding:20px 24px;margin:28px 0}
+.toc-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px}
+.toc ol{list-style:none;padding:0;counter-reset:toc}
+.toc li{counter-increment:toc;padding:5px 0;border-bottom:1px solid var(--cream3);font-size:13px}
+.toc li:last-child{border-bottom:none}
+.toc li::before{content:counter(toc,decimal-leading-zero)". ";font-family:var(--mono);font-size:10px;color:var(--ink4);margin-right:6px}
+.toc a{color:var(--ink2);text-decoration:none}.toc a:hover{color:var(--accent2)}
+.stage{margin:40px 0 0;padding-top:28px;border-top:2px solid var(--border)}
+.stage-num{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.stage-title{font-family:var(--display);font-size:22px;font-weight:600;margin-bottom:12px}
+.stage-intro{font-size:14px;color:var(--ink3);line-height:1.7;margin-bottom:22px;max-width:700px}
+.workflow{margin:0 0 22px;padding:0;list-style:none;counter-reset:wf}
+.workflow li{counter-increment:wf;padding:10px 14px 10px 48px;position:relative;border-left:2px solid var(--cream3);margin-bottom:6px;font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.workflow li::before{content:counter(wf);position:absolute;left:-13px;top:10px;width:24px;height:24px;background:var(--ink);color:var(--cream);font-family:var(--mono);font-size:10px;font-weight:600;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;line-height:24px}
+.workflow li strong{color:var(--ink);display:block;margin-bottom:2px}
+.workflow li em{color:var(--ink4);font-style:normal;font-size:12px}
+.output-block{background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin:16px 0 28px}
+.output-label{background:var(--ink);color:var(--cream2);font-family:var(--mono);font-size:10px;padding:7px 14px;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+.out-type{font-size:9px;padding:1px 7px;border-radius:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.output-inner{padding:18px 20px}
+.out-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.out-table th{background:var(--cream2);padding:7px 12px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.04em;color:var(--ink3);border-bottom:2px solid var(--border)}
+.out-table td{padding:7px 12px;border-bottom:1px solid var(--cream3);color:var(--ink2)}
+.out-table tr:last-child td{border-bottom:none}
+.out-table .pos{color:#2d7a4a;font-weight:600}.out-table .neg{color:#c4440d;font-weight:600}.out-table .hi{color:var(--ink);font-weight:600}
+.out-text{font-family:var(--mono);font-size:12px;line-height:1.9;color:var(--ink2);white-space:pre-wrap}
+.callout{padding:14px 18px;border-radius:4px;margin:16px 0;font-size:13.5px;line-height:1.65;border-left:3px solid}
+.callout-insight{background:#faf5ee;border-color:#c49a00;color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:#f0f5fa;border-color:var(--blue2);color:var(--ink2)}
+.callout strong{font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:4px;opacity:.7}
+.interpret{background:var(--cream2);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin:14px 0}
+.interpret-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);margin-bottom:10px}
+.interpret ul{list-style:none;padding:0}
+.interpret li{font-size:13px;color:var(--ink2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.6}
+.interpret li:last-child{border-bottom:none}
+.interpret li::before{content:"→ ";color:var(--accent2);font-weight:700}
+.kpi-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.kpi{flex:1;min-width:110px;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:4px;border-top:3px solid}
+.kpi-val{font-family:var(--display);font-size:26px;font-weight:700;line-height:1;margin-bottom:4px}
+.kpi-label{font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:.05em;text-transform:uppercase}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.qa-box{padding:14px 16px;border-radius:4px;font-size:13px}
+.qa-good{background:#f0f7f3;border:1px solid #bde0ca}
+.qa-bad{background:#fef5f0;border:1px solid #f4c4aa}
+.qa-box h5{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;font-family:var(--mono)}
+.qa-good h5{color:#1a4a2e}.qa-bad h5{color:#8b2500}
+.qa-box ul{list-style:none;padding:0}
+.qa-box li{padding:3px 0;line-height:1.55;color:var(--ink2)}
+.qa-good li::before{content:"✓  ";color:#2d7a4a;font-weight:700}
+.qa-bad li::before{content:"✗  ";color:#c4440d;font-weight:700}
+.ext-list{list-style:none;padding:0;counter-reset:ext}
+.ext-list li{counter-increment:ext;padding:9px 14px 9px 38px;position:relative;border-bottom:1px solid var(--cream3);font-size:13px;color:var(--ink2);line-height:1.6}
+.ext-list li::before{content:counter(ext);position:absolute;left:0;top:9px;width:22px;height:22px;background:var(--cream3);color:var(--ink3);font-family:var(--mono);font-size:10px;border-radius:50%;text-align:center;line-height:22px}
+.ext-list li strong{color:var(--ink);display:block}
+.nb-footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media(max-width:600px){.page{padding:24px 16px 60px}.nb-title{font-size:26px}.qa-grid{grid-template-columns:1fr}}
+</style></head><body><div class="page">
+<a href="../ML_Strategy_Playbook.html#gmm" class="back-link">← Back to Master Playbook · 3.3 Gaussian Mixture Models</a>
+<div class="nb-header"><div class="nb-num">Notebook 3.3</div><h1 class="nb-title">Gaussian Mixture Models</h1>
+<div class="nb-meta"><span>Question: <em>Who partially belongs to multiple segments?</em></span><span>Output: <em>Soft membership probabilities</em></span><span>Dataset: <em>customers.csv (800 rows)</em></span><span>Use case: <em>Customer genome soft segmentation · Transition-zone intervention targeting</em></span></div>
+<p class="nb-intro">Pipeline walkthrough — analyst workflow steps, pre-populated outputs, and business interpretation at each stage.</p></div>
+<div class="stage" id="s1"><div class="stage-num">Stage 01</div><h2 class="stage-title">Soft Segmentation Setup</h2><p class="stage-intro">GMM assigns each customer a probability of belonging to each segment rather than a hard label. This reflects real customer complexity — a customer can be 70% Champion, 30% At-Risk.</p><ul class="workflow"><li><strong>Identify whether soft segments are needed</strong> Hard segments (K-Means) are sufficient for most strategy work. Use GMM when: (1) you need membership probabilities for personalisation, or (2) you suspect segments genuinely overlap.<em><em>If you need 'Customer X belongs to segment 2', use K-Means. If you need 'Customer X is 68% segment 2', use GMM.</em></em></li><li><strong>Choose covariance type</strong> Full: most flexible, each cluster has its own covariance matrix. Tied: all clusters share one covariance. Diagonal: features independent within clusters. Spherical: circular, like K-Means. Start with 'full'; use 'diagonal' if n/cluster is small.</li><li><strong>Use BIC for model selection</strong> BIC (Bayesian Information Criterion) penalises model complexity. Compute BIC for K=2 to 10. Choose K at the BIC minimum or elbow.</li></ul><div class="output-block"><div class="output-label">Output: BIC Model Selection <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">GMM BIC across K (covariance='full'):
+  K    BIC
+  2    42,840
+  3    40,218
+  4    38,941
+  5    38,402   ← BIC elbow and near-minimum
+  6    38,317   ← slight improvement, borderline
+  7    38,524   ← BIC increases (overfitting)
+  8    38,810
+  
+  Selected: K=5 (elbow, consistent with K-Means result)
+  Convergence: achieved at iteration 47 out of max 200</div></div></div></div><div class="stage" id="s2"><div class="stage-num">Stage 02</div><h2 class="stage-title">Fit & Interpret Soft Assignments</h2><p class="stage-intro">Fit the GMM and examine membership probabilities — the key output that differentiates GMM from hard clustering.</p><ul class="workflow"><li><strong>Fit GaussianMixture(n_components=5, covariance_type='full')</strong> Fitted via EM algorithm. Each iteration assigns soft membership weights then recomputes component parameters.</li><li><strong>Extract membership probabilities</strong> For each customer: vector of 5 probabilities summing to 1. High certainty: [0.93, 0.02, 0.02, 0.02, 0.01]. Low certainty: [0.31, 0.28, 0.22, 0.11, 0.08] — ambiguous customer.</li><li><strong>Identify ambiguous customers</strong> Customers with entropy > threshold are genuinely segment-ambiguous. These are interesting: they may be transitional customers who are in the process of churning or upgrading.</li></ul><div class="output-block"><div class="output-label">Output: Sample Membership Probabilities <span class="out-type">Table</span></div><div class="output-inner"><table class="out-table"><thead><tr><th>Customer</th><th>Comp0 (Champion)</th><th>Comp1 (Loyal)</th><th>Comp2 (At-Risk)</th><th>Comp3 (Low-Engage)</th><th>Comp4 (Price-Sens)</th><th>Assigned</th><th>Confidence</th></tr></thead><tbody><tr><td>C0412</td><td>0.02</td><td>0.04</td><td>0.91</td><td>0.02</td><td>0.01</td><td>At-Risk</td><td>High (0.91)</td></tr><tr><td>C0287</td><td>0.71</td><td>0.22</td><td>0.03</td><td>0.03</td><td>0.01</td><td>Champion</td><td>High (0.71)</td></tr><tr><td>C0551</td><td>0.08</td><td>0.31</td><td>0.33</td><td>0.22</td><td>0.06</td><td>Ambiguous</td><td>Low (0.33)</td></tr><tr><td>C0198</td><td>0.48</td><td>0.38</td><td>0.06</td><td>0.04</td><td>0.04</td><td>Champion</td><td>Moderate (0.48)</td></tr><tr><td>C0634</td><td>0.02</td><td>0.04</td><td>0.04</td><td>0.86</td><td>0.04</td><td>Low-Engage</td><td>High (0.86)</td></tr></tbody></table><div style="font-size:11px;color:var(--ink4);margin-top:8px;font-family:var(--mono)">Ambiguous customers (max probability < 0.5) represent 14% of the dataset — these are the most interesting cases for retention analysis.</div></div></div><div class="output-block"><div class="output-label">Output: Entropy Distribution <span class="out-type">Console</span></div><div class="output-inner"><div class="out-text">Membership entropy distribution:
+  Low entropy (< 0.5, high certainty): 68% of customers
+  Medium entropy (0.5 - 1.5):          18% of customers
+  High entropy (> 1.5, ambiguous):     14% of customers
+
+  Ambiguous customers have:
+    Higher churn rate: 31% vs 20% for certain assignments
+    Higher support calls: 2.9 vs 1.8 average
+    Mid-range tenure: 24 months average
+  
+  Interpretation: ambiguous customers are often transitional —
+  in the process of disengaging but not yet firmly in the At-Risk segment.
+  These are the highest-priority intervention targets.</div></div></div><div class="interpret"><div class="interpret-title">What this tells you</div><ul><li>68% of customers have confident segment assignments (entropy < 0.5) — the segmentation is well-defined for most of the population.</li><li>The 14% ambiguous customers are disproportionately valuable: higher churn rate (31%) and mid-tenure (24 months) suggests they are at a tipping point. GMM identifies them; K-Means would have assigned them arbitrarily to one segment.</li><li>Customer C0551 (33/31/22/08/06 probabilities) is a genuine strategic question: is this customer churning from Champion to At-Risk, or At-Risk to Loyal?</li></ul></div><div class="callout callout-insight"><strong>GMM's unique value: identifying segment transitions</strong>The most strategically valuable output of GMM is the 14% ambiguous customers — K-Means would have assigned them to a single segment, hiding the ambiguity. These transition-zone customers are where proactive intervention has the highest ROI.</div></div><div class="stage" id="s3"><div class="stage-num">Stage 03</div><h2 class="stage-title">QA</h2><p class="stage-intro"></p><ul class="workflow"><li><strong>Run multiple initialisations</strong> GMM can converge to local optima. Run n_init=5-10 and check if component parameters are consistent.</li><li><strong>Check BIC plateau</strong> If BIC keeps decreasing as K increases, consider a higher max K or a different covariance type.</li></ul><div class="output-block"><div class="output-label">Output: QA <span class="out-type">Checklist</span></div><div class="output-inner"><div class="qa-grid"><div class="qa-box qa-good"><h5>Good</h5><ul><li>BIC used for K selection (not just silhouette)</li><li>Multiple initialisations run</li><li>Ambiguous customers identified and interpreted</li><li>Membership probabilities shown alongside hard assignments</li></ul></div><div class="qa-box qa-bad"><h5>Red flags</h5><ul><li>K chosen without BIC — arbitrary</li><li>Single initialisation — may be local optimum</li><li>Hard labels only reported — soft probabilities discarded</li><li>n_init=1 (default in some libraries — check)</li></ul></div></div></div></div></div>
+<div class="nb-footer"><span>3.3 · Gaussian Mixture Models · ML Strategy Playbook</span>
+<a href="../ML_Strategy_Playbook.html#gmm" style="color:var(--ink4);text-decoration:none">← Back</a></div>
+</div></body></html>
