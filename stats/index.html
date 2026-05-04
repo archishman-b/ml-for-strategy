@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statistical Foundations for Strategy Professionals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;
+  --cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;
+  --accent:#8b2500;--accent2:#c4440d;--accent3:#e8c4a0;
+  --border:#d4cdc4;
+  --serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);--shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+@media(prefers-color-scheme:dark){
+  :root{--ink:#f0ece4;--ink2:#d8d0c4;--ink3:#a09488;--ink4:#6a6058;--cream:#181612;--cream2:#201e1a;--cream3:#2a2620;--accent2:#e8784a;--accent3:#c4845a;--border:#38342e;}
+  body{background:#141210}
+  .hero{background:#0e0c0a}
+  .chapter-card{background:#1e1c18;border-color:#38342e}
+  .chapter-card:hover{background:#242018}
+  .ch-num{color:#6a6058}
+  .ch-title-sm{color:var(--ink)}
+  .ch-desc{color:var(--ink3)}
+  .ch-accent{color:var(--accent2) !important}
+  .part-label{color:var(--ink4)}
+  .stats-bar{background:#1e1c18;border-color:#38342e}
+  .stat-num{color:var(--ink)}
+  .stat-label{color:var(--ink4)}
+  .companion-banner{background:#1e1c18;border-color:#38342e}
+  .footer{background:#0e0c0a;border-color:#38342e}
+}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+
+/* ── HERO ── */
+.hero{background:var(--ink);color:var(--cream);padding:88px 72px 72px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 85% 40%,rgba(196,68,13,0.1) 0%,transparent 55%);pointer-events:none}
+.hero-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent3);margin-bottom:20px;opacity:0.7}
+.hero-title{font-family:var(--display);font-size:58px;font-weight:700;line-height:1.1;letter-spacing:-0.025em;color:#fff;margin-bottom:24px;max-width:780px}
+.hero-title em{color:var(--accent3);font-style:normal}
+.hero-desc{font-size:17px;color:rgba(255,255,255,0.65);max-width:620px;line-height:1.75;margin-bottom:40px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:32px;font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.38);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:40px}
+.hero-meta span em{color:rgba(255,255,255,0.68);font-style:normal}
+.hero-links{display:flex;gap:16px;flex-wrap:wrap}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--accent2);color:#fff;
+  font-family:var(--mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;
+  text-decoration:none;padding:12px 24px;border-radius:4px;transition:all 0.15s;
+}
+.btn-primary:hover{background:#e05820}
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:transparent;color:rgba(255,255,255,0.6);
+  font-family:var(--mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;
+  text-decoration:none;padding:12px 24px;border-radius:4px;border:1px solid rgba(255,255,255,0.2);
+  transition:all 0.15s;
+}
+.btn-secondary:hover{border-color:rgba(255,255,255,0.5);color:#fff}
+
+/* ── STATS BAR ── */
+.stats-bar{display:flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;background:#fff;margin:56px 72px 0}
+.stat-item{flex:1;padding:24px 28px;border-right:1px solid var(--border);text-align:center}
+.stat-item:last-child{border-right:none}
+.stat-num{font-family:var(--display);font-size:32px;font-weight:600;color:var(--ink);line-height:1;margin-bottom:6px}
+.stat-label{font-family:var(--mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink4)}
+
+/* ── CHAPTER GRID ── */
+.chapters-section{padding:64px 72px}
+.section-header{margin-bottom:40px}
+.section-eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px}
+.section-heading{font-family:var(--display);font-size:32px;font-weight:600;color:var(--ink);line-height:1.2;letter-spacing:-0.01em}
+
+/* Part groupings */
+.part-group{margin-bottom:48px}
+.part-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink4);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.chapter-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+
+.chapter-card{
+  background:#fff;border:1px solid var(--border);border-radius:6px;
+  padding:20px 22px;box-shadow:var(--shadow);transition:all 0.2s;
+  text-decoration:none;display:block;position:relative;
+  border-top:3px solid transparent;
+}
+.chapter-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+.ch-num{font-family:var(--mono);font-size:9px;letter-spacing:0.06em;color:var(--ink4);margin-bottom:8px;display:block}
+.ch-title-sm{font-family:var(--display);font-size:14.5px;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:6px}
+.ch-accent{font-weight:400}
+.ch-desc{font-size:12px;color:var(--ink3);line-height:1.55;margin-bottom:10px}
+.ch-tags{display:flex;flex-wrap:wrap;gap:4px}
+.ch-tag{font-family:var(--mono);font-size:9px;background:var(--cream2);color:var(--ink4);padding:2px 6px;border-radius:3px;letter-spacing:0.03em}
+
+/* accent colors per part */
+.part-thinking .chapter-card:hover{border-top-color:#c4440d}
+.part-describing .chapter-card:hover{border-top-color:#7a3abf}
+.part-probability .chapter-card:hover{border-top-color:#1a7a6a}
+.part-inference .chapter-card:hover{border-top-color:#8a3020}
+.part-relationships .chapter-card:hover{border-top-color:#4a0a2a}
+.part-prediction .chapter-card:hover{border-top-color:#1a1a5a}
+.part-unsupervised .chapter-card:hover{border-top-color:#5a0a20}
+.part-time .chapter-card:hover{border-top-color:#0a2a4a}
+.part-applied .chapter-card:hover{border-top-color:#2a3a10}
+.part-governance .chapter-card:hover{border-top-color:#2a2a2a}
+
+/* ── COMPANION BANNER ── */
+.companion-banner{
+  margin:0 72px 64px;background:#fff;border:1px solid var(--border);
+  border-radius:6px;padding:28px 32px;display:flex;align-items:center;gap:24px;
+  box-shadow:var(--shadow);
+}
+.companion-text{flex:1}
+.companion-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent2);margin-bottom:6px}
+.companion-title{font-family:var(--display);font-size:18px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.companion-desc{font-size:13px;color:var(--ink3);line-height:1.6}
+.companion-link{
+  font-family:var(--mono);font-size:11px;color:var(--accent2);
+  text-decoration:none;border:1px solid currentColor;padding:8px 16px;
+  border-radius:3px;flex-shrink:0;transition:all 0.15s;white-space:nowrap;
+}
+.companion-link:hover{background:var(--accent2);color:#fff}
+
+/* ── FOOTER ── */
+.footer{background:var(--ink);border-top:1px solid #2a2520;padding:40px 72px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-left{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.05em}
+.footer-left a{color:rgba(255,255,255,0.55);text-decoration:none}
+.footer-left a:hover{color:rgba(255,255,255,0.85)}
+.footer-right{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.05em;text-align:right}
+
+/* ── RESPONSIVE ── */
+@media(max-width:800px){
+  .hero,.chapters-section{padding:48px 24px}
+  .hero-title{font-size:38px}
+  .stats-bar{margin:40px 24px 0;flex-wrap:wrap}
+  .stat-item{flex:1 1 50%;border-bottom:1px solid var(--border)}
+  .chapter-grid{grid-template-columns:1fr 1fr}
+  .companion-banner{margin:0 24px 48px;flex-direction:column;align-items:flex-start}
+  .footer{padding:32px 24px}
+}
+@media(max-width:500px){
+  .chapter-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">A Strategy Professional's Reference · 18 Chapters · ~340 Terms</div>
+  <h1 class="hero-title">Statistical Foundations for <em>Strategy Professionals</em></h1>
+  <p class="hero-desc">The statistical vocabulary that underlies every predictive model, experiment, and analytical decision — explained through business intuition, mathematical precision, and realistic examples from the industries where it is applied.</p>
+  <div class="hero-meta">
+    <span>Chapters: <em>18</em></span>
+    <span>Terms: <em>~340</em></span>
+    <span>Companion: <em>ML Strategy Playbook</em></span>
+    <span>Audience: <em>Strategy · PM · Analytics-Adjacent</em></span>
+  </div>
+  <div class="hero-links">
+    <a href="ch01_statistical_thinking.html" class="btn-primary">→ Start Reading</a>
+    <a href="https://archishman-b.github.io/ml-for-strategy/ML_Strategy_Playbook.html" class="btn-secondary">↗ ML Playbook Companion</a>
+  </div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num">18</div>
+    <div class="stat-label">Chapters</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">~340</div>
+    <div class="stat-label">Terms Defined</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">10</div>
+    <div class="stat-label">Thematic Parts</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">5</div>
+    <div class="stat-label">Fields per Term</div>
+  </div>
+</div>
+
+<!-- CHAPTER GRID -->
+<div class="chapters-section">
+  <div class="section-header">
+    <div class="section-eyebrow">All Chapters</div>
+    <h2 class="section-heading">The complete curriculum</h2>
+  </div>
+
+  <!-- Part 1 -->
+  <div class="part-group part-thinking">
+    <div class="part-label">Part 1 — Thinking With Data</div>
+    <div class="chapter-grid">
+      <a href="ch01_statistical_thinking.html" class="chapter-card">
+        <span class="ch-num">Chapter 01</span>
+        <div class="ch-title-sm">Statistical Thinking and the <span class="ch-accent" style="color:#c4440d">Analytics Mindset</span></div>
+        <div class="ch-desc">Variation, uncertainty, signal vs noise, inference, and the cognitive biases that distort analytical judgment.</div>
+        <div class="ch-tags"><span class="ch-tag">Mindset</span><span class="ch-tag">Bias</span><span class="ch-tag">Variation</span></div>
+      </a>
+      <a href="ch02_data_fundamentals.html" class="chapter-card">
+        <span class="ch-num">Chapter 02</span>
+        <div class="ch-title-sm">Data Fundamentals — <span class="ch-accent" style="color:#c4440d">Types, Quality & Structure</span></div>
+        <div class="ch-desc">Variable types, data quality dimensions, missing data mechanisms, leakage, drift, and PSI.</div>
+        <div class="ch-tags"><span class="ch-tag">Variable Types</span><span class="ch-tag">Leakage</span><span class="ch-tag">Drift</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Part 2 -->
+  <div class="part-group part-describing">
+    <div class="part-label">Part 2 — Describing What You Have</div>
+    <div class="chapter-grid">
+      <a href="ch03_descriptive_stats.html" class="chapter-card">
+        <span class="ch-num">Chapter 03</span>
+        <div class="ch-title-sm">Measures of Center and <span class="ch-accent" style="color:#7a3abf">Spread</span></div>
+        <div class="ch-desc">Mean, median, variance, IQR, skewness, kurtosis, percentiles, and standardisation.</div>
+        <div class="ch-tags"><span class="ch-tag">Summary Stats</span><span class="ch-tag">Distribution</span><span class="ch-tag">Z-Score</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Part 3 -->
+  <div class="part-group part-probability">
+    <div class="part-label">Part 3 — Probability and Uncertainty</div>
+    <div class="chapter-grid">
+      <a href="ch04_probability.html" class="chapter-card">
+        <span class="ch-num">Chapter 04</span>
+        <div class="ch-title-sm">Probability Foundations — <span class="ch-accent" style="color:#1a7a6a">Language of Uncertainty</span></div>
+        <div class="ch-desc">Bayes' theorem, prior/posterior, base rate neglect, distributions, and common probability errors.</div>
+        <div class="ch-tags"><span class="ch-tag">Bayes</span><span class="ch-tag">Distributions</span><span class="ch-tag">Base Rate</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Part 4 -->
+  <div class="part-group part-inference">
+    <div class="part-label">Part 4 — Inference: From Sample to Truth</div>
+    <div class="chapter-grid">
+      <a href="ch05_sampling_estimation.html" class="chapter-card">
+        <span class="ch-num">Chapter 05</span>
+        <div class="ch-title-sm">Sampling, Estimation &amp; <span class="ch-accent" style="color:#8a3020">Confidence Intervals</span></div>
+        <div class="ch-desc">Sampling bias, CLT, standard error, bootstrap, MLE, bias-variance in estimation.</div>
+        <div class="ch-tags"><span class="ch-tag">Sampling</span><span class="ch-tag">CI</span><span class="ch-tag">Bootstrap</span></div>
+      </a>
+      <a href="ch06_hypothesis_testing.html" class="chapter-card">
+        <span class="ch-num">Chapter 06</span>
+        <div class="ch-title-sm">Hypothesis Testing — <span class="ch-accent" style="color:#8a3020">Is This Real or Noise?</span></div>
+        <div class="ch-desc">p-values, Type I/II errors, power, multiple testing, Bonferroni correction, p-hacking.</div>
+        <div class="ch-tags"><span class="ch-tag">p-value</span><span class="ch-tag">Power</span><span class="ch-tag">Significance</span></div>
+      </a>
+      <a href="ch07_comparing_groups.html" class="chapter-card">
+        <span class="ch-num">Chapter 07</span>
+        <div class="ch-title-sm">Comparing Groups — <span class="ch-accent" style="color:#8a3020">t-Tests, ANOVA & Nonparametric</span></div>
+        <div class="ch-desc">Two-sample t-test, paired t-test, ANOVA, chi-square, Mann-Whitney, Kruskal-Wallis.</div>
+        <div class="ch-tags"><span class="ch-tag">t-Test</span><span class="ch-tag">ANOVA</span><span class="ch-tag">Chi-Square</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Part 5 -->
+  <div class="part-group part-relationships">
+    <div class="part-label">Part 5 — Relationships in Data</div>
+    <div class="chapter-grid">
+      <a href="ch08_correlation.html" class="chapter-card">
+        <span class="ch-num">Chapter 08</span>
+        <div class="ch-title-sm">Correlation, Association &amp; <span class="ch-accent" style="color:#4a0a2a">Common Traps</span></div>
+        <div class="ch-desc">Pearson, Spearman, Cramér's V, spurious correlation, confounding, Simpson's paradox.</div>
+        <div class="ch-tags"><span class="ch-tag">Correlation</span><span class="ch-tag">Confounding</span><span class="ch-tag">Simpson's</span></div>
+      </a>
+      <a href="ch09_regression.html" class="chapter-card">
+        <span class="ch-num">Chapter 09</span>
+        <div class="ch-title-sm">Regression <span class="ch-accent" style="color:#4a0a2a">Fundamentals</span></div>
+        <div class="ch-desc">OLS, coefficients, R², residuals, multicollinearity, omitted variable bias, logistic regression.</div>
+        <div class="ch-tags"><span class="ch-tag">OLS</span><span class="ch-tag">Logistic</span><span class="ch-tag">VIF</span></div>
+      </a>
+      <a href="ch10_causal_inference.html" class="chapter-card">
+        <span class="ch-num">Chapter 10</span>
+        <div class="ch-title-sm">Causal Inference &amp; <span class="ch-accent" style="color:#4a0a2a">Experimental Design</span></div>
+        <div class="ch-desc">Potential outcomes, RCT, DiD, IV, RDD, uplift modeling, SRM.</div>
+        <div class="ch-tags"><span class="ch-tag">Causation</span><span class="ch-tag">DiD</span><span class="ch-tag">Uplift</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Part 6 -->
+  <div class="part-group part-prediction">
+    <div class="part-label">Part 6 — Prediction</div>
+    <div class="chapter-grid">
+      <a href="ch11_predictive_modeling.html" class="chapter-card">
+        <span class="ch-num">Chapter 11</span>
+        <div class="ch-title-sm">Predictive Modeling <span class="ch-accent" style="color:#1a1a5a">Fundamentals</span></div>
+        <div class="ch-desc">Bias-variance tradeoff, cross-validation, train/test splits, feature engineering, GBM, early stopping.</div>
+        <div class="ch-tags"><span class="ch-tag">Bias-Variance</span><span class="ch-tag">GBM</span><span class="ch-tag">CV</span></div>
+      </a>
+      <a href="ch12_regularisation.html" class="chapter-card">
+        <span class="ch-num">Chapter 12</span>
+        <div class="ch-title-sm">Regularisation &amp; <span class="ch-accent" style="color:#1a1a5a">Model Complexity</span></div>
+        <div class="ch-desc">Ridge, Lasso, ElasticNet, hyperparameter tuning, dropout.</div>
+        <div class="ch-tags"><span class="ch-tag">Ridge</span><span class="ch-tag">Lasso</span><span class="ch-tag">Dropout</span></div>
+      </a>
+      <a href="ch13_classification_metrics.html" class="chapter-card">
+        <span class="ch-num">Chapter 13</span>
+        <div class="ch-title-sm">Classification <span class="ch-accent" style="color:#1a1a5a">Metrics</span></div>
+        <div class="ch-desc">Confusion matrix, precision, recall, F1, AUC-ROC, Gini, KS statistic, calibration.</div>
+        <div class="ch-tags"><span class="ch-tag">AUC</span><span class="ch-tag">Gini</span><span class="ch-tag">Precision/Recall</span></div>
+      </a>
+      <a href="ch14_forecast_metrics.html" class="chapter-card">
+        <span class="ch-num">Chapter 14</span>
+        <div class="ch-title-sm">Regression, Forecast &amp; <span class="ch-accent" style="color:#1a1a5a">Calibration Metrics</span></div>
+        <div class="ch-desc">MAE, RMSE, MAPE, forecast bias, rolling bias, prediction intervals, pinball loss.</div>
+        <div class="ch-tags"><span class="ch-tag">RMSE</span><span class="ch-tag">MAPE</span><span class="ch-tag">Bias</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Part 7 -->
+  <div class="part-group part-unsupervised">
+    <div class="part-label">Part 7 — Unsupervised Methods</div>
+    <div class="chapter-grid">
+      <a href="ch15_segmentation_clustering.html" class="chapter-card">
+        <span class="ch-num">Chapter 15</span>
+        <div class="ch-title-sm">Segmentation &amp; <span class="ch-accent" style="color:#5a0a20">Clustering</span></div>
+        <div class="ch-desc">K-means, hierarchical, DBSCAN, GMM, silhouette score, scree plot, PCA.</div>
+        <div class="ch-tags"><span class="ch-tag">K-Means</span><span class="ch-tag">PCA</span><span class="ch-tag">Silhouette</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Part 8 -->
+  <div class="part-group part-time">
+    <div class="part-label">Part 8 — Time and Sequential Data</div>
+    <div class="chapter-grid">
+      <a href="ch16_time_series.html" class="chapter-card">
+        <span class="ch-num">Chapter 16</span>
+        <div class="ch-title-sm">Time Series &amp; <span class="ch-accent" style="color:#0a2a4a">Forecasting</span></div>
+        <div class="ch-desc">Decomposition, stationarity, ARIMA, structural breaks, Prophet, temporal validation.</div>
+        <div class="ch-tags"><span class="ch-tag">ARIMA</span><span class="ch-tag">STL</span><span class="ch-tag">Structural Break</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Part 9 -->
+  <div class="part-group part-applied">
+    <div class="part-label">Part 9 — Applied Analytics</div>
+    <div class="chapter-grid">
+      <a href="ch17_business_analytics.html" class="chapter-card">
+        <span class="ch-num">Chapter 17</span>
+        <div class="ch-title-sm">Business Analytics <span class="ch-accent" style="color:#2a3a10">Applications</span></div>
+        <div class="ch-desc">CLV, survival analysis, anomaly detection, price elasticity, marketing mix modeling.</div>
+        <div class="ch-tags"><span class="ch-tag">CLV</span><span class="ch-tag">MMM</span><span class="ch-tag">Elasticity</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Part 10 -->
+  <div class="part-group part-governance">
+    <div class="part-label">Part 10 — Responsible Analytics</div>
+    <div class="chapter-grid">
+      <a href="ch18_model_governance.html" class="chapter-card">
+        <span class="ch-num">Chapter 18</span>
+        <div class="ch-title-sm">Model Governance, Explainability &amp; <span class="ch-accent" style="color:#2a2a2a">Fairness</span></div>
+        <div class="ch-desc">Model risk, model cards, SHAP, PDP/ICE, demographic parity, equal opportunity, governance lifecycle.</div>
+        <div class="ch-tags"><span class="ch-tag">SHAP</span><span class="ch-tag">Fairness</span><span class="ch-tag">Governance</span></div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- COMPANION BANNER -->
+<div class="companion-banner">
+  <div class="companion-text">
+    <div class="companion-label">Companion Reference</div>
+    <div class="companion-title">ML Strategy Playbook</div>
+    <div class="companion-desc">19 annotated ML notebooks covering logistic regression through causal inference — the applied implementation companion to this statistical foundations guide. Every chapter here links back to the relevant playbook notebook.</div>
+  </div>
+  <a href="https://archishman-b.github.io/ml-for-strategy/ML_Strategy_Playbook.html" class="companion-link">↗ Open Playbook</a>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-left">
+    Statistical Foundations for Strategy Professionals &nbsp;·&nbsp;
+    <a href="https://archishman-b.github.io">archishman-b.github.io</a>
+  </div>
+  <div class="footer-right">
+    Part of the 50-week GitHub portfolio<br>
+    Companion to the ML Strategy Playbook
+  </div>
+</div>
+
+</body>
+</html>

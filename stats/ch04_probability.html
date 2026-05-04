@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 4 — Probability Foundations | Stats Foundations for Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;
+  --cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;
+  --accent:#8b2500;--accent2:#c4440d;--accent3:#e8c4a0;
+  --teal:#0a4a4a;--teal2:#1a7a6a;--teal3:#d0f0ea;
+  --gold:#7a5a00;--gold2:#c49a00;--gold3:#fdf5dc;
+  --blue2:#2d5f8a;--blue3:#ddeaf7;
+  --border:#d4cdc4;
+  --serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace;
+  --radius:4px;--shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);--shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+@media(prefers-color-scheme:dark){
+  :root{--ink:#f0ece4;--ink2:#d8d0c4;--ink3:#a09488;--ink4:#6a6058;--cream:#181612;--cream2:#201e1a;--cream3:#2a2620;--accent2:#e8784a;--teal2:#3abaa0;--teal3:#0a2820;--gold2:#e4c050;--gold3:#221e10;--blue3:#1a2a3a;--border:#38342e;}
+  body{background:#141210}.narrative{background:#141210;border-bottom-color:#2a2620}
+  .term-block{background:#1e1c18}.term-header{background:#1e1c18}.term-body{border-top-color:#2a2620}.field-row{border-bottom-color:#2a2620}.field-value.formula{background:#2a2620}
+  .callout-insight{background:#221e10;border-color:#e4c050}.callout-warning{background:#221410;border-color:#e8784a}.callout-rule{background:#0a2820;border-color:#3abaa0}.callout-gold{background:#221e10;border-color:#e4c050}
+  .illustration{background:#1e1c18;border-color:#38342e}.illustration-caption{border-top-color:#2a2620;background:#1e1c18}
+  .ch-progress{background:#1e1c18;border-bottom-color:#38342e}.progress-bar{background:#2a2620}.progress-fill{background:#3abaa0}
+  .ch-hero{background:#0a2828}.cheat-sheet{background:#0a2828}.cheat-item{background:rgba(255,255,255,0.05);border-left-color:#3abaa0}
+  .companion{color:#3abaa0}.companion:hover{background:#3abaa0;color:#141210}
+  .dist-card{background:#1e1c18;border-color:#38342e}
+  p{color:var(--ink2)}.section-intro{color:var(--ink3);border-left-color:#3abaa0}
+  .term-toggle{background:#2a2620;border-color:#38342e;color:var(--ink3)}.term-block.open .term-toggle{background:#f0ece4;color:#141210;border-color:#f0ece4}
+  .term-name{color:var(--ink)}.term-short{color:var(--ink3)}.section-title{color:var(--ink)}.section-label{color:#3abaa0}.field-label{color:var(--ink4)}.field-value{color:var(--ink2)}
+  .field-value.formula .formula-math{color:#3abaa0}.field-value.formula .formula-plain{color:var(--ink3)}.redflag{color:#e8784a}
+  .cheat-title{color:rgba(180,240,220,0.7)}.cheat-item-title{color:#f0ece4}.cheat-item-body{color:rgba(240,236,228,0.5)}
+  .ch-eyebrow{color:rgba(180,240,220,0.7)}.ch-title{color:#f4f0e8}.ch-intro{color:rgba(240,236,228,0.85)}.ch-meta{color:rgba(240,236,228,0.58)}.ch-meta span em{color:rgba(240,236,228,0.88)}.ch-progress span{color:#a09488}
+  .dist-name{color:var(--ink)}.dist-def{color:var(--ink3)}.dist-eg{color:var(--ink4)}
+  svg text{fill:#6a6058 !important}
+}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.ch-hero{background:var(--teal);color:var(--cream);padding:72px 72px 56px;position:relative;overflow:hidden}
+.ch-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 40%,rgba(26,122,106,0.5) 0%,transparent 60%);pointer-events:none}
+.ch-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(180,240,220,0.7);margin-bottom:16px}
+.ch-title{font-family:var(--display);font-size:44px;font-weight:700;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin-bottom:20px;max-width:700px}
+.ch-title em{color:#7de8d0;font-style:normal}
+.ch-intro{font-size:16px;color:rgba(255,255,255,0.75);max-width:600px;line-height:1.7;margin-bottom:36px}
+.ch-meta{display:flex;flex-wrap:wrap;gap:24px;font-size:10px;color:rgba(255,255,255,0.42);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono)}
+.ch-meta span em{color:rgba(255,255,255,0.72);font-style:normal}
+.ch-progress{display:flex;align-items:center;gap:12px;padding:16px 72px;background:var(--cream2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:0.05em}
+.progress-bar{flex:1;height:3px;background:var(--cream3);border-radius:2px;max-width:200px}
+.progress-fill{height:100%;background:var(--teal2);border-radius:2px;width:22%}
+.narrative{padding:56px 72px 48px;border-bottom:1px solid var(--border);max-width:960px}
+.narrative:last-child{border-bottom:none}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal2);margin-bottom:8px;font-weight:500}
+.section-title{font-family:var(--display);font-size:26px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:8px;letter-spacing:-0.01em}
+.section-intro{font-size:14.5px;color:var(--ink3);line-height:1.75;max-width:680px;margin-bottom:36px;padding-left:16px;border-left:3px solid var(--teal3)}
+.term-block{background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s}
+.term-block:hover{box-shadow:var(--shadow-lg)}
+.term-header{display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;cursor:pointer;user-select:none}
+.term-name{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);line-height:1.25;flex:1}
+.term-short{font-size:12.5px;color:var(--ink3);line-height:1.5;flex:1;font-style:italic;margin-top:3px}
+.term-toggle{font-family:var(--mono);font-size:11px;color:var(--ink4);border:1px solid var(--border);border-radius:3px;padding:2px 8px;flex-shrink:0;margin-top:2px;transition:all 0.15s;background:var(--cream)}
+.term-block.open .term-toggle{background:var(--teal);color:#fff;border-color:var(--teal)}
+.term-body{display:none;padding:0 24px 20px;border-top:1px solid var(--cream2)}
+.term-block.open .term-body{display:block}
+.field-row{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--cream3);align-items:baseline}
+.field-row:last-child{border-bottom:none}
+.field-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);font-weight:500;padding-top:1px}
+.field-value{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.field-value.formula{font-family:var(--mono);font-size:12.5px;background:var(--cream2);padding:10px 14px;border-radius:3px;color:var(--ink);line-height:1.65}
+.field-value.formula .formula-math{color:var(--teal2);font-weight:500;display:block;margin-bottom:4px;font-size:13px}
+.field-value.formula .formula-plain{color:var(--ink3);font-family:var(--serif);font-size:12.5px;font-style:italic}
+.redflag{color:var(--accent);font-size:13px}.redflag::before{content:'⚑ ';font-style:normal}
+.callout{padding:16px 20px;border-radius:var(--radius);margin:20px 0;border-left:3px solid;font-size:13.5px;line-height:1.65}
+.callout-insight{background:var(--gold3);border-color:var(--gold2);color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:var(--teal3);border-color:var(--teal2);color:var(--ink2)}
+.callout-gold{background:var(--gold3);border-color:var(--gold2);color:var(--ink2)}
+.callout strong{font-weight:600;display:block;margin-bottom:5px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.65}
+.illustration{margin:28px 0;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:#fff}
+.illustration-caption{font-family:var(--mono);font-size:10.5px;color:var(--ink4);text-align:center;padding:10px;border-top:1px solid var(--cream2);letter-spacing:0.04em;background:var(--cream)}
+.dist-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}
+.dist-card{background:#fff;border:1px solid var(--border);border-radius:6px;padding:14px 16px;box-shadow:var(--shadow)}
+.dist-badge{font-family:var(--mono);font-size:9px;letter-spacing:0.07em;text-transform:uppercase;background:var(--teal3);color:var(--teal2);padding:2px 7px;border-radius:3px;display:inline-block;margin-bottom:8px}
+.dist-name{font-family:var(--display);font-size:14px;font-weight:600;color:var(--ink);margin-bottom:5px}
+.dist-def{font-size:12px;color:var(--ink3);line-height:1.55;margin-bottom:6px}
+.dist-eg{font-family:var(--mono);font-size:10.5px;color:var(--teal2)}
+.cheat-sheet{background:var(--teal);color:#fff;border-radius:6px;padding:28px 32px;margin-top:24px}
+.cheat-title{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(180,240,220,0.7);margin-bottom:16px}
+.cheat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cheat-item{padding:12px 14px;background:rgba(255,255,255,0.08);border-radius:4px;border-left:2px solid #7de8d0}
+.cheat-item-title{font-size:11.5px;font-weight:600;color:#fff;margin-bottom:4px;font-family:var(--serif)}
+.cheat-item-body{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.55}
+.companion{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--teal2);text-decoration:none;border:1px solid currentColor;padding:5px 12px;border-radius:3px;margin-top:4px;transition:all 0.15s}
+.companion:hover{background:var(--teal2);color:#fff}
+@media(max-width:700px){.ch-hero,.narrative{padding:40px 24px}.ch-title{font-size:30px}.field-row{grid-template-columns:1fr;gap:4px}.dist-grid,.cheat-grid{grid-template-columns:1fr}.ch-progress{padding:12px 24px}}
+</style>
+</head>
+<body>
+<div class="ch-progress">
+  <span>Chapter 4 of 18</span>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <span>Statistical Foundations for Strategy Professionals</span>
+</div>
+<div class="ch-hero">
+  <div class="ch-eyebrow">Part 3 — Probability and Uncertainty · Chapter 4</div>
+  <h1 class="ch-title">Probability Foundations — <em>The Language of Uncertainty</em></h1>
+  <p class="ch-intro">Every forecast, risk score, A/B test result, and model output is ultimately a probability statement. Professionals who cannot read probability statements correctly will misinterpret all of these — consistently and expensively.</p>
+  <div class="ch-meta">
+    <span>Terms covered: <em>18</em></span>
+    <span>Sections: <em>Probability rules · Bayes · Distributions · Decision errors</em></span>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 4.1</div>
+  <h2 class="section-title">Probability — the core language of uncertainty</h2>
+  <p class="section-intro">Probability is how we talk precisely about things we are not sure of. A claim that "there's a good chance" of something is strategically useless. A claim that "there is a 73% probability of X, based on Y evidence" is actionable. Learning to think in probabilities — and to spot where probability reasoning goes wrong — is a foundational skill for anyone working with data-driven outputs.</p>
+
+  <div class="term-block" id="t-prob">
+    <div class="term-header" onclick="toggleTerm('t-prob')">
+      <div style="flex:1"><div class="term-name">Probability</div><div class="term-short">A number between 0 and 1 representing the likelihood of an event — the core language of risk and prediction.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how likely an outcome is with precision — not just "likely" or "unlikely." Probability does not tell you what will happen in any single instance; it tells you the expected pattern over many instances. A 30% churn probability does not mean this customer will definitely stay or definitely leave — it means that among many customers with this profile, roughly 3 in 10 will churn.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">0 ≤ P(event) ≤ 1</span><span class="formula-plain">P = 0: impossible. P = 1: certain. Probabilities of all mutually exclusive outcomes must sum to 1. Probability is not the same as the p-value from hypothesis testing — those are very different concepts that share the word "probability."</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In fraud scores, churn model outputs, forecast distributions, credit default probabilities, conversion likelihood scores, and any output labeled as a "probability" or "likelihood."</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what population and time horizon the probability refers to. A 40% churn probability over 90 days and a 40% churn probability over 12 months imply dramatically different intervention priorities and economics.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A telecom operator's churn model assigns 200,000 customers a 12-month churn probability. The value is only useful if it is calibrated — meaning among all customers scored at 40%, roughly 40% should actually churn over 12 months. An uncalibrated model that ranks customers correctly but overstates probabilities will cause overinvestment in retention spend.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-conditional-prob">
+    <div class="term-header" onclick="toggleTerm('t-conditional-prob')">
+      <div style="flex:1"><div class="term-name">Conditional Probability</div><div class="term-short">The probability of one event given that another event has already occurred: P(A|B).</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how additional information changes what you expect. The overall fraud rate is 0.5% — that is the marginal probability. The fraud rate among transactions with an overseas IP and a new device is 12% — that is a conditional probability. The shift from 0.5% to 12% is the value of the additional information, and it is the logical basis for all segmentation and risk-based decision-making.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">P(A|B) = P(A ∩ B) / P(B)</span><span class="formula-plain">Read as "probability of A given B." Multiply denominator condition through: knowing B happened limits the sample space to only cases where B is true, then asks how often A also occurs within that restricted space. This is the mathematical foundation of every predictive model.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In fraud detection, diagnostic testing, customer segmentation models, funnel analysis, and risk stratification — whenever knowing one thing changes what you expect about another.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the conditioning event meaningfully changes the probability. If the conditional probability barely differs from the unconditional rate, the conditioning variable adds no practical value as a signal.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">An insurer finds the overall large-loss probability is 3.2%. Conditional on a claim filed within 14 days of policy inception, it rises to 19.8%. That conditional probability is far more decision-useful than the overall rate — it defines the exact targeting rule for priority investigation without any ML model required.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-independence">
+    <div class="term-header" onclick="toggleTerm('t-independence')">
+      <div style="flex:1"><div class="term-name">Independence</div><div class="term-short">Two events are independent when one occurring does not change the probability of the other.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the events have no relationship — knowing one happened tells you nothing about the other. Independence is a convenient assumption that simplifies many calculations, but it is rarely true in business data. Customer behavior correlates across households; regional sales correlate through economic cycles; loan defaults correlate through credit conditions.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">A and B independent ⟺ P(A ∩ B) = P(A) × P(B)</span><span class="formula-plain">Equivalently: P(A|B) = P(A). Knowing B happened does not change your expectation of A. When independence is wrongly assumed, joint probabilities are underestimated — the classic example: banks that assumed mortgage defaults were independent systematically underestimated correlated default risk.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In portfolio risk modeling, experiment design, probability calculations, and any methodology section that invokes the assumption of "i.i.d." (independently and identically distributed) observations.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what evidence supports the independence assumption. In geographically clustered stores, temporally correlated demand, or socially connected customers, independence is almost never valid and its assumption will understate joint risk.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A grocery chain's loss prevention model treats daily stockout events at different stores as independent. During a heatwave, outdoor product stockouts are highly correlated across all stores simultaneously — the independence assumption produces a drastically underestimated network-level risk that the model never flags.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-expected-value">
+    <div class="term-header" onclick="toggleTerm('t-expected-value')">
+      <div style="flex:1"><div class="term-name">Expected Value</div><div class="term-short">The probability-weighted average of all possible outcomes — what you should expect on average over many repetitions.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the rational basis for decisions under uncertainty when you face the same kind of choice many times. It does not tell you what will happen in any single instance, but it tells you which option produces the best average result over time. Most well-functioning business decision frameworks are implicitly or explicitly expected value maximization.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">E[X] = Σ xᵢ × P(xᵢ)</span><span class="formula-plain">Multiply each possible outcome by its probability, sum the results. Business application: Expected profit = Σ (profit of each scenario × probability of that scenario). Decision rule: choose the action with the highest expected value — or if costs differ, highest expected net value.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In business case modeling, pricing decisions, marketing investment optimization, fraud rules (expected loss = P(fraud) × loss amount), and anywhere probabilities are combined with monetary values to rank options.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the decision will be made once or many times. Expected value is most reliable for repeated decisions — applying it to a single one-off high-stakes bet requires also considering variance (downside risk), not just the average.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A payments company sets fraud rules using expected value: expected loss from allowing a transaction = P(fraud) × £transaction_value × (1 − recovery_rate). The rule declines when expected loss exceeds the expected profit from a legitimate transaction. This framework explicitly trades off false positives (lost revenue) against false negatives (fraud losses) in a mathematically coherent way.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-odds">
+    <div class="term-header" onclick="toggleTerm('t-odds')">
+      <div style="flex:1"><div class="term-name">Odds and Odds Ratio</div><div class="term-short">Odds express probability as a ratio of occurrence to non-occurrence; odds ratios compare odds across two groups.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the relative likelihood in a format that is natural for logistic regression interpretation. An odds ratio of 2.3 for a predictor means the event is 2.3 times as likely (in odds terms) for observations with that characteristic than without it. This is how logistic regression outputs are technically interpreted — not as probability multipliers.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Odds = P/(1−P) &nbsp;&nbsp; OR = (P₁/(1−P₁)) / (P₂/(1−P₂))</span><span class="formula-plain">If P = 0.2, odds = 0.2/0.8 = 0.25 (1:4). Odds ratio of 2.0 means odds doubled — not probability doubled. At low base rates (P &lt; 5%), odds ratio ≈ probability ratio. At high base rates, they diverge substantially — confusing the two is a systematic source of analytical error in clinical and business research.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In logistic regression coefficient interpretation, medical research, epidemiology, and any context where the log-odds scale is used (logit transformation).</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether an "odds ratio" is being described as if it were a "risk ratio." At high event rates, they diverge sharply. A study reporting "2× higher odds" of a common outcome (50% base rate) does not mean twice the probability.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A retailer's logistic regression model finds an odds ratio of 3.1 for loyalty programme membership on purchase conversion. At a base conversion rate of 4%, this means roughly a 3× lift in probability (~12% vs 4%). At a base conversion rate of 40%, an OR of 3.1 corresponds to ~67% vs 40% — smaller absolute lift than the ratio implies.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 4.2</div>
+  <h2 class="section-title">Bayes' theorem — updating beliefs with evidence</h2>
+  <p class="section-intro">Bayesian reasoning is what good strategists do intuitively when they say "given what we just learned, I need to update my view." Bayes' theorem gives that intuition mathematical precision. It is also the foundation of an entire school of statistical modeling, and the basis for understanding why base rates matter so much in diagnostic and predictive settings.</p>
+
+  <div class="callout callout-rule">
+    <strong>The base rate problem — why Bayes matters in practice</strong>
+    A test for a disease has 95% accuracy. You test positive. What is the probability you have the disease? Most people answer "95%." The correct answer depends entirely on the base rate — if the disease affects 1% of the population, the probability is actually closer to 16%. The other 84% of positive tests are false positives from healthy people. This is not a paradox — it is Bayes' theorem, and it is routinely violated in business risk, fraud, and diagnostic settings.
+  </div>
+
+  <div class="term-block" id="t-bayes">
+    <div class="term-header" onclick="toggleTerm('t-bayes')">
+      <div style="flex:1"><div class="term-name">Bayes' Theorem</div><div class="term-short">A formula for updating probability estimates when new evidence appears.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you exactly how much to update your belief about a hypothesis when you receive new evidence. The key insight is that the strength of evidence depends not only on the test's accuracy but also on how likely the hypothesis was to be true before you saw the evidence. A strong signal in a low-base-rate setting still produces mostly false positives.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">P(H|E) = P(E|H) × P(H) / P(E)</span><span class="formula-plain">Posterior = Likelihood × Prior / Evidence. In English: your updated belief (posterior) is your original belief (prior) multiplied by how much more likely this evidence is if the hypothesis is true versus false (likelihood ratio), normalised so everything sums to 1.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In fraud detection systems, diagnostic testing, Bayesian A/B testing, spam filters, sequential evidence updating, and any model that explicitly updates probabilities as new information arrives.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the prior was stated explicitly and whether the conclusion changes materially at different reasonable prior beliefs. A result that is highly sensitive to prior choice should not be treated as settled — it means the evidence is insufficient to overcome reasonable prior uncertainty.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A bank's fraud detection layer uses Bayes sequentially: prior fraud probability at transaction initiation is 0.5%. After seeing an overseas IP (likelihood ratio 8:1 for fraud), posterior updates to ~3.9%. After seeing a new device fingerprint (likelihood ratio 5:1), it updates further to ~17%. Each piece of evidence multiplicatively updates the estimate — a far more principled approach than rule-based thresholds.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-prior-posterior">
+    <div class="term-header" onclick="toggleTerm('t-prior-posterior')">
+      <div style="flex:1"><div class="term-name">Prior and Posterior</div><div class="term-short">Prior: belief before seeing evidence. Posterior: updated belief after incorporating evidence.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you Bayesian analysis makes its starting assumptions explicit, which is actually an advantage over classical statistics that implicitly assume flat priors. The prior represents what you knew (or assumed) before the data. The posterior represents your updated belief. When data is abundant, the prior matters little — the data dominates. When data is sparse, the prior matters a lot and should be stated carefully.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Posterior ∝ Likelihood × Prior</span><span class="formula-plain">Informative prior: encodes specific domain knowledge. Uninformative (flat) prior: lets the data speak freely. Conjugate prior: same distributional family as likelihood, allowing closed-form updating. With large data, posteriors converge regardless of prior — the "data washes out" weak priors.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In Bayesian A/B testing dashboards ("probability B beats A"), Bayesian forecasting, clinical trial reporting, and any analytical output that explicitly combines prior assumptions with observed data.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what prior was assumed and whether the result is sensitive to it. If the conclusion changes substantially when the prior is varied across reasonable alternatives, the experiment or analysis has insufficient data to be conclusive.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A pharma firm models expected uptake of a new drug. A clinical-evidence-based prior of 15% uptake at 6 months is combined with early pilot data showing 22% in a small sample. The posterior estimate — 17% — is a weighted blend that appropriately discounts the small noisy pilot while incorporating its direction. As more data arrives, the posterior will converge toward the true rate regardless of the starting prior.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-basenrate-neglect">
+    <div class="term-header" onclick="toggleTerm('t-basenrate-neglect')">
+      <div style="flex:1"><div class="term-name">Base Rate Neglect</div><div class="term-short">Ignoring the underlying prevalence of an event when evaluating new evidence — one of the most common analytical errors.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how a cognitively natural error leads to systematically wrong probability estimates. When we receive compelling new evidence, we tend to focus on the evidence and forget to ask "but how rare was this in the first place?" A highly accurate test applied to a rare condition will still generate more false positives than true positives — because the base rate of true cases is so low that even a small false positive rate swamps the true positive count.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Positive predictive value (PPV) = True positives / (True positives + False positives). For a 95% accurate test on a condition with 1% base rate: PPV = (0.95 × 0.01) / (0.95 × 0.01 + 0.05 × 0.99) = 0.0095 / 0.0590 ≈ 16%. The test is mostly generating false alarms even though it is "highly accurate."</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In fraud alert interpretation, medical testing, security screening, customer risk scoring, and any setting where a model is applied to a population where the target event is rare.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what the event's base rate is in the population the model will be applied to, not the development sample. A model trained on a balanced sample with 50% fraud may perform very differently in production where fraud is 0.3% — precision will be much lower than development metrics suggest.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A credit card issuer deploys a fraud model with 99.5% specificity and 80% sensitivity. Fraud base rate is 0.2%. In production: for every 100,000 transactions, 200 are fraudulent (160 caught, 40 missed) and 99,800 are legitimate (499 falsely flagged). The analyst team reviews 659 alerts — 499 of which are legitimate transactions. Precision is 24%. Understanding the base rate is what makes that precision predictable.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 4.3</div>
+  <h2 class="section-title">Key probability distributions for business</h2>
+  <p class="section-intro">Probability distributions are models of how outcomes are generated. Knowing which distribution governs a process tells you what to expect, what is unusual, and what methods are valid. You do not need to derive these — but recognizing which distribution applies to which business problem is a critical analytical skill.</p>
+
+  <div class="dist-grid">
+    <div class="dist-card">
+      <span class="dist-badge">Yes/No</span>
+      <div class="dist-name">Bernoulli / Binomial</div>
+      <div class="dist-def">Single trial (Bernoulli) or n trials (Binomial) with binary outcomes. Parameters: probability p, number of trials n.</div>
+      <div class="dist-eg">Conversion: did this visitor purchase? Defects: how many units in a batch fail QC?</div>
+    </div>
+    <div class="dist-card">
+      <span class="dist-badge">Event Counts</span>
+      <div class="dist-name">Poisson</div>
+      <div class="dist-def">Count of rare independent events in a fixed interval when events happen at constant average rate λ.</div>
+      <div class="dist-eg">Call centre arrivals per hour, insurance claims per week, server errors per day</div>
+    </div>
+    <div class="dist-card">
+      <span class="dist-badge">Symmetric</span>
+      <div class="dist-name">Normal (Gaussian)</div>
+      <div class="dist-def">Symmetric bell curve defined by mean μ and SD σ. Foundation of most statistical inference via CLT.</div>
+      <div class="dist-eg">Measurement errors, aggregated sums, forecasting residuals</div>
+    </div>
+    <div class="dist-card">
+      <span class="dist-badge">Multiplicative</span>
+      <div class="dist-name">Log-Normal</div>
+      <div class="dist-def">The log of the variable is normally distributed. Right-skewed, always positive. Driven by multiplicative processes.</div>
+      <div class="dist-eg">Revenue, CLV, salary, property prices, company sizes</div>
+    </div>
+    <div class="dist-card">
+      <span class="dist-badge">Time to Event</span>
+      <div class="dist-name">Exponential</div>
+      <div class="dist-def">Time between events in a Poisson process. Memoryless: past waiting time does not affect future wait.</div>
+      <div class="dist-eg">Time between customer purchases, time between system failures</div>
+    </div>
+    <div class="dist-card">
+      <span class="dist-badge">Heavy Tails</span>
+      <div class="dist-name">Power Law</div>
+      <div class="dist-def">Rare large events far more frequent than normal distribution predicts. Scale-free — the shape looks the same at all scales.</div>
+      <div class="dist-eg">Content virality, city sizes, wealth distribution, network degree</div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-normal">
+    <div class="term-header" onclick="toggleTerm('t-normal')">
+      <div style="flex:1"><div class="term-name">Normal Distribution</div><div class="term-short">The symmetric bell curve — the most important distribution in statistics by virtue of the Central Limit Theorem.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you that many natural and business processes produce roughly bell-shaped distributions when aggregated or repeated. Its importance comes not just from natural occurrence but from the Central Limit Theorem: regardless of the underlying distribution, the sampling distribution of the mean becomes approximately normal with large samples — which is why so many statistical tests work.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">X ~ N(μ, σ²)  →  68-95-99.7 rule</span><span class="formula-plain">68% of values fall within ±1 SD of mean. 95% within ±2 SD. 99.7% within ±3 SD. For business: if a metric is approximately normal, values more than 3 SDs from the mean occur about 0.3% of the time — useful for setting anomaly detection thresholds.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In hypothesis testing assumptions, model residual diagnostics, forecasting error distributions, and confidence interval calculations.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the assumption of normality is actually justified. Revenue, claim size, and customer spend are almost always right-skewed and log-normal — not normal. Applying normal-distribution methods to these variables produces systematically wrong significance tests and risk estimates.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A manufacturing plant monitors widget diameter measurements, which are approximately normal due to many independent small errors in the production process. Control limits set at ±3 SD correctly flag about 0.3% of widgets for inspection. Applying the same logic to per-customer revenue — which is log-normal, not normal — would flag the highest-value customers as anomalies.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-lognormal">
+    <div class="term-header" onclick="toggleTerm('t-lognormal')">
+      <div style="flex:1"><div class="term-name">Log-Normal Distribution</div><div class="term-short">A distribution where the log of the variable is approximately normal — right-skewed, always positive, driven by multiplicative processes.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the metric is driven by many small multiplicative factors rather than additive ones — which is why it cannot go below zero and produces a long right tail. Revenue, wealth, and company size all follow approximately log-normal distributions because they compound over time. This distribution is more relevant to business analytics than the normal distribution for most monetary metrics.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">If ln(X) ~ N(μ, σ²), then X is log-normal</span><span class="formula-plain">Apply a log transformation and check whether the result looks approximately normal. For log-normal data: median = exp(μ); mean = exp(μ + σ²/2). The mean always exceeds the median — sometimes by a lot, which explains why mean revenue per customer can be 2–3× the median.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In revenue modeling, CLV estimation, insurance loss severity, pricing analytics, and any financial metric that cannot be negative and has a long right tail.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether results were summarised on the original scale or the log scale. Reporting mean claim cost on the original scale will be dominated by a few large claims; reporting geometric mean or median on log-scale gives a better picture of the typical case.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">An e-commerce marketplace finds seller revenue follows a log-normal distribution: median seller earns £8,400/year, but the mean is £31,200 due to a small number of sellers generating millions. A platform strategy built around the "average seller" optimises for a revenue level that the typical seller will never see — the median is a far more useful design target.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 4.4</div>
+  <h2 class="section-title">Common probability reasoning errors</h2>
+  <p class="section-intro">Probability is where human intuition is most systematically wrong. These errors are not signs of poor intelligence — they appear in expert judgment, strategy presentations, and board-level risk discussions. Recognising them is the first step to avoiding them.</p>
+
+  <div class="term-block" id="t-gamblers-fallacy">
+    <div class="term-header" onclick="toggleTerm('t-gamblers-fallacy')">
+      <div style="flex:1"><div class="term-name">Gambler's Fallacy</div><div class="term-short">The mistaken belief that past independent random events influence future probabilities.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you a cognitive tendency to see "reversion" in random sequences that have no memory. After five consecutive quarterly misses on earnings, the instinct is to say "a beat is due." If the misses are genuinely random, that instinct is wrong — each quarter is independent and the probability of a beat is unchanged by the streak.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">For independent events: P(event on trial n) = P(event) regardless of what happened on trials 1 through n−1. A fair coin has 50% heads probability on flip 10 regardless of the prior 9 flips all being tails. The coin has no memory.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In investment forecasting ("the market is due for a correction"), performance reviews ("we've had a good run so we should expect a tough quarter"), and any context where a pattern in independent random events is being extrapolated.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the events are actually independent. If underlying conditions have changed, a run of bad results may reflect a real shift — not random variation that will reverse. Distinguishing these requires statistical testing, not pattern-matching intuition.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A venture fund's last six investments have underperformed. The IC starts favouring certain deal types, believing "the odds have shifted in favour of a winner." If deal selection was always random with a fixed base hit rate, the previous six results have no bearing on the seventh. If the hit rate has genuinely declined, the problem is portfolio thesis, not a statistical rebalancing owed by fate.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-conjunction-fallacy">
+    <div class="term-header" onclick="toggleTerm('t-conjunction-fallacy')">
+      <div style="flex:1"><div class="term-name">Conjunction Fallacy</div><div class="term-short">The error of judging a specific scenario as more probable than a general one it is a subset of.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you that adding specific detail to a scenario makes it feel more probable even though logically it must be less probable. P(A and B) ≤ P(A) always — a more specific outcome can only be equal to or less probable than either component alone. Narrative plausibility hijacks probability reasoning.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">P(A ∩ B) ≤ P(A)  and  P(A ∩ B) ≤ P(B)</span><span class="formula-plain">A conjunction (two conditions both holding) is always at most as probable as either condition alone. The more specific a scenario, the less probable it must be — even if the detail makes it feel more concrete and believable.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In scenario planning, competitive intelligence, forecasting narratives, and whenever a vivid specific story is presented as if its vividness is evidence of its likelihood.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the probability of the joint scenario was estimated separately from its components. A competitor entering and winning 30% market share by a specific date is inherently less probable than either event alone — a compelling narrative for why both would happen is not a probability estimate.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A strategy team evaluates whether a new entrant will "raise $200M and launch a competing product targeting enterprise customers in Asia by Q3." The specificity makes it vivid and discussable. It is also lower probability than simply "a competitor enters the market" — by how much depends on each component's individual probability and their dependence.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Chapter Summary</div>
+  <h2 class="section-title">Chapter 4 cheat sheet</h2>
+  <div class="cheat-sheet">
+    <div class="cheat-title">Key principles from this chapter</div>
+    <div class="cheat-grid">
+      <div class="cheat-item"><div class="cheat-item-title">Probability applies over many cases</div><div class="cheat-item-body">A 30% churn probability means 3 in 10 similar customers churn — not that this individual will or won't. It guides expected value calculations, not single-case predictions.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Base rate changes everything</div><div class="cheat-item-body">An accurate model applied to a rare event still generates mostly false positives. Always compute precision (PPV) at the actual production base rate, not the development sample rate.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Bayes: prior × evidence = posterior</div><div class="cheat-item-body">New evidence updates your belief proportional to how much more likely the evidence is under the hypothesis than not. Sparse data cannot overcome a strong prior — and vice versa.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Independence is almost never true</div><div class="cheat-item-body">Business events are correlated — customers, stores, markets. Assuming independence underestimates joint probabilities and collective risk. Verify before using multiplicative probability rules.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Most business data is log-normal, not normal</div><div class="cheat-item-body">Revenue, CLV, claim size — right-skewed, positive, multiplicative. Normal-distribution methods applied to log-normal data produce systematically wrong answers. Log-transform first.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Specific scenarios are less probable</div><div class="cheat-item-body">P(A and B) ≤ P(A). Vivid, specific narratives feel more probable than they are. Conjunction fallacy inflates confidence in detailed scenarios — probability estimation must be done component by component.</div></div>
+    </div>
+  </div>
+  <div style="margin-top:28px">
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:12px">Chapter 5 takes probability into sampling — how we use probability theory to draw conclusions about populations from samples. Chapter 8 extends Bayesian reasoning into the formal framework of hypothesis testing. The base rate and calibration concepts introduced here are central to Chapters 14 and 15 on classification metrics.</p>
+    <a href="../ml-for-strategy-v2/ML_Strategy_Playbook.html" class="companion">↗ ML Strategy Playbook — companion reference</a>
+  </div>
+</div>
+
+<script>
+function toggleTerm(id){const b=document.getElementById(id);const o=b.classList.contains('open');b.classList.toggle('open',!o);b.querySelector('.term-toggle').textContent=o?'expand':'collapse';}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const all=document.querySelectorAll('.term-block');if(e.key==='e'){all.forEach(b=>{b.classList.add('open');b.querySelector('.term-toggle').textContent='collapse';})}if(e.key==='c'){all.forEach(b=>{b.classList.remove('open');b.querySelector('.term-toggle').textContent='expand';})}});
+</script>
+</body>
+</html>

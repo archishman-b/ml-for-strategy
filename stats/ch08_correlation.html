@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 8 — Correlation & Association | Stats Foundations for Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;
+  --cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;
+  --accent:#8b2500;--accent2:#c4440d;
+  --amber:#7a4800;--amber2:#c47800;--amber3:#fdf0dc;
+  --blue2:#2d5f8a;--blue3:#ddeaf7;
+  --green2:#2d7a4a;--green3:#ddf0e5;
+  --red2:#c4400d;--red3:#fef0e8;
+  --border:#d4cdc4;
+  --serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);--shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+@media(prefers-color-scheme:dark){
+  :root{--ink:#f0ece4;--ink2:#d8d0c4;--ink3:#a09488;--ink4:#6a6058;--cream:#181612;--cream2:#201e1a;--cream3:#2a2620;--accent2:#e8784a;--amber2:#e0a030;--amber3:#221808;--blue3:#1a2a3a;--green3:#1a2a20;--red3:#2a1008;--border:#38342e;}
+  body{background:#141210}.narrative{background:#141210;border-bottom-color:#2a2620}
+  .term-block{background:#1e1c18}.term-header{background:#1e1c18}.term-body{border-top-color:#2a2620}.field-row{border-bottom-color:#2a2620}.field-value.formula{background:#2a2620}
+  .callout-insight{background:#221808;border-color:#e0a030}.callout-warning{background:#2a1008;border-color:#e8784a}.callout-rule{background:#1a2a3a;border-color:#5a9fdf}.callout-green{background:#1a2a20;border-color:#5aba7a}
+  .ch-progress{background:#1e1c18;border-bottom-color:#38342e}.progress-bar{background:#2a2620}.progress-fill{background:#e0a030}
+  .ch-hero{background:#2a1800}.cheat-sheet{background:#2a1800}.cheat-item{background:rgba(255,255,255,0.05);border-left-color:#e0a030}
+  .companion{color:#e0a030}.companion:hover{background:#e0a030;color:#141210}
+  p{color:var(--ink2)}.section-intro{color:var(--ink3);border-left-color:#e0a030}
+  .term-toggle{background:#2a2620;border-color:#38342e;color:var(--ink3)}.term-block.open .term-toggle{background:#f0ece4;color:#141210;border-color:#f0ece4}
+  .term-name{color:var(--ink)}.term-short{color:var(--ink3)}.section-title{color:var(--ink)}.section-label{color:#e0a030}.field-label{color:var(--ink4)}.field-value{color:var(--ink2)}
+  .field-value.formula .formula-math{color:#e0a030}.field-value.formula .formula-plain{color:var(--ink3)}.redflag{color:#e8784a}
+  .cheat-title{color:rgba(240,200,120,0.7)}.cheat-item-title{color:#f0ece4}.cheat-item-body{color:rgba(240,236,228,0.5)}
+  .ch-eyebrow{color:rgba(240,200,120,0.7)}.ch-title{color:#f4f0e8}.ch-intro{color:rgba(240,236,228,0.85)}.ch-meta{color:rgba(240,236,228,0.58)}.ch-meta span em{color:rgba(240,236,228,0.88)}.ch-progress span{color:#a09488}
+  svg text{fill:#6a6058 !important}
+}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.ch-hero{background:var(--amber);color:var(--cream);padding:72px 72px 56px;position:relative;overflow:hidden}
+.ch-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%,rgba(196,120,0,0.5) 0%,transparent 60%);pointer-events:none}
+.ch-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,200,120,0.7);margin-bottom:16px}
+.ch-title{font-family:var(--display);font-size:44px;font-weight:700;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin-bottom:20px;max-width:700px}
+.ch-title em{color:#ffd080;font-style:normal}
+.ch-intro{font-size:16px;color:rgba(255,255,255,0.75);max-width:600px;line-height:1.7;margin-bottom:36px}
+.ch-meta{display:flex;flex-wrap:wrap;gap:24px;font-size:10px;color:rgba(255,255,255,0.42);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono)}
+.ch-meta span em{color:rgba(255,255,255,0.72);font-style:normal}
+.ch-progress{display:flex;align-items:center;gap:12px;padding:16px 72px;background:var(--cream2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:0.05em}
+.progress-bar{flex:1;height:3px;background:var(--cream3);border-radius:2px;max-width:200px}
+.progress-fill{height:100%;background:var(--amber2);border-radius:2px;width:44%}
+.narrative{padding:56px 72px 48px;border-bottom:1px solid var(--border);max-width:960px}
+.narrative:last-child{border-bottom:none}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--amber2);margin-bottom:8px;font-weight:500}
+.section-title{font-family:var(--display);font-size:26px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:8px;letter-spacing:-0.01em}
+.section-intro{font-size:14.5px;color:var(--ink3);line-height:1.75;max-width:680px;margin-bottom:36px;padding-left:16px;border-left:3px solid var(--amber3)}
+.term-block{background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s}
+.term-block:hover{box-shadow:var(--shadow-lg)}
+.term-header{display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;cursor:pointer;user-select:none}
+.term-name{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);line-height:1.25;flex:1}
+.term-short{font-size:12.5px;color:var(--ink3);line-height:1.5;flex:1;font-style:italic;margin-top:3px}
+.term-toggle{font-family:var(--mono);font-size:11px;color:var(--ink4);border:1px solid var(--border);border-radius:3px;padding:2px 8px;flex-shrink:0;margin-top:2px;transition:all 0.15s;background:var(--cream)}
+.term-block.open .term-toggle{background:var(--amber);color:#fff;border-color:var(--amber)}
+.term-body{display:none;padding:0 24px 20px;border-top:1px solid var(--cream2)}
+.term-block.open .term-body{display:block}
+.field-row{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--cream3);align-items:baseline}
+.field-row:last-child{border-bottom:none}
+.field-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);font-weight:500;padding-top:1px}
+.field-value{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.field-value.formula{font-family:var(--mono);font-size:12.5px;background:var(--cream2);padding:10px 14px;border-radius:3px;color:var(--ink);line-height:1.65}
+.field-value.formula .formula-math{color:var(--amber2);font-weight:500;display:block;margin-bottom:4px;font-size:13px}
+.field-value.formula .formula-plain{color:var(--ink3);font-family:var(--serif);font-size:12.5px;font-style:italic}
+.redflag{color:var(--accent);font-size:13px}.redflag::before{content:'⚑ ';font-style:normal}
+.callout{padding:16px 20px;border-radius:4px;margin:20px 0;border-left:3px solid;font-size:13.5px;line-height:1.65}
+.callout-insight{background:var(--amber3);border-color:var(--amber2);color:var(--ink2)}
+.callout-warning{background:var(--red3);border-color:var(--red2);color:var(--ink2)}
+.callout-rule{background:var(--blue3);border-color:var(--blue2);color:var(--ink2)}
+.callout-green{background:var(--green3);border-color:var(--green2);color:var(--ink2)}
+.callout strong{font-weight:600;display:block;margin-bottom:5px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.65}
+.illustration{margin:28px 0;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:#fff}
+.illustration-caption{font-family:var(--mono);font-size:10.5px;color:var(--ink4);text-align:center;padding:10px;border-top:1px solid var(--cream2);letter-spacing:0.04em;background:var(--cream)}
+.cheat-sheet{background:var(--amber);color:#fff;border-radius:6px;padding:28px 32px;margin-top:24px}
+.cheat-title{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(240,200,120,0.7);margin-bottom:16px}
+.cheat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cheat-item{padding:12px 14px;background:rgba(255,255,255,0.08);border-radius:4px;border-left:2px solid #ffd080}
+.cheat-item-title{font-size:11.5px;font-weight:600;color:#fff;margin-bottom:4px;font-family:var(--serif)}
+.cheat-item-body{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.55}
+.companion{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--amber2);text-decoration:none;border:1px solid currentColor;padding:5px 12px;border-radius:3px;margin-top:4px;transition:all 0.15s}
+.companion:hover{background:var(--amber2);color:#fff}
+@media(max-width:700px){.ch-hero,.narrative{padding:40px 24px}.ch-title{font-size:30px}.field-row{grid-template-columns:1fr;gap:4px}.cheat-grid{grid-template-columns:1fr}.ch-progress{padding:12px 24px}}
+</style>
+</head>
+<body>
+<div class="ch-progress">
+  <span>Chapter 8 of 18</span>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <span>Statistical Foundations for Strategy Professionals</span>
+</div>
+<div class="ch-hero">
+  <div class="ch-eyebrow">Part 5 — Relationships in Data · Chapter 8</div>
+  <h1 class="ch-title">Correlation, Association, and <em>Common Traps</em></h1>
+  <p class="ch-intro">Correlation is the most used and most abused concept in business analytics. This chapter covers what it measures, what it does not measure, and the specific ways it misleads — from spurious correlations to the ecological fallacy to the dangers of range restriction.</p>
+  <div class="ch-meta">
+    <span>Terms covered: <em>16</em></span>
+    <span>Sections: <em>Pearson r · Spearman · Other measures · Confounding · Spurious correlations · Traps</em></span>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 8.1</div>
+  <h2 class="section-title">Measuring association — the right tool for the data type</h2>
+  <p class="section-intro">Correlation measures the strength and direction of a linear relationship between two variables. But "correlation" as a concept covers many different measures, each appropriate for different data types and relationship structures. Using the wrong measure produces numbers that look precise but measure the wrong thing.</p>
+
+  <div class="term-block" id="t-pearson">
+    <div class="term-header" onclick="toggleTerm('t-pearson')">
+      <div style="flex:1"><div class="term-name">Pearson Correlation Coefficient (r)</div><div class="term-short">Measures the strength and direction of the linear relationship between two continuous variables. Ranges from −1 to +1.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how closely two variables track together in a straight-line relationship. r = +1 is perfect positive linear relationship. r = 0 is no linear relationship. r = −1 is perfect negative linear relationship. Crucially: r = 0 does not mean no relationship at all — a perfect quadratic relationship can produce r = 0. Pearson measures linear association only.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">r = Σ[(xᵢ−x̄)(yᵢ−ȳ)] / (n−1)sₓsᵧ</span><span class="formula-plain">Correlation is scale-invariant — multiplying all x or y values by a constant does not change r. Interpretation: |r| &lt; 0.1 negligible; 0.1–0.3 small; 0.3–0.5 moderate; 0.5–0.7 large; &gt; 0.7 very large (these are loose conventions — business context should define what is actionable).</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In feature selection, data exploration, dashboard KPI relationships, risk factor analysis, and any exploratory data analysis comparing two continuous variables.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the relationship could be non-linear. Always plot a scatterplot — a correlation of 0.3 with a clear non-linear pattern is more interesting than a linear r of 0.5 suggests.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">An insurer finds r = 0.62 between vehicle age and claim frequency. The relationship is positive, moderately strong, and linear enough for Pearson to be meaningful. But further investigation reveals the relationship is stronger for years 3–8 and weaker beyond year 10 — the overall r masks a non-linear age effect that a piecewise model would capture better.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-spearman">
+    <div class="term-header" onclick="toggleTerm('t-spearman')">
+      <div style="flex:1"><div class="term-name">Spearman Rank Correlation (ρ)</div><div class="term-short">Measures the monotonic relationship between two variables using their ranks — robust to outliers and non-linearity.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you whether one variable tends to increase as the other increases — without requiring the relationship to be exactly linear. Spearman applies Pearson's formula to the ranks of the data rather than the raw values, making it resistant to extreme values and appropriate for ordinal data. It captures monotonic relationships: X going up as Y goes up, even if the rate is not constant.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">ρ = 1 − [6Σdᵢ²] / [n(n²−1)]  where dᵢ = rank difference</span><span class="formula-plain">Replace each value with its rank. Compute Pearson correlation on the ranks. Interpreting ρ: same conventions as r. Use Spearman when: (1) data is ordinal, (2) relationship is monotonic but non-linear, (3) outliers are present that would distort Pearson, (4) small samples from non-normal distributions.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In model feature screening with mixed variable types, NPS-to-outcome correlations, non-normal financial data analysis, and any correlation analysis where outliers are a concern.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the Pearson and Spearman correlations differ substantially. A large gap between r and ρ signals that outliers or non-linearity are driving the Pearson result — and the Spearman is the more reliable measure of the underlying relationship.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A media company measures relationship between articles shared (highly right-skewed — a few viral pieces dominate) and new subscriber acquisition. Pearson r = 0.71 — but driven by five viral outliers. Spearman ρ = 0.38 — the rank correlation after extreme values are moderated. The Spearman is the better description of the typical relationship between sharing and subscriptions.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-cramersv">
+    <div class="term-header" onclick="toggleTerm('t-cramersv')">
+      <div style="flex:1"><div class="term-name">Cramér's V</div><div class="term-short">Measures the strength of association between two categorical variables — the chi-square-based correlation analogue for non-numeric data.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how strongly two categorical variables are associated — normalizing the chi-square statistic so that 0 means no association and 1 means perfect association, regardless of table size. It is the standard effect size for categorical-categorical relationships, complementing the chi-square test's p-value with a measure of how strong the association is.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">V = √(χ² / (n × min(r−1, c−1)))</span><span class="formula-plain">Where n = total count, r = rows, c = columns. V ranges from 0 to 1. Interpretation: V ≈ 0.1 weak, 0.3 moderate, 0.5+ strong (varies with table dimensions). For 2×2 tables, V = |phi coefficient|.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In feature importance screening for categorical variables, customer segment analysis, marketing mix evaluation, and any analysis asking how strongly two categorical factors are related.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether a high Cramér's V is driven by a specific combination of categories rather than a general association. A V of 0.45 could reflect one dominant cell where two specific categories co-occur — which may be more interesting and actionable than a uniform association across all cells.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A retailer tests whether product category preference is associated with customer acquisition channel. Chi-square: χ²=142, p&lt;0.001, V=0.31. Moderate association — online-acquired customers skew toward electronics and home; in-store customers skew toward clothing and food. The association is commercially meaningful for personalisation strategy.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-autocorr">
+    <div class="term-header" onclick="toggleTerm('t-autocorr')">
+      <div style="flex:1"><div class="term-name">Autocorrelation</div><div class="term-short">Correlation of a variable with its own past values — a structural feature of time series data that violates many standard model assumptions.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you today's value is correlated with yesterday's (or last week's, last year's) value. This is nearly universal in business time series — sales today predict sales tomorrow; this quarter's engagement predicts next quarter's. Autocorrelation violates the independence assumption of standard regression and inflates t-statistics, making everything look more significant than it is.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">ACF(k) = Corr(yₜ, yₜ₋ₖ)</span><span class="formula-plain">ACF at lag k: correlation between observations k periods apart. Plot the ACF for lags 1 through 20 to identify structure. Positive ACF at lag 1 (most common) means high values tend to be followed by high values. Seasonal patterns show up as spikes at lag 7 (weekly), 12 (monthly), 52 (annual).</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In time series diagnostics, regression residual checks, A/B test sequential analysis, and any model using time-ordered observations where independence cannot be assumed.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the model's residuals were checked for autocorrelation. Autocorrelated residuals in a regression model indicate the model is missing time structure — standard errors are understated and significance tests are unreliable.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A grocery chain models daily sales using promotional spend as the sole predictor. R² = 0.84. Residual diagnostics show autocorrelation at lag 7 (ACF = 0.72) — weekly seasonal patterns dominate what the regression residuals look like. The model is largely fitting seasonal rhythm, not the promotional effect. A seasonal decomposition step is needed before isolating the true promotion contribution.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 8.2</div>
+  <h2 class="section-title">The traps — spurious correlation, confounding, and Simpson's paradox</h2>
+  <p class="section-intro">Correlation misleads in systematic, predictable ways. The traps below are not edge cases — they are encountered routinely in business data and consistently lead to wrong conclusions when not caught. Every correlation finding deserves to be checked against these failure modes before being acted on.</p>
+
+  <div class="term-block" id="t-spurious">
+    <div class="term-header" onclick="toggleTerm('t-spurious')">
+      <div style="flex:1"><div class="term-name">Spurious Correlation</div><div class="term-short">Two variables appear correlated but share no causal connection — both are driven by a third variable or by chance.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you that finding a correlation proves almost nothing about the relationship between two variables. US cheese consumption correlates with deaths by bedsheet tangling (r=0.947). Nicolas Cage film appearances correlate with pool drownings. These are not coincidences in any causal sense — they are mathematical patterns that can be generated by searching enough variable pairs. With modern datasets of thousands of variables, finding correlations above 0.7 by chance alone is trivially easy.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Two mechanisms generate spurious correlations: (1) Common cause — both variables are driven by a third factor (confounding). (2) Data dredging — searching many pairs until a high correlation appears by chance. Prevention: pre-specify hypotheses, require replication in out-of-sample data, and ask for a plausible causal mechanism before acting.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In automated feature screening, algorithmic trading signals, marketing attribution models, and any analysis where correlations are discovered rather than pre-specified.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether there is a credible causal mechanism linking the two variables. A high correlation without a plausible mechanism is a hypothesis requiring investigation, not a finding ready to act on.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A credit scoring team scans 3,000 candidate features and finds postcode has extremely high correlation with default. This may reflect real socioeconomic factors — or it may partly reflect the fact that with 3,000 variables screened, some spurious correlations will appear significant. The team validates the feature's predictive power on a held-out temporal sample before including it in the production model.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-confounding">
+    <div class="term-header" onclick="toggleTerm('t-confounding')">
+      <div style="flex:1"><div class="term-name">Confounding Variable</div><div class="term-short">A variable that affects both the proposed cause and the outcome — creating the appearance of a causal relationship where one may not exist.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you a hidden third variable may be driving both. Shoe size correlates with reading ability in children — but only because both are caused by age. Customer engagement score correlates with spending — but both are caused by a customer being highly valuable in the first place. Identifying and controlling for confounders is the central challenge of observational causal inference.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Variable C is a confounder of the X→Y relationship if: (1) C causes X, and (2) C causes Y, and (3) C is not on the causal path from X to Y. Controlling for C removes the spurious correlation. Randomization eliminates confounding by making treatment assignment independent of all potential confounders.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In observational analysis of treatment effects, cohort studies, attribution modeling, and any analysis that attempts to establish a causal conclusion from non-experimental data.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what the most obvious confounder is for this relationship. For every claimed X→Y relationship, list three potential third variables that could cause both. If any of those confounders is not measured or controlled for, the causal claim is at risk.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A professional services firm finds that consultants who complete a training programme generate 40% more revenue in the following year. The obvious confounder: high performers are more likely to sign up for training (motivation and ability both drive selection into training and revenue performance). Without randomisation, the 40% gap may reflect who chose to train, not what training did to them.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-simpsons">
+    <div class="term-header" onclick="toggleTerm('t-simpsons')">
+      <div style="flex:1"><div class="term-name">Simpson's Paradox</div><div class="term-short">A trend that appears in aggregate data reverses or disappears when the data is broken into subgroups — due to a confounding variable that determines group composition.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the aggregate result can tell the opposite story from the subgroup results. This is not a paradox in any deep sense — it is just a consequence of groups of different sizes containing different mixtures. The right level of analysis depends on what question you are asking: aggregate results answer population-level questions; subgroup results answer within-stratum questions.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Classic example: Treatment A cures 73% of kidney stones overall; Treatment B cures 83% overall. But for small stones: A=93%, B=87%. For large stones: A=73%, B=69%. Doctors assigned B more often to mild cases — the aggregate result favors B because of case mix, not efficacy. The subgroup result is the clinically correct one.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In A/B tests with unequal traffic allocation across segments, channel performance comparisons, demographic analysis, and any aggregation across groups with very different compositions.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the two variants or groups being compared have meaningfully different compositions. If the distribution of a key confounding variable (customer type, traffic source, geography) differs between groups, aggregate comparison may be misleading.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A streaming service compares conversion rate between two homepage variants. Variant A: 4.8% conversion. Variant B: 4.2% conversion. Variant A looks better. But Variant A was shown to users from high-conversion organic search (40% of traffic) far more than Variant B. Segmenting by source: among organic search users, B converts at 6.1% vs A at 6.3% — essentially tied. Among all other traffic, B outperforms A. The aggregate result is entirely driven by traffic mix, not variant performance.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-ecological">
+    <div class="term-header" onclick="toggleTerm('t-ecological')">
+      <div style="flex:1"><div class="term-name">Ecological Fallacy</div><div class="term-short">Applying group-level correlations to draw conclusions about individuals — a category error that produces systematically wrong inferences.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you that correlations at the group level do not imply the same correlation at the individual level. Countries with higher chocolate consumption have more Nobel laureates — this correlation may reflect economic development driving both, but it tells you nothing about whether individual chocolate consumption predicts Nobel Prize potential. Group patterns emerge from group-level forces; individual behavior depends on individual-level factors.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">If data is aggregated (regions, stores, cohorts), correlations computed from that data describe aggregate-level relationships — not within-unit individual relationships. To make individual-level claims, individual-level data is required. The appropriate analysis level is determined by the question being answered, not the convenience of the data available.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In regional performance analysis, store-level benchmarking, cohort comparisons, and any business analysis using aggregate data to make claims about individual behavior.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the insight applies at the level of the individual decision (customer, transaction) or the aggregate (segment, region). An insight from store-level analysis may not hold at the transaction level — and vice versa.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A bank analyzes which postcodes have the highest default rates and considers restricting lending in those areas. The ecological analysis identifies community-level risk — but within high-default postcodes, the vast majority of individual borrowers repay. Restricting credit based on postcode denies creditworthy individuals on the basis of their neighbours' behaviour, and may expose the bank to fair lending regulatory risk.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-range-restriction">
+    <div class="term-header" onclick="toggleTerm('t-range-restriction')">
+      <div style="flex:1"><div class="term-name">Range Restriction</div><div class="term-short">When a sample covers only part of the full variable range, correlations are systematically attenuated — creating underestimates of true relationships.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you restricting the range of variation on one axis compresses the correlation toward zero, even if the true population relationship is strong. If you measure IQ-job performance correlation only among employees who passed a selection test (a restricted range of IQ), the observed correlation understates the relationship that exists in the full population. The same trap applies in credit models, hiring analytics, and any outcome measurement on a filtered population.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Range restriction attenuates r proportionally to how narrow the restricted range is. A variable with 50% of its natural variance removed will produce correlations approximately 25–40% smaller than the true population correlation. Correction: Thorndike formula or full-population data is required to recover the true relationship.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In performance validation studies (data only on accepted applicants), marketing attribution (data only on customers who were contacted), and any outcome analysis on a screened population.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the analysis data covers the full range of the predictor. A credit model validated only on approved applicants cannot reliably predict performance for the declined population — the model has never seen those cases.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A lender validates its income-to-default model and finds a weak correlation (r=0.21) among approved applicants. A random sample experiment approving some normally-declined applicants reveals r=0.48 in the full population — range restriction (only approving mid-to-high income applicants) had compressed the measured relationship. The model was underusing income as a predictor because validation data was too narrow.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Chapter Summary</div>
+  <h2 class="section-title">Chapter 8 cheat sheet</h2>
+  <div class="cheat-sheet">
+    <div class="cheat-title">Key principles from this chapter</div>
+    <div class="cheat-grid">
+      <div class="cheat-item"><div class="cheat-item-title">r measures linear relationships only</div><div class="cheat-item-body">A perfect quadratic relationship can have r=0. Always plot before computing. Use Spearman for monotonic-but-nonlinear relationships or when outliers are present.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Correlation requires a plausible mechanism</div><div class="cheat-item-body">With enough variables, spurious correlations are inevitable. Pre-specify hypotheses, require replication, and ask for the causal mechanism before acting on any discovered correlation.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Always check for confounders</div><div class="cheat-item-body">The most dangerous correlations in business are those driven by a third variable nobody measured. List the most plausible confounders before drawing any causal conclusion.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Simpson's paradox is everywhere</div><div class="cheat-item-body">Aggregate comparisons can reverse at subgroup level when group compositions differ. A/B test results should always be checked for composition effects before declaring a winner.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Group patterns ≠ individual patterns</div><div class="cheat-item-body">Ecological correlations do not apply to individuals. Insights from store, region, or cohort data must be validated at the individual level before driving individual-level decisions.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Range restriction attenuates correlation</div><div class="cheat-item-body">Models and correlations measured on filtered populations understate true relationships. Validation on screened samples gives optimistic (false) low-correlation estimates.</div></div>
+    </div>
+  </div>
+  <div style="margin-top:28px">
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:12px">Chapter 9 extends from measuring relationships to modeling them — regression is built on correlation but adds directionality, quantifies magnitude, and controls for multiple variables simultaneously.</p>
+    <a href="../ml-for-strategy-v2/ML_Strategy_Playbook.html" class="companion">↗ ML Strategy Playbook — companion reference</a>
+  </div>
+</div>
+<script>
+function toggleTerm(id){const b=document.getElementById(id);const o=b.classList.contains('open');b.classList.toggle('open',!o);b.querySelector('.term-toggle').textContent=o?'expand':'collapse';}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const all=document.querySelectorAll('.term-block');if(e.key==='e'){all.forEach(b=>{b.classList.add('open');b.querySelector('.term-toggle').textContent='collapse';})}if(e.key==='c'){all.forEach(b=>{b.classList.remove('open');b.querySelector('.term-toggle').textContent='expand';})}});
+</script>
+</body>
+</html>

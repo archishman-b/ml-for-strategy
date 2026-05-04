@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 11 — Predictive Modeling Fundamentals | Stats Foundations for Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;
+  --cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;
+  --accent:#8b2500;--accent2:#c4440d;
+  --indigo:#1a1a5a;--indigo2:#3a3ab0;--indigo3:#e8e8fc;
+  --gold:#7a5a00;--gold2:#c49a00;--gold3:#fdf5dc;
+  --green2:#2d7a4a;--green3:#ddf0e5;
+  --border:#d4cdc4;
+  --serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);--shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+@media(prefers-color-scheme:dark){
+  :root{--ink:#f0ece4;--ink2:#d8d0c4;--ink3:#a09488;--ink4:#6a6058;--cream:#181612;--cream2:#201e1a;--cream3:#2a2620;--accent2:#e8784a;--indigo2:#7070e0;--indigo3:#0a0a28;--gold2:#e4c050;--gold3:#221e10;--green3:#1a2a20;--border:#38342e;}
+  body{background:#141210}.narrative{background:#141210;border-bottom-color:#2a2620}
+  .term-block{background:#1e1c18}.term-header{background:#1e1c18}.term-body{border-top-color:#2a2620}.field-row{border-bottom-color:#2a2620}.field-value.formula{background:#2a2620}
+  .callout-insight{background:#221e10;border-color:#e4c050}.callout-warning{background:#221410;border-color:#e8784a}.callout-rule{background:#0a0a28;border-color:#7070e0}.callout-green{background:#1a2a20;border-color:#5aba7a}
+  .ch-progress{background:#1e1c18;border-bottom-color:#38342e}.progress-bar{background:#2a2620}.progress-fill{background:#7070e0}
+  .ch-hero{background:#0e0e30}.cheat-sheet{background:#0e0e30}.cheat-item{background:rgba(255,255,255,0.05);border-left-color:#7070e0}
+  .companion{color:#7070e0}.companion:hover{background:#7070e0;color:#141210}
+  p{color:var(--ink2)}.section-intro{color:var(--ink3);border-left-color:#7070e0}
+  .term-toggle{background:#2a2620;border-color:#38342e;color:var(--ink3)}.term-block.open .term-toggle{background:#f0ece4;color:#141210;border-color:#f0ece4}
+  .term-name{color:var(--ink)}.term-short{color:var(--ink3)}.section-title{color:var(--ink)}.section-label{color:#7070e0}.field-label{color:var(--ink4)}.field-value{color:var(--ink2)}
+  .field-value.formula .formula-math{color:#7070e0}.field-value.formula .formula-plain{color:var(--ink3)}.redflag{color:#e8784a}
+  .cheat-title{color:rgba(180,180,240,0.7)}.cheat-item-title{color:#f0ece4}.cheat-item-body{color:rgba(240,236,228,0.5)}
+  .ch-eyebrow{color:rgba(180,180,240,0.7)}.ch-title{color:#f4f0e8}.ch-intro{color:rgba(240,236,228,0.85)}.ch-meta{color:rgba(240,236,228,0.58)}.ch-meta span em{color:rgba(240,236,228,0.88)}.ch-progress span{color:#a09488}
+  svg text{fill:#6a6058 !important}
+}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.ch-hero{background:var(--indigo);color:var(--cream);padding:72px 72px 56px;position:relative;overflow:hidden}
+.ch-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 40% 80%,rgba(58,58,176,0.5) 0%,transparent 55%);pointer-events:none}
+.ch-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(180,180,240,0.7);margin-bottom:16px}
+.ch-title{font-family:var(--display);font-size:44px;font-weight:700;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin-bottom:20px;max-width:700px}
+.ch-title em{color:#c0c0f4;font-style:normal}
+.ch-intro{font-size:16px;color:rgba(255,255,255,0.75);max-width:600px;line-height:1.7;margin-bottom:36px}
+.ch-meta{display:flex;flex-wrap:wrap;gap:24px;font-size:10px;color:rgba(255,255,255,0.42);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono)}
+.ch-meta span em{color:rgba(255,255,255,0.72);font-style:normal}
+.ch-progress{display:flex;align-items:center;gap:12px;padding:16px 72px;background:var(--cream2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:0.05em}
+.progress-bar{flex:1;height:3px;background:var(--cream3);border-radius:2px;max-width:200px}
+.progress-fill{height:100%;background:var(--indigo2);border-radius:2px;width:61%}
+.narrative{padding:56px 72px 48px;border-bottom:1px solid var(--border);max-width:960px}
+.narrative:last-child{border-bottom:none}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--indigo2);margin-bottom:8px;font-weight:500}
+.section-title{font-family:var(--display);font-size:26px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:8px;letter-spacing:-0.01em}
+.section-intro{font-size:14.5px;color:var(--ink3);line-height:1.75;max-width:680px;margin-bottom:36px;padding-left:16px;border-left:3px solid var(--indigo3)}
+.term-block{background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s}
+.term-block:hover{box-shadow:var(--shadow-lg)}
+.term-header{display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;cursor:pointer;user-select:none}
+.term-name{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);line-height:1.25;flex:1}
+.term-short{font-size:12.5px;color:var(--ink3);line-height:1.5;flex:1;font-style:italic;margin-top:3px}
+.term-toggle{font-family:var(--mono);font-size:11px;color:var(--ink4);border:1px solid var(--border);border-radius:3px;padding:2px 8px;flex-shrink:0;margin-top:2px;transition:all 0.15s;background:var(--cream)}
+.term-block.open .term-toggle{background:var(--indigo);color:#fff;border-color:var(--indigo)}
+.term-body{display:none;padding:0 24px 20px;border-top:1px solid var(--cream2)}
+.term-block.open .term-body{display:block}
+.field-row{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--cream3);align-items:baseline}
+.field-row:last-child{border-bottom:none}
+.field-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);font-weight:500;padding-top:1px}
+.field-value{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.field-value.formula{font-family:var(--mono);font-size:12.5px;background:var(--cream2);padding:10px 14px;border-radius:3px;color:var(--ink);line-height:1.65}
+.field-value.formula .formula-math{color:var(--indigo2);font-weight:500;display:block;margin-bottom:4px;font-size:13px}
+.field-value.formula .formula-plain{color:var(--ink3);font-family:var(--serif);font-size:12.5px;font-style:italic}
+.redflag{color:var(--accent);font-size:13px}.redflag::before{content:'⚑ ';font-style:normal}
+.callout{padding:16px 20px;border-radius:4px;margin:20px 0;border-left:3px solid;font-size:13.5px;line-height:1.65}
+.callout-insight{background:var(--gold3);border-color:var(--gold2);color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:var(--indigo3);border-color:var(--indigo2);color:var(--ink2)}
+.callout-green{background:var(--green3);border-color:var(--green2);color:var(--ink2)}
+.callout strong{font-weight:600;display:block;margin-bottom:5px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.65}
+.illustration{margin:28px 0;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:#fff}
+.illustration-caption{font-family:var(--mono);font-size:10.5px;color:var(--ink4);text-align:center;padding:10px;border-top:1px solid var(--cream2);letter-spacing:0.04em;background:var(--cream)}
+.cheat-sheet{background:var(--indigo);color:#fff;border-radius:6px;padding:28px 32px;margin-top:24px}
+.cheat-title{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(180,180,240,0.7);margin-bottom:16px}
+.cheat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cheat-item{padding:12px 14px;background:rgba(255,255,255,0.07);border-radius:4px;border-left:2px solid #c0c0f4}
+.cheat-item-title{font-size:11.5px;font-weight:600;color:#fff;margin-bottom:4px;font-family:var(--serif)}
+.cheat-item-body{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.55}
+.companion{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--indigo2);text-decoration:none;border:1px solid currentColor;padding:5px 12px;border-radius:3px;margin-top:4px;transition:all 0.15s}
+.companion:hover{background:var(--indigo2);color:#fff}
+@media(max-width:700px){.ch-hero,.narrative{padding:40px 24px}.ch-title{font-size:30px}.field-row{grid-template-columns:1fr;gap:4px}.cheat-grid{grid-template-columns:1fr}.ch-progress{padding:12px 24px}}
+</style>
+</head>
+<body>
+<div class="ch-progress">
+  <span>Chapter 11 of 18</span>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <span>Statistical Foundations for Strategy Professionals</span>
+</div>
+<div class="ch-hero">
+  <div class="ch-eyebrow">Part 6 — Prediction · Chapter 11</div>
+  <h1 class="ch-title">Predictive Modeling Fundamentals — <em>From Inference to Prediction</em></h1>
+  <p class="ch-intro">Predictive modeling shifts the goal from understanding relationships to forecasting outcomes. Different evaluation metrics, different validation strategies, and a different relationship to assumptions — this chapter covers the conceptual foundations that apply across all prediction algorithms.</p>
+  <div class="ch-meta">
+    <span>Terms covered: <em>18</em></span>
+    <span>Sections: <em>Bias-variance tradeoff · Cross-validation · Train/test splits · Feature engineering · Tree models · Ensembles</em></span>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 11.1</div>
+  <h2 class="section-title">The bias-variance tradeoff — the central tension in prediction</h2>
+  <p class="section-intro">Every predictive model exists somewhere on a spectrum between oversimplified (high bias) and overfit to noise (high variance). Understanding this tradeoff explains why the most statistically pure model is rarely the best predictor, why ensemble methods work, and how to choose model complexity for a given task.</p>
+
+  <div class="illustration">
+    <svg viewBox="0 0 760 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fff">
+      <!-- X axis -->
+      <line x1="60" y1="160" x2="700" y2="160" stroke="#d4cdc4" stroke-width="1"/>
+      <text x="380" y="180" font-family="'JetBrains Mono',monospace" font-size="9" fill="#b0a898" text-anchor="middle" letter-spacing="0.05em">MODEL COMPLEXITY →</text>
+      <!-- Y axis -->
+      <line x1="60" y1="20" x2="60" y2="165" stroke="#d4cdc4" stroke-width="1"/>
+      <text x="35" y="95" font-family="'JetBrains Mono',monospace" font-size="8" fill="#b0a898" text-anchor="middle" letter-spacing="0.04em" transform="rotate(-90,35,95)">ERROR</text>
+
+      <!-- Training error (decreasing) -->
+      <path d="M80,145 Q200,80 380,30 Q500,18 680,14" fill="none" stroke="#2d5f8a" stroke-width="2"/>
+      <!-- Validation error (U-shaped) -->
+      <path d="M80,150 Q200,90 320,60 Q400,50 440,52 Q530,58 680,120" fill="none" stroke="#c4400d" stroke-width="2"/>
+
+      <!-- Optimal zone indicator -->
+      <line x1="420" y1="20" x2="420" y2="160" stroke="#2d7a4a" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="425" y="35" font-family="'JetBrains Mono',monospace" font-size="8" fill="#2d7a4a">sweet spot</text>
+
+      <!-- Labels -->
+      <text x="680" y="12" font-family="'JetBrains Mono',monospace" font-size="8.5" fill="#2d5f8a">training</text>
+      <text x="680" y="23" font-family="'JetBrains Mono',monospace" font-size="8.5" fill="#2d5f8a">error</text>
+      <text x="680" y="113" font-family="'JetBrains Mono',monospace" font-size="8.5" fill="#c4400d">validation</text>
+      <text x="680" y="124" font-family="'JetBrains Mono',monospace" font-size="8.5" fill="#c4400d">error</text>
+
+      <!-- Regions -->
+      <text x="150" y="145" font-family="'Source Serif 4',serif" font-size="10" fill="#b0a898" font-style="italic">underfitting</text>
+      <text x="150" y="157" font-family="'JetBrains Mono',monospace" font-size="8" fill="#b0a898">(high bias)</text>
+      <text x="560" y="95" font-family="'Source Serif 4',serif" font-size="10" fill="#b0a898" font-style="italic">overfitting</text>
+      <text x="560" y="107" font-family="'JetBrains Mono',monospace" font-size="8" fill="#b0a898">(high variance)</text>
+    </svg>
+    <div class="illustration-caption">Training error decreases monotonically with complexity. Validation error follows a U-shape — the optimal model complexity is at the minimum of validation error, not minimum training error.</div>
+  </div>
+
+  <div class="term-block" id="t-bias-var">
+    <div class="term-header" onclick="toggleTerm('t-bias-var')">
+      <div style="flex:1"><div class="term-name">Bias-Variance Tradeoff</div><div class="term-short">Simple models have high bias (systematic error) and low variance; complex models have low bias but high variance — the fundamental tension in model selection.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you that accuracy on new data depends on two opposing error sources: bias (model too simple to capture the true pattern — systematically wrong) and variance (model too sensitive to training data — performs differently on new data). Adding complexity reduces bias but increases variance. The optimal model minimizes their sum — not either individually.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Expected Error = Bias² + Variance + Irreducible Noise</span><span class="formula-plain">Bias decreases and variance increases as model complexity grows. Irreducible noise is the floor — no model beats it. The goal is to find complexity where (Bias² + Variance) is minimized — which requires validation on held-out data, not training data alone.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In model selection decisions, hyperparameter tuning, regularization discussions, ensemble method rationale, and any comparison of simple vs complex models.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether model selection was based on training or validation performance. Selecting the model with lowest training error will produce the most complex (most overfit) model. Always evaluate on held-out data.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A credit scoring team compares logistic regression (low variance, higher bias) against gradient boosting (low bias, higher variance). On a stable 3-year training set, GBM dominates on training AUC. On a held-out last-6-months validation set during a period of economic shift, logistic regression's stability advantage narrows the performance gap — lower variance is more valuable when conditions change.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-overfitting">
+    <div class="term-header" onclick="toggleTerm('t-overfitting')">
+      <div style="flex:1"><div class="term-name">Overfitting</div><div class="term-short">A model that memorizes training data noise rather than learning the underlying pattern — performs well in development but poorly in production.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the model has learned patterns that are specific to the training data and will not generalize. Every dataset has noise — random fluctuations with no predictive value. An overfit model mistakes noise for signal. The symptom is a large gap between training performance and validation performance — the model degrades significantly on new data.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Diagnose: training AUC/accuracy significantly higher than validation AUC/accuracy. Causes: too many features relative to data volume, too many tree splits, too many epochs without early stopping. Remedies: regularisation, early stopping, feature selection, cross-validation for hyperparameters, collecting more data.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In model development when large performance gaps appear between train and validation sets, and in production when a model that looked excellent in development underperforms from day one.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the training-validation performance gap is larger than 5 AUC points. A gap of 10+ points in AUC suggests severe overfitting. The model is learning training-set-specific patterns that will not persist in production.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A data team trains a fraud detection model on 18 months of transactions with 500 features. Training AUC: 0.986. Validation AUC (held-out last 3 months): 0.887. The 0.099 gap signals severe overfitting. Feature selection reduces the model to 45 features. Training AUC drops to 0.942, but validation AUC rises to 0.921 — a simpler model with far better generalization.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-cross-val">
+    <div class="term-header" onclick="toggleTerm('t-cross-val')">
+      <div style="flex:1"><div class="term-name">Cross-Validation</div><div class="term-short">A method of estimating model performance by repeatedly fitting on subsets of training data and evaluating on the remainder — reducing reliance on any single train/test split.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the performance estimate is not dependent on the luck of a single train/test split. A single 80/20 split may give optimistic or pessimistic performance depending on which 20% ends up in the test set. k-fold CV uses all data for both training and evaluation in rotation, providing a more stable and reliable performance estimate.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">k-fold CV: split data into k folds; train on k−1, evaluate on 1; rotate k times</span><span class="formula-plain">CV error = average of k test scores. k=5 or k=10 is standard. For time series: always use temporal cross-validation (train on past, evaluate on future) — random k-fold leaks future information into training. Never use CV performance as the final holdout estimate — it is for model selection, not final evaluation.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In hyperparameter tuning, model selection among competing algorithms, feature selection, and any development process that needs performance estimates without burning the final holdout.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the final reported performance is from CV or a truly held-out test set. Using CV performance as the final estimate after tuning hyperparameters to optimise it constitutes double-dipping — the CV is no longer independent of the model selection process.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A team develops a customer churn model, using 5-fold CV to compare 8 candidate model configurations. They select the configuration with best CV AUC, then evaluate it once on a held-out final test set. The test AUC (0.794) is slightly lower than CV AUC (0.812) — a small gap suggesting the model generalizes well. The test set result is the honest reportable performance number.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-train-test">
+    <div class="term-header" onclick="toggleTerm('t-train-test')">
+      <div style="flex:1"><div class="term-name">Train / Validation / Test Split</div><div class="term-short">The three-way partition of data for model development — training builds models, validation tunes them, test provides the honest final performance estimate.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you model development needs multiple independent data partitions to avoid optimistic performance estimates. The training set is used to fit model parameters. The validation set is used to tune hyperparameters and compare models — it is touched repeatedly and is therefore "spent." The test set is used exactly once to provide the final unbiased performance estimate.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Typical split: 60% train, 20% validation, 20% test. For time series: splits must be temporal — train on oldest data, validate on middle period, test on most recent. Never: train on all data, evaluate on training data (tautological), or allow test set to influence any modeling decision before final evaluation.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In every supervised machine learning project — the split strategy and its implementation are among the first things a model review should check.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether any test set data was ever visible during development. Even using test set statistics to make decisions (feature engineering, threshold calibration, model selection) contaminates it. The test set must be truly invisible until the final evaluation.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A retail forecasting team splits 3 years of sales data: train on years 1–2 (60%), validate on first 6 months of year 3 (20%), and hold out the final 6 months (20%) as the test set. Chronological splitting is essential — random splitting would allow future-week data into training, creating look-ahead bias that inflates forecast quality metrics.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 11.2</div>
+  <h2 class="section-title">Feature engineering and tree-based models</h2>
+  <p class="section-intro">Raw data is rarely in the form that best represents the patterns a model needs to learn. Feature engineering transforms, combines, and encodes raw variables to improve model performance. Tree-based models — decision trees, random forests, gradient boosting — dominate many business applications because they handle nonlinearities, interactions, and mixed data types naturally.</p>
+
+  <div class="term-block" id="t-feature-eng">
+    <div class="term-header" onclick="toggleTerm('t-feature-eng')">
+      <div style="flex:1"><div class="term-name">Feature Engineering</div><div class="term-short">Creating, transforming, and selecting input variables to improve model performance — often the highest-ROI step in model development.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the model's ceiling is determined by what information is available in the features, not by the algorithm. A logistic regression with well-engineered features routinely outperforms gradient boosting with raw features. Feature engineering involves: transformations (log, square root for skewed variables), interaction terms, temporal aggregations (30-day recency, frequency), ratios, and encoding strategies for categorical variables.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Common engineering steps: (1) Log-transform right-skewed numerics. (2) Create behavioral aggregates: sum, mean, max, min over windows. (3) Date decomposition: day_of_week, month, days_since_event. (4) Ratio features: spend/limit, calls/year. (5) One-hot encode low-cardinality categoricals. (6) Target encode high-cardinality categoricals. (7) Always compute on training data, apply to validation/test.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In model feature lists, data science notebooks, and any comparison of model versions where the primary difference is the feature set rather than the algorithm.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether any feature engineering step could introduce leakage. Computing "average spend in the next 30 days" for a churn model uses future data — the transformation itself is the source of leakage, not just the raw variable.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A telecom churn model uses raw call data (300 daily columns per customer). Feature engineering creates: 30/60/90-day call frequency trends, recency of last call, ratio of international to domestic calls, week-over-week usage change, and days since last service contact. The engineered 20-feature model outperforms the raw 300-feature model by 4 AUC points while being 15× faster to score in production.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-trees">
+    <div class="term-header" onclick="toggleTerm('t-trees')">
+      <div style="flex:1"><div class="term-name">Decision Trees and Random Forests</div><div class="term-short">Non-parametric models that split data recursively on features — trees are interpretable but prone to overfitting; forests use averaging over many trees to reduce variance.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the algorithm partitions the feature space into rectangular regions and predicts the average outcome in each region. Decision trees naturally handle non-linear relationships and feature interactions, require no scaling, and tolerate mixed variable types. Their weakness: a single deep tree overfits severely. Random forest averages 100–1,000 trees on bootstrapped samples with random feature subsets — reducing variance without increasing bias much.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Random forest: build B trees on bootstrap samples, each using a random √p subset of features. Predict by averaging (regression) or voting (classification). Key hyperparameters: n_estimators (more = less variance, diminishing returns after ~200), max_depth (limits individual tree complexity), min_samples_leaf (smooths predictions). OOB score: automatic validation estimate from out-of-bag samples.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In fraud detection, credit scoring, churn prediction, demand forecasting, and most tabular data ML applications where performance matters more than interpretability.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether feature importance from the random forest uses MDI (mean decrease in impurity, built-in) or permutation importance (computed separately). MDI overestimates importance of high-cardinality features — permutation importance is more reliable for feature selection.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A property insurer's claims fraud model uses a random forest with 500 trees on 80 engineered features. OOB AUC: 0.892. Feature permutation importance reveals: claim_frequency_last_3y, days_since_policy_start, and num_prior_modifications are the top 3 predictors. This guides the risk team's investigation priorities — they focus manual review time on cases with suspicious combinations of these three features.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-gbm">
+    <div class="term-header" onclick="toggleTerm('t-gbm')">
+      <div style="flex:1"><div class="term-name">Gradient Boosting</div><div class="term-short">Builds trees sequentially, each correcting the errors of the previous — typically the highest-performing algorithm on tabular business data.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the model improves iteratively — each new tree fits the residuals (errors) of all prior trees combined. Where random forests reduce variance through parallel averaging, gradient boosting reduces bias through sequential correction. It is more powerful than random forest for many tasks but more susceptible to overfitting, more sensitive to hyperparameters, and slower to train.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Ŷ_m = Ŷ_{m-1} + η × h_m(X) where h_m fits residuals of Ŷ_{m-1}. Learning rate η (0.01–0.1) controls how much each tree contributes — smaller η requires more trees but generalizes better. Key hyperparameters: n_estimators, learning_rate, max_depth (shallow trees 3–6 work best), subsample. Always use early stopping to prevent overfitting.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In Kaggle competition winners, production ML systems at major tech companies, and most mature analytics teams for tabular prediction tasks. XGBoost, LightGBM, and CatBoost are the dominant implementations.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether early stopping was used and whether the learning rate was tuned. Gradient boosting without early stopping will overfit with enough trees. A high learning rate with few trees leaves significant model capacity on the table.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A lender switches from logistic regression to LightGBM for application scoring. LightGBM training AUC: 0.878 (vs 0.842 for logistic). With early stopping (monitoring 20% validation set), the optimal model uses 847 of 2,000 maximum trees at learning_rate=0.05. The 4.3% AUC improvement equates to better separation of default risk that the risk team estimates could reduce expected credit losses by £2.1M annually at current volumes.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-early-stopping">
+    <div class="term-header" onclick="toggleTerm('t-early-stopping')">
+      <div style="flex:1"><div class="term-name">Early Stopping</div><div class="term-short">Halting model training when validation performance stops improving — preventing overfitting in iterative algorithms.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the algorithm is monitoring the validation loss during training and stopping when that loss starts increasing — even if training loss is still decreasing. This is the standard regularisation technique for gradient boosting and neural networks. Without early stopping, iterative models will overfit if given enough iterations or epochs.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Monitor validation metric at each iteration. Maintain a count of iterations since best validation score. Stop when count exceeds patience threshold (e.g., 50 rounds). Restore model weights from the best validation epoch/iteration. Implementation detail: validation data used for early stopping should not overlap with the final test set.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In gradient boosting configuration (early_stopping_rounds parameter), neural network training logs, and any iterative optimization where training loss and validation loss diverge.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the early stopping validation set was also used for hyperparameter tuning. Using the same validation data for both early stopping and hyperparameter tuning optimistically biases the selected model — separate validation sets are needed for each purpose.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">An e-commerce recommendations team trains a neural collaborative filtering model. After epoch 12, validation NDCG@10 peaks at 0.421. Training continues to epoch 20 (training NDCG: 0.501). Early stopping at epoch 14 (patience=2 after peak) restores the epoch-12 weights — avoiding the 4% validation metric degradation from the last 6 epochs of pure noise fitting.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Chapter Summary</div>
+  <h2 class="section-title">Chapter 11 cheat sheet</h2>
+  <div class="cheat-sheet">
+    <div class="cheat-title">Key principles from this chapter</div>
+    <div class="cheat-grid">
+      <div class="cheat-item"><div class="cheat-item-title">Select models on validation, not training error</div><div class="cheat-item-body">Training error always decreases with complexity. Validation error follows a U-shape. The optimal model minimizes validation error — which requires held-out data.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Feature engineering often beats algorithm choice</div><div class="cheat-item-body">Well-engineered features in a logistic regression often outperform raw features in gradient boosting. Start with what the model can learn from, not which algorithm to use.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Three-way split: train / validation / test</div><div class="cheat-item-body">Train for parameters. Validation for model selection and hyperparameters. Test exactly once for honest performance reporting. Never let test set information influence development.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Use temporal splits for time series</div><div class="cheat-item-body">Random k-fold on time series data creates look-ahead bias. Always train on past, evaluate on future — in both CV folds and final train/test splits.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Gradient boosting with early stopping</div><div class="cheat-item-body">GBM is typically the highest-performing tabular algorithm. Always use early stopping with a separate validation set. Low learning rate + more trees generally outperforms high learning rate + fewer trees.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">OOB score for random forest</div><div class="cheat-item-body">Out-of-bag samples provide a free internal validation estimate in random forests — useful for quick model quality checks during development without burning a dedicated validation set.</div></div>
+    </div>
+  </div>
+  <div style="margin-top:28px">
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:12px">Chapter 12 deepens the regularisation discussion — Ridge, Lasso, ElasticNet, and how shrinkage methods navigate the bias-variance tradeoff. Chapter 13 covers the evaluation metrics for classification models in detail.</p>
+    <a href="../ml-for-strategy-v2/ML_Strategy_Playbook.html" class="companion">↗ ML Strategy Playbook — companion reference</a>
+  </div>
+</div>
+<script>
+function toggleTerm(id){const b=document.getElementById(id);const o=b.classList.contains('open');b.classList.toggle('open',!o);b.querySelector('.term-toggle').textContent=o?'expand':'collapse';}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const all=document.querySelectorAll('.term-block');if(e.key==='e'){all.forEach(b=>{b.classList.add('open');b.querySelector('.term-toggle').textContent='collapse';})}if(e.key==='c'){all.forEach(b=>{b.classList.remove('open');b.querySelector('.term-toggle').textContent='expand';})}});
+</script>
+</body>
+</html>

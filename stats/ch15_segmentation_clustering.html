@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 15 — Segmentation & Clustering | Stats Foundations for Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;
+  --cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;
+  --accent:#8b2500;--accent2:#c4440d;
+  --crimson:#5a0a20;--crimson2:#aa2040;--crimson3:#fce8ec;
+  --gold:#7a5a00;--gold2:#c49a00;--gold3:#fdf5dc;
+  --blue2:#2d5f8a;--blue3:#ddeaf7;
+  --border:#d4cdc4;
+  --serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);--shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+@media(prefers-color-scheme:dark){
+  :root{--ink:#f0ece4;--ink2:#d8d0c4;--ink3:#a09488;--ink4:#6a6058;--cream:#181612;--cream2:#201e1a;--cream3:#2a2620;--accent2:#e8784a;--crimson2:#e04060;--crimson3:#200810;--gold2:#e4c050;--gold3:#221e10;--blue3:#1a2a3a;--border:#38342e;}
+  body{background:#141210}.narrative{background:#141210;border-bottom-color:#2a2620}
+  .term-block{background:#1e1c18}.term-header{background:#1e1c18}.term-body{border-top-color:#2a2620}.field-row{border-bottom-color:#2a2620}.field-value.formula{background:#2a2620}
+  .callout-insight{background:#221e10;border-color:#e4c050}.callout-warning{background:#200810;border-color:#e04060}.callout-rule{background:#1a2a3a;border-color:#5a9fdf}
+  .ch-progress{background:#1e1c18;border-bottom-color:#38342e}.progress-bar{background:#2a2620}.progress-fill{background:#e04060}
+  .ch-hero{background:#200818}.cheat-sheet{background:#200818}.cheat-item{background:rgba(255,255,255,0.05);border-left-color:#e04060}
+  .algo-card{background:#1e1c18;border-color:#38342e}
+  .companion{color:#e04060}.companion:hover{background:#e04060;color:#141210}
+  p{color:var(--ink2)}.section-intro{color:var(--ink3);border-left-color:#e04060}
+  .term-toggle{background:#2a2620;border-color:#38342e;color:var(--ink3)}.term-block.open .term-toggle{background:#f0ece4;color:#141210;border-color:#f0ece4}
+  .term-name{color:var(--ink)}.term-short{color:var(--ink3)}.section-title{color:var(--ink)}.section-label{color:#e04060}.field-label{color:var(--ink4)}.field-value{color:var(--ink2)}
+  .field-value.formula .formula-math{color:#e04060}.field-value.formula .formula-plain{color:var(--ink3)}.redflag{color:#e8784a}
+  .cheat-title{color:rgba(240,160,180,0.7)}.cheat-item-title{color:#f0ece4}.cheat-item-body{color:rgba(240,236,228,0.5)}
+  .ch-eyebrow{color:rgba(240,160,180,0.7)}.ch-title{color:#f4f0e8}.ch-intro{color:rgba(240,236,228,0.85)}.ch-meta{color:rgba(240,236,228,0.58)}.ch-meta span em{color:rgba(240,236,228,0.88)}.ch-progress span{color:#a09488}
+  .algo-name{color:var(--ink)}.algo-def{color:var(--ink3)}.algo-badge{background:#200818;color:#e04060}
+}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.ch-hero{background:var(--crimson);color:var(--cream);padding:72px 72px 56px;position:relative;overflow:hidden}
+.ch-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 85% 70%,rgba(170,32,64,0.5) 0%,transparent 55%);pointer-events:none}
+.ch-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,160,180,0.7);margin-bottom:16px}
+.ch-title{font-family:var(--display);font-size:44px;font-weight:700;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin-bottom:20px;max-width:700px}
+.ch-title em{color:#f8a0b8;font-style:normal}
+.ch-intro{font-size:16px;color:rgba(255,255,255,0.75);max-width:600px;line-height:1.7;margin-bottom:36px}
+.ch-meta{display:flex;flex-wrap:wrap;gap:24px;font-size:10px;color:rgba(255,255,255,0.42);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono)}
+.ch-meta span em{color:rgba(255,255,255,0.72);font-style:normal}
+.ch-progress{display:flex;align-items:center;gap:12px;padding:16px 72px;background:var(--cream2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:0.05em}
+.progress-bar{flex:1;height:3px;background:var(--cream3);border-radius:2px;max-width:200px}
+.progress-fill{height:100%;background:var(--crimson2);border-radius:2px;width:83%}
+.narrative{padding:56px 72px 48px;border-bottom:1px solid var(--border);max-width:960px}
+.narrative:last-child{border-bottom:none}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--crimson2);margin-bottom:8px;font-weight:500}
+.section-title{font-family:var(--display);font-size:26px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:8px;letter-spacing:-0.01em}
+.section-intro{font-size:14.5px;color:var(--ink3);line-height:1.75;max-width:680px;margin-bottom:36px;padding-left:16px;border-left:3px solid var(--crimson3)}
+.term-block{background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s}
+.term-block:hover{box-shadow:var(--shadow-lg)}
+.term-header{display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;cursor:pointer;user-select:none}
+.term-name{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);line-height:1.25;flex:1}
+.term-short{font-size:12.5px;color:var(--ink3);line-height:1.5;flex:1;font-style:italic;margin-top:3px}
+.term-toggle{font-family:var(--mono);font-size:11px;color:var(--ink4);border:1px solid var(--border);border-radius:3px;padding:2px 8px;flex-shrink:0;margin-top:2px;transition:all 0.15s;background:var(--cream)}
+.term-block.open .term-toggle{background:var(--crimson);color:#fff;border-color:var(--crimson)}
+.term-body{display:none;padding:0 24px 20px;border-top:1px solid var(--cream2)}
+.term-block.open .term-body{display:block}
+.field-row{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--cream3);align-items:baseline}
+.field-row:last-child{border-bottom:none}
+.field-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);font-weight:500;padding-top:1px}
+.field-value{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.field-value.formula{font-family:var(--mono);font-size:12.5px;background:var(--cream2);padding:10px 14px;border-radius:3px;color:var(--ink);line-height:1.65}
+.field-value.formula .formula-math{color:var(--crimson2);font-weight:500;display:block;margin-bottom:4px;font-size:13px}
+.field-value.formula .formula-plain{color:var(--ink3);font-family:var(--serif);font-size:12.5px;font-style:italic}
+.redflag{color:var(--accent);font-size:13px}.redflag::before{content:'⚑ ';font-style:normal}
+.callout{padding:16px 20px;border-radius:4px;margin:20px 0;border-left:3px solid;font-size:13.5px;line-height:1.65}
+.callout-insight{background:var(--gold3);border-color:var(--gold2);color:var(--ink2)}
+.callout-warning{background:var(--crimson3);border-color:var(--crimson2);color:var(--ink2)}
+.callout-rule{background:var(--blue3);border-color:var(--blue2);color:var(--ink2)}
+.callout strong{font-weight:600;display:block;margin-bottom:5px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.65}
+.algo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0}
+.algo-card{background:#fff;border:1px solid var(--border);border-radius:6px;padding:16px 18px;box-shadow:var(--shadow)}
+.algo-badge{font-family:var(--mono);font-size:9px;letter-spacing:0.07em;text-transform:uppercase;background:var(--crimson3);color:var(--crimson2);padding:2px 7px;border-radius:3px;display:inline-block;margin-bottom:8px}
+.algo-name{font-family:var(--display);font-size:14px;font-weight:600;color:var(--ink);margin-bottom:5px}
+.algo-def{font-size:12px;color:var(--ink3);line-height:1.55;margin-bottom:6px}
+.algo-eg{font-family:var(--mono);font-size:10.5px;color:var(--crimson2)}
+.cheat-sheet{background:var(--crimson);color:#fff;border-radius:6px;padding:28px 32px;margin-top:24px}
+.cheat-title{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(240,160,180,0.7);margin-bottom:16px}
+.cheat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cheat-item{padding:12px 14px;background:rgba(255,255,255,0.08);border-radius:4px;border-left:2px solid #f8a0b8}
+.cheat-item-title{font-size:11.5px;font-weight:600;color:#fff;margin-bottom:4px;font-family:var(--serif)}
+.cheat-item-body{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.55}
+.companion{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--crimson2);text-decoration:none;border:1px solid currentColor;padding:5px 12px;border-radius:3px;margin-top:4px;transition:all 0.15s}
+.companion:hover{background:var(--crimson2);color:#fff}
+@media(max-width:700px){.ch-hero,.narrative{padding:40px 24px}.ch-title{font-size:30px}.field-row{grid-template-columns:1fr;gap:4px}.algo-grid,.cheat-grid{grid-template-columns:1fr}.ch-progress{padding:12px 24px}}
+</style>
+</head>
+<body>
+<div class="ch-progress">
+  <span>Chapter 15 of 18</span>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <span>Statistical Foundations for Strategy Professionals</span>
+</div>
+<div class="ch-hero">
+  <div class="ch-eyebrow">Part 7 — Unsupervised Methods · Chapter 15</div>
+  <h1 class="ch-title">Segmentation and <em>Clustering</em></h1>
+  <p class="ch-intro">Clustering finds structure in data without a predefined outcome — grouping customers, products, or markets by similarity. It is one of the most used and most misused tools in business analytics, because there is no ground truth to validate against, and almost any algorithm will produce clusters whether meaningful ones exist or not.</p>
+  <div class="ch-meta">
+    <span>Terms covered: <em>16</em></span>
+    <span>Sections: <em>K-means · Hierarchical · DBSCAN · Evaluation · Dimensionality reduction · PCA</em></span>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 15.1</div>
+  <h2 class="section-title">Clustering algorithms — the right tool for the structure you expect</h2>
+  <p class="section-intro">Different clustering algorithms make different assumptions about cluster shape, size, and number. Choosing the algorithm before exploring the data structure is a common mistake — the algorithm should match what the data actually looks like, not what is most convenient to implement.</p>
+
+  <div class="algo-grid">
+    <div class="algo-card">
+      <span class="algo-badge">Centroid-based</span>
+      <div class="algo-name">K-Means</div>
+      <div class="algo-def">Partitions data into k spherical clusters by iteratively assigning points to nearest centroid and updating centroids. Fast, scalable, requires k specified upfront.</div>
+      <div class="algo-eg">Best for: large tabular datasets, equal-size approximately spherical clusters</div>
+    </div>
+    <div class="algo-card">
+      <span class="algo-badge">Hierarchy-based</span>
+      <div class="algo-name">Hierarchical (Ward)</div>
+      <div class="algo-def">Builds a dendrogram by successively merging (agglomerative) or splitting (divisive) clusters. No k required upfront — cut the dendrogram at chosen depth.</div>
+      <div class="algo-eg">Best for: small-medium datasets, exploring cluster structure, variable-size clusters</div>
+    </div>
+    <div class="algo-card">
+      <span class="algo-badge">Density-based</span>
+      <div class="algo-name">DBSCAN</div>
+      <div class="algo-def">Finds dense regions separated by low-density areas. Handles arbitrary shapes, automatically identifies noise/outliers as points belonging to no cluster.</div>
+      <div class="algo-eg">Best for: geographic/spatial data, irregular cluster shapes, anomaly identification</div>
+    </div>
+    <div class="algo-card">
+      <span class="algo-badge">Probabilistic</span>
+      <div class="algo-name">Gaussian Mixture Models (GMM)</div>
+      <div class="algo-def">Models data as a mixture of Gaussian distributions. Returns soft cluster assignments (probabilities). Handles elliptical clusters of different sizes.</div>
+      <div class="algo-eg">Best for: overlapping clusters, uncertainty quantification, when membership should be probabilistic</div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-kmeans">
+    <div class="term-header" onclick="toggleTerm('t-kmeans')">
+      <div style="flex:1"><div class="term-name">K-Means Clustering</div><div class="term-short">Partitions data into k clusters by minimising within-cluster variance — the most widely used clustering algorithm in business analytics.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the algorithm is finding k groups where observations within each group are as similar to each other (and as different from other groups) as possible. K-means defines "similar" as close in Euclidean distance to the cluster centroid — which means it assumes clusters are roughly spherical, similar in size, and the features are on comparable scales.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Minimize: Σ_k Σ_{i∈Cₖ} ||xᵢ − μₖ||²</span><span class="formula-plain">K-means++ initialization (random seeding far from existing centroids) reduces poor convergence. Always run 10+ random starts — results vary by initialization. Scale features before K-means (distance-based, scale-sensitive). Use elbow plot or silhouette score to choose k.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In customer segmentation, product portfolio clustering, geographic market grouping, and any business context requiring discrete, interpretable groups from continuous features.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether features were standardised before clustering. K-means on unstandardised features will create clusters dominated by the highest-variance variable — income (range £20k–£200k) will swamp age (range 18–80) and the clustering will essentially just be income-based regardless of other features.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A telecoms operator clusters 4M customers on 15 standardised behavioral features (spend, usage, tenure, channel). K-means with k=6 (selected by silhouette score) identifies: high-value tenured (23%), digital-native mid-value (19%), heavy-data mobile-first (17%), price-sensitive churners (15%), voice-primary seniors (14%), low-engagement dormant (12%). Each segment gets differentiated retention, pricing, and acquisition strategy.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-hierarchical">
+    <div class="term-header" onclick="toggleTerm('t-hierarchical')">
+      <div style="flex:1"><div class="term-name">Hierarchical Clustering</div><div class="term-short">Builds a tree of nested clusters (dendrogram) — letting analysts choose the level of granularity without re-running the algorithm.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the data contains nested structure — that what looks like one segment at the strategic level may be several distinct micro-segments at the operational level. Hierarchical clustering captures this without requiring k to be specified upfront and allows exploring multiple resolutions of the same structure through the dendrogram.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Agglomerative: start with each point as its own cluster, iteratively merge the two most similar. Ward linkage minimises within-cluster variance at each merge — best for compact, equal-sized clusters. Single linkage = minimum distance (prone to chaining). Complete linkage = maximum distance (compact clusters). Cut the dendrogram at the largest gap in merge distances to find natural k.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In market structure analysis, product taxonomy development, brand portfolio rationalization, and any business question where understanding the hierarchy of similarity matters as much as the final grouping.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what linkage criterion was used. Single linkage is prone to "chaining" — one very large elongated cluster forms while others are tiny. Ward linkage generally produces the most interpretable, compact customer segments for business applications.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A consumer goods company uses hierarchical clustering on 200 SKUs by flavor, format, and price point to rationalise the portfolio. The dendrogram reveals a natural 3-cluster top-level structure (premium, mainstream, value) with 12 sub-clusters within those. This hierarchical structure informs both brand architecture decisions and SKU reduction targeting — eliminating sub-clusters with overlapping positioning.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-soft-assignments">
+    <div class="term-header" onclick="toggleTerm('t-soft-assignments')">
+      <div style="flex:1"><div class="term-name">Soft Cluster Assignments (GMM)</div><div class="term-short">Probabilistic membership — each observation belongs to all clusters with varying probabilities, rather than exclusively to one.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the model is honest about boundary cases. A customer with 62% probability in Cluster A and 38% in Cluster B is genuinely intermediate — forcing hard assignment to A misrepresents how similar they are to B. Gaussian Mixture Models produce these soft assignments by fitting a probabilistic model where each cluster is a Gaussian distribution with its own mean and covariance.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">P(cluster k | xᵢ) = πₖ × N(xᵢ|μₖ,Σₖ) / Σⱼ πⱼ × N(xᵢ|μⱼ,Σⱼ)</span><span class="formula-plain">Fitted by Expectation-Maximisation (EM). Use BIC (Bayesian Information Criterion) to select number of components. Covariance type (full, tied, diagonal, spherical) controls cluster shape flexibility — full is most flexible, spherical is equivalent to soft K-means.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In customer lifetime value modeling where customer types overlap, document topic modeling (LDA is a GMM variant), and any segmentation where boundary uncertainty is commercially important.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask how uncertain assignments are handled operationally. Soft assignments are statistically honest but operationally inconvenient — most CRM systems require a hard segment label. Define a business rule for edge cases (e.g. assign to the highest-probability cluster, but flag cases below 60% as "undecided" for manual review).</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A bank clusters customers for product recommendation. GMM identifies 5 segments. 18% of customers have no cluster with probability above 60% — they sit genuinely between segments. These "multi-segment" customers receive a hybrid product recommendation rather than being forced into the nearest segment's default recommendation — improving cross-sell conversion by 14% for this group.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 15.2</div>
+  <h2 class="section-title">Evaluating cluster quality — without ground truth</h2>
+  <p class="section-intro">Unlike supervised models, clustering has no ground truth to validate against. Evaluation must rely on internal cohesion metrics (are similar things being grouped together?) and business interpretability (do the segments mean something actionable?). Statistical and business validity are both necessary — neither alone is sufficient.</p>
+
+  <div class="term-block" id="t-silhouette">
+    <div class="term-header" onclick="toggleTerm('t-silhouette')">
+      <div style="flex:1"><div class="term-name">Silhouette Score</div><div class="term-short">Measures how similar each point is to its own cluster versus neighbouring clusters — the standard internal clustering quality metric.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how well each observation fits its assigned cluster. A score near +1 means the observation is much closer to its own cluster than to the nearest alternative — well-assigned. A score near 0 means it sits on the boundary between two clusters. A score near −1 means it may be assigned to the wrong cluster.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">s(i) = (b(i) − a(i)) / max(a(i), b(i))</span><span class="formula-plain">a(i) = mean distance to other points in same cluster (cohesion). b(i) = mean distance to points in nearest other cluster (separation). Range: [−1, +1]. Mean silhouette ≥ 0.50 is generally considered good clustering structure. Use to compare different k values — select k with highest mean silhouette.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In k-selection analysis (elbow vs silhouette comparison), cluster quality reporting, and validation of whether a proposed segmentation has statistical coherence before investing in strategic interpretation.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the silhouette score was computed on the training data or on a held-out validation set. On training data, silhouette is optimistically biased — the algorithm fits to maximise cohesion. Validate on a held-out 20% to get an honest quality estimate.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A retailer tests k=3 through k=10 for customer clustering. Silhouette scores: k=4 (0.48), k=5 (0.56), k=6 (0.53), k=7 (0.51). k=5 maximises silhouette at 0.56. A business review of the 5 segments confirms interpretability — each has a distinct actionable strategy. The combination of statistical quality (silhouette) and business interpretability validates k=5.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-scree">
+    <div class="term-header" onclick="toggleTerm('t-scree')">
+      <div style="flex:1"><div class="term-name">Scree Plot and Elbow Method</div><div class="term-short">Plots within-cluster variance (or explained variance for PCA) against k — the "elbow" indicates where adding more clusters yields diminishing returns.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the natural breaking point in complexity — where the return from adding another cluster (or component) drops sharply. The elbow is where the curve changes from steep to flat. Before the elbow, each additional cluster explains significant new variation; after the elbow, clusters are splitting existing coherent groups rather than capturing genuinely new structure.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">For K-means: plot within-cluster sum of squares (WCSS or inertia) vs k. The elbow is the point of maximum curvature. For PCA: plot explained variance % vs number of components. Limitation: the elbow is often subjective — the plot may not have a clear bend. Use alongside silhouette score and business interpretability as a multi-criterion decision.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In clustering k-selection analysis and PCA component selection — always as a visual tool to guide, not determine, the final number.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether a clear elbow was visible or whether k was chosen subjectively from a continuously decreasing curve. When the elbow is ambiguous, rely more heavily on silhouette score and business interpretability to make the final selection.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">An insurer clusters policyholders for risk stratification. Scree plot shows WCSS decreasing steeply from k=1 to k=4, then flattening at k=5. Silhouette peaks at k=4 (0.61). Business review confirms 4 interpretable risk profiles (standard, above-average, high-risk, very high-risk). Both methods agree — k=4 is the right choice.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 15.3</div>
+  <h2 class="section-title">Dimensionality reduction — PCA and related methods</h2>
+  <p class="section-intro">High-dimensional data is hard to cluster, visualise, and model. Dimensionality reduction compresses many correlated features into a smaller set of uncorrelated components while preserving most of the information. It is a preprocessing step for clustering, a visualisation tool for exploration, and a method for removing multicollinearity before regression.</p>
+
+  <div class="term-block" id="t-pca">
+    <div class="term-header" onclick="toggleTerm('t-pca')">
+      <div style="flex:1"><div class="term-name">PCA — Principal Component Analysis</div><div class="term-short">Finds orthogonal linear combinations of features that explain the maximum variance — reducing dimensionality while preserving information.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you a new set of uncorrelated "super-features" (principal components) that summarise the original variables. PC1 explains the most variance, PC2 the second most, and so on — each orthogonal to all others. If 10 correlated features can be summarised by 3 PCs explaining 85% of the variance, those 3 PCs are often more useful for clustering and modeling than the 10 originals.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">PCA = eigenvectors of covariance matrix</span><span class="formula-plain">Standardise features before PCA (otherwise high-variance features dominate). Use scree plot to select number of components — typically retain enough to explain 70–85% of variance. Component loadings: the correlation of each original feature with each PC — use to name and interpret what each component represents.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">As preprocessing before clustering (reduces noise, speeds up algorithms), in data visualisation (project to 2D for scatterplot), and in regression when multicollinearity must be removed without feature selection.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether PCA components are interpretable for the business use case. PCA is optimal for variance compression but produces components that are linear combinations of all features — sometimes hard to explain to stakeholders. If interpretability is required, factor analysis or targeted feature selection may be preferable.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A credit bureau has 85 credit bureau variables per applicant, highly intercorrelated. PCA reduces to 8 components explaining 79% of total variance. The top component loads heavily on payment history and delinquency variables — interpretable as "payment reliability." The second loads on utilisation and balance variables — "debt burden." These components become clean, uncorrelated inputs to the credit risk model, eliminating multicollinearity while retaining most information.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Chapter Summary</div>
+  <h2 class="section-title">Chapter 15 cheat sheet</h2>
+  <div class="cheat-sheet">
+    <div class="cheat-title">Key principles from this chapter</div>
+    <div class="cheat-grid">
+      <div class="cheat-item"><div class="cheat-item-title">Match algorithm to expected structure</div><div class="cheat-item-body">K-means for spherical, equal-size clusters. Hierarchical for exploring nested structure. DBSCAN for arbitrary shapes and outlier detection. GMM when cluster boundaries should be soft.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Always standardise before clustering</div><div class="cheat-item-body">Distance-based algorithms (K-means, hierarchical) are dominated by the highest-variance feature if features are unstandardised. Scale everything to mean 0, SD 1 first.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Evaluate with silhouette + business review</div><div class="cheat-item-body">Statistical quality (silhouette ≥ 0.5 is good) is necessary but not sufficient. Every segment must be interpretable, actionably different, and large enough to warrant a distinct strategy.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Use scree/elbow + silhouette to choose k</div><div class="cheat-item-body">Neither alone is decisive. Use both, plus ask: does each k-segment have a distinct business profile? The right k is the smallest number that captures all commercially meaningful differences.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">PCA before clustering reduces noise</div><div class="cheat-item-body">High-dimensional data with correlated features → cluster on first 5–10 PCs rather than raw features. Reduces computational cost and suppresses noise variables that dilute cluster quality.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Soft assignments for boundary cases</div><div class="cheat-item-body">Customers near cluster boundaries may genuinely be intermediate. GMM captures this honestly. Define an operational rule for how to treat borderline cases (usually assign to highest probability, flag below 60% for review).</div></div>
+    </div>
+  </div>
+  <div style="margin-top:28px">
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:12px">Chapter 16 covers time series and forecasting — where the order of observations matters and standard independence assumptions break down. Chapter 17 covers business analytics applications, bringing together the statistical methods from earlier chapters into integrated analytical workflows.</p>
+    <a href="../ml-for-strategy-v2/ML_Strategy_Playbook.html" class="companion">↗ ML Strategy Playbook — companion reference</a>
+  </div>
+</div>
+<script>
+function toggleTerm(id){const b=document.getElementById(id);const o=b.classList.contains('open');b.classList.toggle('open',!o);b.querySelector('.term-toggle').textContent=o?'expand':'collapse';}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const all=document.querySelectorAll('.term-block');if(e.key==='e'){all.forEach(b=>{b.classList.add('open');b.querySelector('.term-toggle').textContent='collapse';})}if(e.key==='c'){all.forEach(b=>{b.classList.remove('open');b.querySelector('.term-toggle').textContent='expand';})}});
+</script>
+</body>
+</html>

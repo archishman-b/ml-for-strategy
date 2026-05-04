@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 9 — Regression Fundamentals | Stats Foundations for Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;
+  --cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;
+  --accent:#8b2500;--accent2:#c4440d;
+  --slate:#2a3a4a;--slate2:#3a6a9a;--slate3:#ddeaf8;
+  --gold:#7a5a00;--gold2:#c49a00;--gold3:#fdf5dc;
+  --green2:#2d7a4a;--green3:#ddf0e5;
+  --border:#d4cdc4;
+  --serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);--shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+@media(prefers-color-scheme:dark){
+  :root{--ink:#f0ece4;--ink2:#d8d0c4;--ink3:#a09488;--ink4:#6a6058;--cream:#181612;--cream2:#201e1a;--cream3:#2a2620;--accent2:#e8784a;--slate2:#5a9adf;--slate3:#0a1828;--gold2:#e4c050;--gold3:#221e10;--green3:#1a2a20;--border:#38342e;}
+  body{background:#141210}.narrative{background:#141210;border-bottom-color:#2a2620}
+  .term-block{background:#1e1c18}.term-header{background:#1e1c18}.term-body{border-top-color:#2a2620}.field-row{border-bottom-color:#2a2620}.field-value.formula{background:#2a2620}
+  .callout-insight{background:#221e10;border-color:#e4c050}.callout-warning{background:#221410;border-color:#e8784a}.callout-rule{background:#0a1828;border-color:#5a9adf}.callout-green{background:#1a2a20;border-color:#5aba7a}
+  .illustration{background:#1e1c18;border-color:#38342e}.illustration-caption{border-top-color:#2a2620;background:#1e1c18}
+  .ch-progress{background:#1e1c18;border-bottom-color:#38342e}.progress-bar{background:#2a2620}.progress-fill{background:#5a9adf}
+  .ch-hero{background:#141e28}.cheat-sheet{background:#141e28}.cheat-item{background:rgba(255,255,255,0.05);border-left-color:#5a9adf}
+  .companion{color:#5a9adf}.companion:hover{background:#5a9adf;color:#141210}
+  p{color:var(--ink2)}.section-intro{color:var(--ink3);border-left-color:#5a9adf}
+  .term-toggle{background:#2a2620;border-color:#38342e;color:var(--ink3)}.term-block.open .term-toggle{background:#f0ece4;color:#141210;border-color:#f0ece4}
+  .term-name{color:var(--ink)}.term-short{color:var(--ink3)}.section-title{color:var(--ink)}.section-label{color:#5a9adf}.field-label{color:var(--ink4)}.field-value{color:var(--ink2)}
+  .field-value.formula .formula-math{color:#5a9adf}.field-value.formula .formula-plain{color:var(--ink3)}.redflag{color:#e8784a}
+  .cheat-title{color:rgba(160,200,240,0.7)}.cheat-item-title{color:#f0ece4}.cheat-item-body{color:rgba(240,236,228,0.5)}
+  .ch-eyebrow{color:rgba(160,200,240,0.7)}.ch-title{color:#f4f0e8}.ch-intro{color:rgba(240,236,228,0.85)}.ch-meta{color:rgba(240,236,228,0.58)}.ch-meta span em{color:rgba(240,236,228,0.88)}.ch-progress span{color:#a09488}
+  svg text{fill:#6a6058 !important}
+}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.ch-hero{background:var(--slate);color:var(--cream);padding:72px 72px 56px;position:relative;overflow:hidden}
+.ch-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 20%,rgba(58,106,154,0.5) 0%,transparent 55%);pointer-events:none}
+.ch-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(160,200,240,0.7);margin-bottom:16px}
+.ch-title{font-family:var(--display);font-size:44px;font-weight:700;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin-bottom:20px;max-width:700px}
+.ch-title em{color:#a0d0f8;font-style:normal}
+.ch-intro{font-size:16px;color:rgba(255,255,255,0.75);max-width:600px;line-height:1.7;margin-bottom:36px}
+.ch-meta{display:flex;flex-wrap:wrap;gap:24px;font-size:10px;color:rgba(255,255,255,0.42);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono)}
+.ch-meta span em{color:rgba(255,255,255,0.72);font-style:normal}
+.ch-progress{display:flex;align-items:center;gap:12px;padding:16px 72px;background:var(--cream2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:0.05em}
+.progress-bar{flex:1;height:3px;background:var(--cream3);border-radius:2px;max-width:200px}
+.progress-fill{height:100%;background:var(--slate2);border-radius:2px;width:50%}
+.narrative{padding:56px 72px 48px;border-bottom:1px solid var(--border);max-width:960px}
+.narrative:last-child{border-bottom:none}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--slate2);margin-bottom:8px;font-weight:500}
+.section-title{font-family:var(--display);font-size:26px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:8px;letter-spacing:-0.01em}
+.section-intro{font-size:14.5px;color:var(--ink3);line-height:1.75;max-width:680px;margin-bottom:36px;padding-left:16px;border-left:3px solid var(--slate3)}
+.term-block{background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s}
+.term-block:hover{box-shadow:var(--shadow-lg)}
+.term-header{display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;cursor:pointer;user-select:none}
+.term-name{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);line-height:1.25;flex:1}
+.term-short{font-size:12.5px;color:var(--ink3);line-height:1.5;flex:1;font-style:italic;margin-top:3px}
+.term-toggle{font-family:var(--mono);font-size:11px;color:var(--ink4);border:1px solid var(--border);border-radius:3px;padding:2px 8px;flex-shrink:0;margin-top:2px;transition:all 0.15s;background:var(--cream)}
+.term-block.open .term-toggle{background:var(--slate);color:#fff;border-color:var(--slate)}
+.term-body{display:none;padding:0 24px 20px;border-top:1px solid var(--cream2)}
+.term-block.open .term-body{display:block}
+.field-row{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--cream3);align-items:baseline}
+.field-row:last-child{border-bottom:none}
+.field-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);font-weight:500;padding-top:1px}
+.field-value{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.field-value.formula{font-family:var(--mono);font-size:12.5px;background:var(--cream2);padding:10px 14px;border-radius:3px;color:var(--ink);line-height:1.65}
+.field-value.formula .formula-math{color:var(--slate2);font-weight:500;display:block;margin-bottom:4px;font-size:13px}
+.field-value.formula .formula-plain{color:var(--ink3);font-family:var(--serif);font-size:12.5px;font-style:italic}
+.redflag{color:var(--accent);font-size:13px}.redflag::before{content:'⚑ ';font-style:normal}
+.callout{padding:16px 20px;border-radius:4px;margin:20px 0;border-left:3px solid;font-size:13.5px;line-height:1.65}
+.callout-insight{background:var(--gold3);border-color:var(--gold2);color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:var(--slate3);border-color:var(--slate2);color:var(--ink2)}
+.callout-green{background:var(--green3);border-color:var(--green2);color:var(--ink2)}
+.callout strong{font-weight:600;display:block;margin-bottom:5px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.65}
+.illustration{margin:28px 0;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:#fff}
+.illustration-caption{font-family:var(--mono);font-size:10.5px;color:var(--ink4);text-align:center;padding:10px;border-top:1px solid var(--cream2);letter-spacing:0.04em;background:var(--cream)}
+.cheat-sheet{background:var(--slate);color:#fff;border-radius:6px;padding:28px 32px;margin-top:24px}
+.cheat-title{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(160,200,240,0.7);margin-bottom:16px}
+.cheat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cheat-item{padding:12px 14px;background:rgba(255,255,255,0.07);border-radius:4px;border-left:2px solid #a0d0f8}
+.cheat-item-title{font-size:11.5px;font-weight:600;color:#fff;margin-bottom:4px;font-family:var(--serif)}
+.cheat-item-body{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.55}
+.companion{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--slate2);text-decoration:none;border:1px solid currentColor;padding:5px 12px;border-radius:3px;margin-top:4px;transition:all 0.15s}
+.companion:hover{background:var(--slate2);color:#fff}
+@media(max-width:700px){.ch-hero,.narrative{padding:40px 24px}.ch-title{font-size:30px}.field-row{grid-template-columns:1fr;gap:4px}.cheat-grid{grid-template-columns:1fr}.ch-progress{padding:12px 24px}}
+</style>
+</head>
+<body>
+<div class="ch-progress">
+  <span>Chapter 9 of 18</span>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <span>Statistical Foundations for Strategy Professionals</span>
+</div>
+<div class="ch-hero">
+  <div class="ch-eyebrow">Part 5 — Relationships in Data · Chapter 9</div>
+  <h1 class="ch-title">Regression Fundamentals — <em>Quantifying Relationships</em></h1>
+  <p class="ch-intro">Regression is the workhorse of quantitative business analysis — used in pricing, demand forecasting, marketing mix modeling, credit scoring, and causal inference. Understanding what regression coefficients mean, what assumptions they require, and where they fail is one of the highest-leverage skills in applied analytics.</p>
+  <div class="ch-meta">
+    <span>Terms covered: <em>20</em></span>
+    <span>Sections: <em>OLS · Logistic · Coefficients · Diagnostics · Multicollinearity · Interpretation</em></span>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 9.1</div>
+  <h2 class="section-title">Ordinary Least Squares — the foundation</h2>
+  <p class="section-intro">Linear regression models the expected value of an outcome as a linear function of predictors. It is simple, interpretable, and remarkably powerful when its assumptions hold. When those assumptions fail — and knowing when they fail is the key skill — the coefficients are still estimable but may be biased, inefficient, or uninterpretable.</p>
+
+  <div class="illustration">
+    <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fff">
+      <!-- Axes -->
+      <line x1="60" y1="30" x2="60" y2="180" stroke="#d4cdc4" stroke-width="1"/>
+      <line x1="60" y1="180" x2="640" y2="180" stroke="#d4cdc4" stroke-width="1"/>
+      <!-- Scatter points -->
+      <circle cx="90" cy="155" r="3.5" fill="#3a6a9a" opacity="0.6"/>
+      <circle cx="120" cy="148" r="3.5" fill="#3a6a9a" opacity="0.6"/>
+      <circle cx="145" cy="140" r="3.5" fill="#3a6a9a" opacity="0.6"/>
+      <circle cx="170" cy="135" r="3.5" fill="#3a6a9a" opacity="0.6"/>
+      <circle cx="200" cy="128" r="3.5" fill="#3a6a9a" opacity="0.6"/>
+      <circle cx="235" cy="118" r="3.5" fill="#3a6a9a" opacity="0.6"/>
+      <circle cx="265" cy="122" r="3.5" fill="#3a6a9a" opacity="0.6"/>
+      <circle cx="300" cy="108" r="3.5" fill="#3a6a9a" opacity="0.6"/>
+      <circle cx="335" cy="100" r="3.5" fill="#3a6a9a" opacity="0.6"/>
+      <circle cx="370" cy="92" r="3.5" fill="#3a6a9a" opacity="0.6"/>
+      <circle cx="400" cy="88" r="3.5" fill="#3a6a9a" opacity="0.6"/>
+      <circle cx="440" cy="80" r="3.5" fill="#3a6a9a" opacity="0.6"/>
+      <circle cx="470" cy="72" r="3.5" fill="#3a6a9a" opacity="0.6"/>
+      <circle cx="510" cy="65" r="3.5" fill="#3a6a9a" opacity="0.6"/>
+      <circle cx="545" cy="60" r="3.5" fill="#3a6a9a" opacity="0.6"/>
+      <circle cx="580" cy="55" r="3.5" fill="#3a6a9a" opacity="0.6"/>
+      <!-- Regression line -->
+      <line x1="75" y1="162" x2="610" y2="48" stroke="#c4500d" stroke-width="2"/>
+      <!-- Residual lines (a few examples) -->
+      <line x1="200" y1="128" x2="200" y2="115" stroke="#c4500d" stroke-width="1" stroke-dasharray="2,2" opacity="0.6"/>
+      <line x1="335" y1="100" x2="335" y2="107" stroke="#c4500d" stroke-width="1" stroke-dasharray="2,2" opacity="0.6"/>
+      <line x1="470" y1="72" x2="470" y2="77" stroke="#c4500d" stroke-width="1" stroke-dasharray="2,2" opacity="0.6"/>
+      <!-- Labels -->
+      <text x="50" y="25" font-family="'JetBrains Mono',monospace" font-size="9" fill="#b0a898" letter-spacing="0.05em">Y</text>
+      <text x="630" y="184" font-family="'JetBrains Mono',monospace" font-size="9" fill="#b0a898" letter-spacing="0.05em">X</text>
+      <text x="580" y="42" font-family="'JetBrains Mono',monospace" font-size="9" fill="#c4500d">fitted line</text>
+      <text x="580" y="53" font-family="'JetBrains Mono',monospace" font-size="8" fill="#c4500d">ŷ = β₀ + β₁x</text>
+      <text x="190" y="142" font-family="'JetBrains Mono',monospace" font-size="8" fill="#b0a898">residual</text>
+      <text x="190" y="153" font-family="'JetBrains Mono',monospace" font-size="8" fill="#b0a898">= y − ŷ</text>
+    </svg>
+    <div class="illustration-caption">OLS minimizes the sum of squared vertical distances (residuals) between observed points and the fitted line. The slope β₁ is the expected change in Y per unit increase in X.</div>
+  </div>
+
+  <div class="term-block" id="t-ols">
+    <div class="term-header" onclick="toggleTerm('t-ols')">
+      <div style="flex:1"><div class="term-name">Ordinary Least Squares (OLS)</div><div class="term-short">The standard method for fitting a linear regression by minimizing the sum of squared residuals.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the algorithm that produces the best-fitting line through a scatter of points, where "best" means the squared vertical distances between points and the line are as small as possible. The squaring penalizes large errors more than small ones — one big miss hurts more than many small ones. This is both a strength (penalizes extreme outliers) and a vulnerability (outliers can distort the fitted line).</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">β̂ = (XᵀX)⁻¹Xᵀy  [matrix form]</span><span class="formula-plain">For simple regression: β̂₁ = Σ(xᵢ−x̄)(yᵢ−ȳ) / Σ(xᵢ−x̄)² = r × (sy/sx). The slope equals the correlation scaled by the ratio of standard deviations. OLS produces BLUE (Best Linear Unbiased Estimator) when the Gauss-Markov assumptions hold.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In pricing analysis, marketing mix modeling, demand forecasting, compensation benchmarking, and any quantitative analysis that estimates the relationship between a continuous outcome and predictors.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the residuals look well-behaved. Plot: (1) residuals vs fitted values (should be random scatter), (2) QQ-plot of residuals (should be approximately linear), (3) residuals over time if data is sequential (should show no pattern).</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A property company fits an OLS model: sale_price = β₀ + β₁×sqm + β₂×bedrooms + β₃×distance_to_centre + ε. Each coefficient is interpretable: β₁ estimates how much an additional square metre adds to price, holding other factors constant. Residual diagnostics reveal heteroskedasticity (variance increases with predicted price) — suggesting log-transforming the outcome would improve the model.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-coeff-interp">
+    <div class="term-header" onclick="toggleTerm('t-coeff-interp')">
+      <div style="flex:1"><div class="term-name">Coefficient Interpretation</div><div class="term-short">A regression coefficient is the expected change in Y per one-unit increase in X, holding all other variables constant.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the partial effect of one predictor, controlling for everything else in the model. "Holding constant" is the key phrase — it means the coefficient answers: among observations with the same values on all other predictors, what is the expected change in Y for a unit increase in X? This conditional interpretation is what makes regression more powerful than raw correlation.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">ŷ = β₀ + β₁x₁ + β₂x₂ + ... + βₖxₖ</span><span class="formula-plain">Continuous predictor: β₁ = change in ŷ per 1-unit increase in x₁. Binary (0/1) predictor: β = expected difference in ŷ between the two groups. Log(y) as outcome: coefficient × 100 ≈ % change in y. Log(x): β₁/100 ≈ change in y for 1% increase in x.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In every regression table — interpreting what each row means is the fundamental skill for consuming any regression output.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what "one unit" means for each predictor. A coefficient of 0.08 for income means something very different if income is measured in £ versus £1,000 versus log(£). Check units before interpreting magnitude.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A marketing mix model estimates: log(sales) = 2.1 + 0.32×log(TV_spend) + 0.18×log(digital_spend) − 0.09×price. Interpreting: a 1% increase in TV spend is associated with a 0.32% increase in sales (advertising elasticity). A £1 price increase is associated with a 9% sales decline (price elasticity). These elasticities guide budget allocation and pricing decisions.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-r2">
+    <div class="term-header" onclick="toggleTerm('t-r2')">
+      <div style="flex:1"><div class="term-name">R² — Coefficient of Determination</div><div class="term-short">The proportion of outcome variance explained by the regression model — ranges from 0 (no fit) to 1 (perfect fit).</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how much of the variability in the outcome is accounted for by the predictors. An R² of 0.72 means 72% of the variance in the outcome is explained by the model — and 28% remains unexplained noise. The benchmark for what counts as "good" R² is heavily domain-dependent: R² = 0.10 is excellent for predicting individual stock returns; R² = 0.90 may be mediocre for explaining a mechanical engineering process.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">R² = 1 − SS_residual / SS_total = ESS / TSS</span><span class="formula-plain">Adjusted R² penalizes for adding predictors: adj.R² = 1 − (1−R²)(n−1)/(n−k−1). Use adjusted R² to compare models with different numbers of predictors. Adding any variable — even noise — increases R² but may decrease adjusted R².</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In all regression output tables, model comparison summaries, and forecast quality reports.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether R² is being compared across models with different numbers of predictors or different sample sizes. Always use adjusted R² for model comparison. Also: high R² does not mean the model's coefficients are correctly estimated — leakage, overfitting, and multicollinearity can produce high R² with wrong coefficient signs.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A demand forecasting model for weekly grocery sales achieves R²=0.91 on training data. The team mistakenly includes last week's sales as a predictor — which contains significant autocorrelation with the current week. R² inflates. When the variable is removed (because it cannot be known at forecast time), R² drops to 0.74. The 0.17 difference represents leakage, not genuine forecast power.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-residuals">
+    <div class="term-header" onclick="toggleTerm('t-residuals')">
+      <div style="flex:1"><div class="term-name">Residuals and Model Diagnostics</div><div class="term-short">Residuals = observed − predicted. Their patterns reveal whether regression assumptions hold and where the model fails.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you what the model does not explain. A well-specified regression should have residuals that look like random noise — no patterns, no trends, no relationship with the predictors. Patterns in residuals are diagnostic: heteroskedasticity (residuals fan out), nonlinearity (residuals curve), autocorrelation (sequential patterns), outliers (a few very large residuals).</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">eᵢ = yᵢ − ŷᵢ</span><span class="formula-plain">Diagnostic plots: (1) Residuals vs fitted — should be random horizontal band. Fanning = heteroskedasticity. Curves = nonlinearity. (2) QQ-plot — should be approximately straight diagonal. Bent tails = non-normality. (3) Scale-location plot — should be flat. (4) Cook's distance — identifies influential outliers.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In model validation reports, pre-deployment model QA, and any regression analysis that includes a methodology section.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether residuals were plotted and checked. A regression presented without residual diagnostics has not been validated. Coefficient estimates from a model with violated assumptions may have wrong signs and magnitudes.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">An energy company models household consumption from home size, occupants, and tariff type. Residuals vs fitted plot shows a clear funnel shape — residuals are small for low-consumption homes and large for high-consumption ones (heteroskedasticity). This inflates standard errors for large consumers and understates them for small consumers. Remodeling with log(consumption) as the outcome resolves the problem.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 9.2</div>
+  <h2 class="section-title">Multicollinearity, omitted variable bias, and other coefficient traps</h2>
+  <p class="section-intro">Regression coefficients can mislead in several systematic ways that do not show up in the overall model fit. A regression with high R² and low p-values can still have badly estimated individual coefficients if predictors are correlated, important variables are missing, or the model is specified incorrectly.</p>
+
+  <div class="term-block" id="t-multicollinearity">
+    <div class="term-header" onclick="toggleTerm('t-multicollinearity')">
+      <div style="flex:1"><div class="term-name">Multicollinearity</div><div class="term-short">High correlation between predictor variables — making it impossible to separately identify each predictor's unique contribution.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the model cannot attribute the outcome variation to specific predictors because they move together so closely. If TV spend and digital spend always increase or decrease together, the model cannot tell how much each separately contributes — coefficients become unstable, standard errors inflate, and small data changes can flip coefficient signs entirely. The model predicts well overall but cannot identify individual effects.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">VIF = 1/(1 − R²ⱼ)  [for predictor j]</span><span class="formula-plain">Variance Inflation Factor: how much the variance of coefficient j is inflated by multicollinearity. VIF = 1: no collinearity. VIF &gt; 5: moderate concern. VIF &gt; 10: severe — coefficient estimates are unreliable. Diagnosis: compute pairwise correlations and VIF for all predictors before interpreting any individual coefficient.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In marketing mix models (media channels correlate), economic forecasting (macro indicators correlate), and any regression with many related predictors from the same domain.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether coefficients have counterintuitive signs or implausibly large standard errors. These are symptoms of multicollinearity — the model may predict well overall while completely misattributing the causes. Remedies: PCA, ridge regression, dropping correlated predictors, or using domain knowledge to constrain coefficients.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A bank's credit model includes both income and loan_to_income_ratio as predictors. These are functionally related — income appears in the denominator of the ratio. VIF for both exceeds 18. The income coefficient has a negative sign (people with higher income default more?) — an artifact of collinearity, not a real phenomenon. Removing the ratio and keeping income as a standalone predictor resolves the issue.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-omitted-var">
+    <div class="term-header" onclick="toggleTerm('t-omitted-var')">
+      <div style="flex:1"><div class="term-name">Omitted Variable Bias</div><div class="term-short">Bias in estimated coefficients caused by excluding a variable that is correlated with both a predictor and the outcome.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you leaving out an important variable makes other coefficients pick up its effect — distorting their estimates. If customer age is correlated with both income (included predictor) and default risk (outcome), but age is not in the model, the income coefficient will absorb some of age's effect on default. The income coefficient is biased and cannot be correctly interpreted as the pure effect of income.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Bias = β_omitted × Corr(X_included, X_omitted)</span><span class="formula-plain">The omitted variable biases the included predictor's coefficient in proportion to: (1) how strongly the omitted variable affects the outcome (β_omitted), and (2) how correlated the omitted variable is with the included predictor. Zero correlation = no bias. High correlation and strong effect = large bias.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In observational studies, attribution models, and any causal inference from regression where important confounders may be unmeasured.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what important variables were not available to include. A coefficient that changes substantially when a new variable is added was absorbing that variable's effect before — the earlier estimate was biased.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A retailer models sales as a function of shelf space and promotional activity, omitting store footfall data (unavailable). The shelf space coefficient is inflated because larger stores (with more shelf space) also have more footfall. Adding footfall when finally collected reduces the shelf space coefficient by 40% — the prior estimates had inflated attribution to shelf space that should have been credited to footfall.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-heteroskedasticity">
+    <div class="term-header" onclick="toggleTerm('t-heteroskedasticity')">
+      <div style="flex:1"><div class="term-name">Heteroskedasticity</div><div class="term-short">When the variance of regression residuals is not constant across values of the predictors — violating a key OLS assumption.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the model's uncertainty is not uniform — it predicts some cases more confidently than others, but the standard errors do not reflect this. Common in business data: revenue models predict small purchases accurately and large ones noisily (variance scales with size). OLS with heteroskedasticity still estimates coefficients consistently but produces incorrect standard errors — significance tests are wrong.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Detection: Breusch-Pagan test or visual residuals-vs-fitted plot. Remedies: (1) Log-transform the outcome (most effective for right-skewed data), (2) Weighted least squares (downweight high-variance observations), (3) Robust standard errors (HC standard errors correct inference without changing coefficient estimates).</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In revenue, cost, claim size, and price models where variance naturally scales with the outcome level, and in cross-sectional data combining very different-sized entities (SMEs and large corporations in the same model).</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether robust standard errors were used. For most large business datasets, heteroskedasticity is the norm rather than the exception. Standard errors from plain OLS without robustness correction are likely wrong — though in practice the distortion is often modest for large samples.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">An insurer models claim severity. Residuals fan dramatically — claims under £5,000 have residuals within ±£1,000; claims over £50,000 have residuals of ±£20,000. The model is heteroskedastic. The team switches to log(claim_amount) as the outcome, which stabilizes residual variance and produces more reliable coefficient estimates and standard errors.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 9.3</div>
+  <h2 class="section-title">Logistic regression — when the outcome is binary</h2>
+  <p class="section-intro">When the outcome is yes/no rather than continuous, linear regression is inappropriate — predictions can fall outside [0,1] and the linearity assumption fails. Logistic regression solves both problems by modeling the log-odds of the outcome and constraining predictions to the [0,1] probability range.</p>
+
+  <div class="term-block" id="t-logistic">
+    <div class="term-header" onclick="toggleTerm('t-logistic')">
+      <div style="flex:1"><div class="term-name">Logistic Regression</div><div class="term-short">Models the probability of a binary outcome using the logistic function — the standard approach for classification in interpretable business models.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the model estimates a probability for each observation — the probability it belongs to the "1" class (churned, defaulted, converted). The log-odds (logit) of the outcome is modeled as a linear function of predictors, then transformed back to a probability via the sigmoid function. Coefficients are on the log-odds scale; exponentiated, they are odds ratios.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">log(P/(1−P)) = β₀ + β₁x₁ + ... + βₖxₖ</span><span class="formula-plain">P(Y=1|X) = 1/(1 + e^−(β₀+β₁x₁+...)) [sigmoid]. Coefficient interpretation: exp(βⱼ) = odds ratio for a 1-unit increase in xⱼ. The model is fit by maximum likelihood, not OLS. Evaluate with AUC, Gini, and calibration — not R².</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In credit default models, churn prediction, fraud scoring, conversion rate modeling, medical diagnostic models, and any supervised learning problem with a binary target.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the model's predicted probabilities are calibrated. A logistic regression that ranks customers perfectly by risk (high AUC) but consistently overstates default probabilities will cause over-provisioning for credit losses — calibration and discrimination are separately important.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A consumer lender uses logistic regression to score loan applications. Coefficient for missed_payment_last_12m: exp(1.84) = 6.3 odds ratio — an applicant with a prior missed payment has 6.3× higher odds of default. The model's log-odds output is transformed to a predicted probability, then mapped to an accept/decline threshold calibrated to maintain target default rates within regulatory capital constraints.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-log-transform">
+    <div class="term-header" onclick="toggleTerm('t-log-transform')">
+      <div style="flex:1"><div class="term-name">Log Transformation in Regression</div><div class="term-short">Applying log to the outcome or predictors changes the model from additive to multiplicative — appropriate for right-skewed and scale-dependent relationships.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the relationship is proportional rather than additive — a 10% change in X is associated with a fixed % change in Y, regardless of Y's level. This fits business phenomena like advertising elasticity, demand response, and size effects far better than linear models. Log-transforming right-skewed variables also makes distributions more symmetric, stabilizes residual variance, and makes coefficient interpretation more natural.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">log(y) = β₀ + β₁x  → β₁ × 100 ≈ % change in y per unit x</span><span class="formula-plain">log(y) = β₀ + β₁log(x) → β₁ = elasticity (% change in y per 1% change in x). Never log-transform variables that can be zero or negative — use log(x+1) or log(x + minimum) as alternatives. Always transform back when reporting predictions in original units.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In pricing elasticity models, marketing mix models, income and revenue analysis, and any model where the residuals fan out with increasing predicted values.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether predictions from a log-transformed model were correctly retransformed before reporting. E[y] ≠ exp(E[log(y)]) — naively exponentiating the log-scale prediction systematically underestimates the mean in the original scale. The smearing estimator or delta method corrects for this.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">An e-commerce company models log(order_value) as a function of log(search_rank). The coefficient of −0.23 means a 10% worse rank (rank × 1.10) is associated with a 2.3% lower order value. This constant-elasticity interpretation is natural, stable across the full range of search ranks, and directly usable for pricing rank improvements.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Chapter Summary</div>
+  <h2 class="section-title">Chapter 9 cheat sheet</h2>
+  <div class="cheat-sheet">
+    <div class="cheat-title">Key principles from this chapter</div>
+    <div class="cheat-grid">
+      <div class="cheat-item"><div class="cheat-item-title">Coefficients = partial effects, not total effects</div><div class="cheat-item-body">Each coefficient is the effect of one variable holding all others constant. Omitting important variables biases coefficients toward the omitted variable's effect.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">R² measures fit, not correctness</div><div class="cheat-item-body">High R² with wrong coefficient signs indicates multicollinearity or leakage. Always check diagnostics alongside model fit statistics.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Always plot residuals</div><div class="cheat-item-body">Patterns in residuals reveal assumption violations. Fan shapes = heteroskedasticity. Curves = nonlinearity. Drifting patterns = omitted time structure.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">VIF > 10 means unreliable coefficients</div><div class="cheat-item-body">Multicollinearity inflates standard errors and can flip coefficient signs. Coefficients from highly collinear models cannot be individually interpreted or used for attribution.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Log models give % change interpretations</div><div class="cheat-item-body">log(y) ~ log(x) produces elasticities. log(y) ~ x produces semi-elasticities. These are more natural for most business metrics than absolute-change interpretations.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Logistic regression for binary outcomes</div><div class="cheat-item-body">Use logistic, not linear, for 0/1 outcomes. Evaluate with AUC and calibration plots. Exponentiated coefficients are odds ratios — not probability ratios.</div></div>
+    </div>
+  </div>
+  <div style="margin-top:28px">
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:12px">Chapter 10 extends regression into causal inference — how to estimate the effect of interventions from observational data using difference-in-differences, instrumental variables, and regression discontinuity. Chapter 13 covers regularisation and the bias-variance tradeoff in prediction-focused modeling.</p>
+    <a href="../ml-for-strategy-v2/ML_Strategy_Playbook.html" class="companion">↗ ML Strategy Playbook — companion reference</a>
+  </div>
+</div>
+<script>
+function toggleTerm(id){const b=document.getElementById(id);const o=b.classList.contains('open');b.classList.toggle('open',!o);b.querySelector('.term-toggle').textContent=o?'expand':'collapse';}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const all=document.querySelectorAll('.term-block');if(e.key==='e'){all.forEach(b=>{b.classList.add('open');b.querySelector('.term-toggle').textContent='collapse';})}if(e.key==='c'){all.forEach(b=>{b.classList.remove('open');b.querySelector('.term-toggle').textContent='expand';})}});
+</script>
+</body>
+</html>

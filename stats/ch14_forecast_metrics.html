@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 14 — Regression & Forecast Metrics | Stats Foundations for Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;
+  --cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;
+  --accent:#8b2500;--accent2:#c4440d;
+  --steel:#2a3a4a;--steel2:#4a8aaa;--steel3:#d8eef4;
+  --gold:#7a5a00;--gold2:#c49a00;--gold3:#fdf5dc;
+  --green2:#2d7a4a;--green3:#ddf0e5;
+  --border:#d4cdc4;
+  --serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);--shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+@media(prefers-color-scheme:dark){
+  :root{--ink:#f0ece4;--ink2:#d8d0c4;--ink3:#a09488;--ink4:#6a6058;--cream:#181612;--cream2:#201e1a;--cream3:#2a2620;--accent2:#e8784a;--steel2:#6ab0cc;--steel3:#0a2030;--gold2:#e4c050;--gold3:#221e10;--green3:#1a2a20;--border:#38342e;}
+  body{background:#141210}.narrative{background:#141210;border-bottom-color:#2a2620}
+  .term-block{background:#1e1c18}.term-header{background:#1e1c18}.term-body{border-top-color:#2a2620}.field-row{border-bottom-color:#2a2620}.field-value.formula{background:#2a2620}
+  .callout-insight{background:#221e10;border-color:#e4c050}.callout-warning{background:#221410;border-color:#e8784a}.callout-rule{background:#0a2030;border-color:#6ab0cc}.callout-green{background:#1a2a20;border-color:#5aba7a}
+  .illustration{background:#1e1c18;border-color:#38342e}.illustration-caption{border-top-color:#2a2620;background:#1e1c18}
+  .ch-progress{background:#1e1c18;border-bottom-color:#38342e}.progress-bar{background:#2a2620}.progress-fill{background:#6ab0cc}
+  .ch-hero{background:#0a1e2a}.cheat-sheet{background:#0a1e2a}.cheat-item{background:rgba(255,255,255,0.05);border-left-color:#6ab0cc}
+  .metrics-table th{background:#1e1c18;border-color:#38342e;color:var(--ink4)}.metrics-table td{border-color:#2a2620;color:var(--ink2)}.metrics-table tr:nth-child(even) td{background:#1a1816}
+  .companion{color:#6ab0cc}.companion:hover{background:#6ab0cc;color:#141210}
+  p{color:var(--ink2)}.section-intro{color:var(--ink3);border-left-color:#6ab0cc}
+  .term-toggle{background:#2a2620;border-color:#38342e;color:var(--ink3)}.term-block.open .term-toggle{background:#f0ece4;color:#141210;border-color:#f0ece4}
+  .term-name{color:var(--ink)}.term-short{color:var(--ink3)}.section-title{color:var(--ink)}.section-label{color:#6ab0cc}.field-label{color:var(--ink4)}.field-value{color:var(--ink2)}
+  .field-value.formula .formula-math{color:#6ab0cc}.field-value.formula .formula-plain{color:var(--ink3)}.redflag{color:#e8784a}
+  .cheat-title{color:rgba(160,210,230,0.7)}.cheat-item-title{color:#f0ece4}.cheat-item-body{color:rgba(240,236,228,0.5)}
+  .ch-eyebrow{color:rgba(160,210,230,0.7)}.ch-title{color:#f4f0e8}.ch-intro{color:rgba(240,236,228,0.85)}.ch-meta{color:rgba(240,236,228,0.58)}.ch-meta span em{color:rgba(240,236,228,0.88)}.ch-progress span{color:#a09488}
+  svg text{fill:#6a6058 !important}
+}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.ch-hero{background:var(--steel);color:var(--cream);padding:72px 72px 56px;position:relative;overflow:hidden}
+.ch-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 40%,rgba(74,138,170,0.4) 0%,transparent 55%);pointer-events:none}
+.ch-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(160,210,230,0.7);margin-bottom:16px}
+.ch-title{font-family:var(--display);font-size:44px;font-weight:700;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin-bottom:20px;max-width:700px}
+.ch-title em{color:#80d0f0;font-style:normal}
+.ch-intro{font-size:16px;color:rgba(255,255,255,0.75);max-width:600px;line-height:1.7;margin-bottom:36px}
+.ch-meta{display:flex;flex-wrap:wrap;gap:24px;font-size:10px;color:rgba(255,255,255,0.42);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono)}
+.ch-meta span em{color:rgba(255,255,255,0.72);font-style:normal}
+.ch-progress{display:flex;align-items:center;gap:12px;padding:16px 72px;background:var(--cream2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:0.05em}
+.progress-bar{flex:1;height:3px;background:var(--cream3);border-radius:2px;max-width:200px}
+.progress-fill{height:100%;background:var(--steel2);border-radius:2px;width:77.5%}
+.narrative{padding:56px 72px 48px;border-bottom:1px solid var(--border);max-width:960px}
+.narrative:last-child{border-bottom:none}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--steel2);margin-bottom:8px;font-weight:500}
+.section-title{font-family:var(--display);font-size:26px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:8px;letter-spacing:-0.01em}
+.section-intro{font-size:14.5px;color:var(--ink3);line-height:1.75;max-width:680px;margin-bottom:36px;padding-left:16px;border-left:3px solid var(--steel3)}
+.term-block{background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s}
+.term-block:hover{box-shadow:var(--shadow-lg)}
+.term-header{display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;cursor:pointer;user-select:none}
+.term-name{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);line-height:1.25;flex:1}
+.term-short{font-size:12.5px;color:var(--ink3);line-height:1.5;flex:1;font-style:italic;margin-top:3px}
+.term-toggle{font-family:var(--mono);font-size:11px;color:var(--ink4);border:1px solid var(--border);border-radius:3px;padding:2px 8px;flex-shrink:0;margin-top:2px;transition:all 0.15s;background:var(--cream)}
+.term-block.open .term-toggle{background:var(--steel);color:#fff;border-color:var(--steel)}
+.term-body{display:none;padding:0 24px 20px;border-top:1px solid var(--cream2)}
+.term-block.open .term-body{display:block}
+.field-row{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--cream3);align-items:baseline}
+.field-row:last-child{border-bottom:none}
+.field-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);font-weight:500;padding-top:1px}
+.field-value{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.field-value.formula{font-family:var(--mono);font-size:12.5px;background:var(--cream2);padding:10px 14px;border-radius:3px;color:var(--ink);line-height:1.65}
+.field-value.formula .formula-math{color:var(--steel2);font-weight:500;display:block;margin-bottom:4px;font-size:13px}
+.field-value.formula .formula-plain{color:var(--ink3);font-family:var(--serif);font-size:12.5px;font-style:italic}
+.redflag{color:var(--accent);font-size:13px}.redflag::before{content:'⚑ ';font-style:normal}
+.callout{padding:16px 20px;border-radius:4px;margin:20px 0;border-left:3px solid;font-size:13.5px;line-height:1.65}
+.callout-insight{background:var(--gold3);border-color:var(--gold2);color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:var(--steel3);border-color:var(--steel2);color:var(--ink2)}
+.callout-green{background:var(--green3);border-color:var(--green2);color:var(--ink2)}
+.callout strong{font-weight:600;display:block;margin-bottom:5px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.65}
+.illustration{margin:28px 0;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:#fff}
+.illustration-caption{font-family:var(--mono);font-size:10.5px;color:var(--ink4);text-align:center;padding:10px;border-top:1px solid var(--cream2);letter-spacing:0.04em;background:var(--cream)}
+.metrics-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:12.5px}
+.metrics-table th{font-family:var(--mono);font-size:9px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);background:var(--cream2);padding:10px 14px;text-align:left;border:1px solid var(--border)}
+.metrics-table td{padding:10px 14px;border:1px solid var(--cream3);color:var(--ink2);vertical-align:top;line-height:1.6}
+.metrics-table tr:nth-child(even) td{background:var(--cream)}
+.metric-name{font-weight:600;font-family:var(--display);font-size:13px;color:var(--ink)}
+.metric-formula{font-family:var(--mono);font-size:10.5px;color:var(--steel2)}
+.cheat-sheet{background:var(--steel);color:#fff;border-radius:6px;padding:28px 32px;margin-top:24px}
+.cheat-title{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(160,210,230,0.7);margin-bottom:16px}
+.cheat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cheat-item{padding:12px 14px;background:rgba(255,255,255,0.07);border-radius:4px;border-left:2px solid #80d0f0}
+.cheat-item-title{font-size:11.5px;font-weight:600;color:#fff;margin-bottom:4px;font-family:var(--serif)}
+.cheat-item-body{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.55}
+.companion{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--steel2);text-decoration:none;border:1px solid currentColor;padding:5px 12px;border-radius:3px;margin-top:4px;transition:all 0.15s}
+.companion:hover{background:var(--steel2);color:#fff}
+@media(max-width:700px){.ch-hero,.narrative{padding:40px 24px}.ch-title{font-size:30px}.field-row{grid-template-columns:1fr;gap:4px}.cheat-grid{grid-template-columns:1fr}.ch-progress{padding:12px 24px}}
+</style>
+</head>
+<body>
+<div class="ch-progress">
+  <span>Chapter 14 of 18</span>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <span>Statistical Foundations for Strategy Professionals</span>
+</div>
+<div class="ch-hero">
+  <div class="ch-eyebrow">Part 6 — Prediction · Chapter 14</div>
+  <h1 class="ch-title">Regression, Forecast, and <em>Calibration Metrics</em></h1>
+  <p class="ch-intro">When the outcome is continuous or probabilistic, different error metrics capture different business concerns. RMSE penalises large errors heavily; MAE treats all errors equally; MAPE expresses error relative to scale; bias and drift catch systematic failure that point-error metrics miss.</p>
+  <div class="ch-meta">
+    <span>Terms covered: <em>15</em></span>
+    <span>Sections: <em>MAE · RMSE · MAPE · Bias · Forecast drift · Rolling bias · Interval metrics</em></span>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 14.1</div>
+  <h2 class="section-title">Point forecast metrics — choosing the right error measure</h2>
+  <p class="section-intro">Every forecast error metric asks a slightly different question. The choice should be driven by the business cost structure, not by which metric makes the model look best. A metric that gives equal weight to all errors tells a different story from one that penalises large errors heavily, and this choice has direct operational consequences.</p>
+
+  <table class="metrics-table">
+    <thead>
+      <tr><th>Metric</th><th>Penalises large errors?</th><th>Scale-free?</th><th>Use when</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="metric-name">MAE</span><br><span class="metric-formula">mean(|y−ŷ|)</span></td><td>No — linear</td><td>No (original units)</td><td>All forecast errors equally costly</td></tr>
+      <tr><td><span class="metric-name">RMSE</span><br><span class="metric-formula">√mean((y−ŷ)²)</span></td><td>Yes — squared</td><td>No (original units)</td><td>Large errors disproportionately costly</td></tr>
+      <tr><td><span class="metric-name">MAPE</span><br><span class="metric-formula">mean(|y−ŷ|/y)×100</span></td><td>No — linear %</td><td>Yes (percentage)</td><td>Comparing across different-scale products</td></tr>
+      <tr><td><span class="metric-name">WAPE</span><br><span class="metric-formula">Σ|eᵢ|/Σyᵢ</span></td><td>No — linear %</td><td>Yes (percentage)</td><td>Portfolio accuracy weighted by volume</td></tr>
+      <tr><td><span class="metric-name">Bias</span><br><span class="metric-formula">mean(ŷ−y)</span></td><td>No (signed)</td><td>No</td><td>Detecting systematic over/under-forecast</td></tr>
+    </tbody>
+  </table>
+
+  <div class="term-block" id="t-mae">
+    <div class="term-header" onclick="toggleTerm('t-mae')">
+      <div style="flex:1"><div class="term-name">MAE — Mean Absolute Error</div><div class="term-short">Average of absolute forecast errors — treats all error sizes equally, robust to outliers, interpretable in original units.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the average magnitude of errors in the same units as the outcome. MAE = 42 units means the model is off by 42 units on average. A 100-unit error counts exactly 10× a 10-unit error — no extra penalty for large misses. MAE is optimal when the operational cost of a forecast error scales linearly with its size.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">MAE = (1/n) Σ |yᵢ − ŷᵢ|</span><span class="formula-plain">Always compare against a naive baseline (e.g. last-period actuals, seasonal naive). A model must beat the naive baseline to justify its complexity. MAE optimisation produces the conditional median — appropriate when half-above/half-below is the target, not the mean.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In demand planning dashboards, inventory optimisation KPIs, and any forecasting context where errors of all sizes are roughly equally costly per unit of error.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what the naive baseline MAE is. A model MAE of 42 units sounds precise in isolation but is unimpressive if a last-period naive forecast achieves MAE of 38 units.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A grocery retailer's ML demand model achieves MAE of 12.3 units/day vs naive baseline of 18.1 — a 32% improvement. At £4.20 gross margin per unit over 500 SKUs and 365 days, the 5.8-unit improvement saves approximately £4.4M annually in reduced stockout and overstock costs.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-rmse">
+    <div class="term-header" onclick="toggleTerm('t-rmse')">
+      <div style="flex:1"><div class="term-name">RMSE — Root Mean Squared Error</div><div class="term-short">Square root of average squared errors — disproportionately penalises large misses, making it sensitive to tail forecast failures.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the typical error size with extra punishment for large misses. A single 100-unit error contributes as much to RMSE as 100 errors of 10 units each. RMSE is optimal when forecast errors cause convex costs — where a single large stockout or overstock is disproportionately damaging compared to many small deviations.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">RMSE = √[(1/n) Σ (yᵢ − ŷᵢ)²]</span><span class="formula-plain">RMSE ≥ MAE always. RMSE/MAE ratio > 1.5 indicates heavy-tailed errors — occasional catastrophic misses dominate. RMSE optimisation produces the conditional mean. Sensitive to outliers in actuals and predictions — check whether extreme actuals are real or data errors before trusting RMSE comparisons.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In regression model benchmarking, financial forecasting, ML competition leaderboards, and any context where large forecast errors cause disproportionate operational damage.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether RMSE is dominated by a small number of catastrophic misses. If RMSE >> MAE, investigate the specific periods/SKUs with the largest errors — they may warrant a dedicated model or a separate analytical intervention.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A utility's hourly energy demand model: MAE = 42 MW, RMSE = 98 MW. The 2.3× ratio reveals catastrophic peak-demand misses driving the RMSE. These tail events require emergency grid purchases at 5–8× normal prices — the RMSE is the business-relevant metric, not the MAE.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-mape">
+    <div class="term-header" onclick="toggleTerm('t-mape')">
+      <div style="flex:1"><div class="term-name">MAPE — Mean Absolute Percentage Error</div><div class="term-short">Average absolute error expressed as a fraction of the actual value — scale-free, comparable across products of different volumes.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how large the error is relative to what actually happened. MAPE of 9% means the model is off by 9% of the actual value on average. Being scale-free makes MAPE the natural choice for comparing forecast accuracy across products with very different absolute volumes — a 50-unit miss on a 100-unit SKU and a 500-unit miss on a 1,000-unit SKU are both 50% MAPE.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">MAPE = (100/n) Σ |yᵢ − ŷᵢ| / |yᵢ|</span><span class="formula-plain">Never use when actuals can be zero or near-zero (MAPE = infinity or huge). Use SMAPE or WAPE instead. MAPE asymmetrically penalises under-forecasts more than over-forecasts of equal absolute size. WAPE (Weighted APE = total absolute error / total actual) removes small-volume distortion by treating the portfolio as a whole.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In supply chain KPI dashboards, retailer scorecard reports, and any management reporting where "% accuracy" must be compared across product categories.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether near-zero-volume SKUs are included. A handful of low-volume items with 300% MAPE can dominate the portfolio average, masking excellent accuracy on high-volume revenue drivers.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">An FMCG manufacturer reports portfolio MAPE of 22%. Segmented: top 20% volume SKUs MAPE = 9%; bottom 20% MAPE = 58%. The headline is entirely driven by the low-volume tail. Investment in improving forecast accuracy on high-volume SKUs (9% → 6%) has 5× the operational cost benefit vs chasing MAPE improvements in the tail.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-bias">
+    <div class="term-header" onclick="toggleTerm('t-bias')">
+      <div style="flex:1"><div class="term-name">Forecast Bias</div><div class="term-short">Systematic tendency to over- or under-predict — a directional error that compounds over time and is more damaging than equal random noise.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the model is wrong in the same direction repeatedly. Unlike random error — which averages out — bias never cancels. Persistent overforecasting produces chronic overstock; persistent underforecasting produces persistent stockouts. A biased forecast with low MAE is more damaging than an unbiased forecast with somewhat higher MAE, because the bias consistently drives the same wrong operational decision.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Bias = mean(ŷᵢ − yᵢ)  [positive = overforecast]</span><span class="formula-plain">% Bias = mean((ŷ−y)/y) × 100. Target: near zero. Track separately from MAE — MAE can be low while bias is high if errors are all in the same direction. A forecast with MAE=10 and bias=+9 means almost all error is systematic overstatement.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In supply chain model audits, demand planning review packs, and any operations context where inventory levels are consistently drifting in one direction without a business explanation.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether bias has been tracked separately from absolute error metrics. Reporting only MAE or MAPE hides directional bias. A consistently biased forecast is a systematic decision-quality problem, not a noise problem.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A pharmaceutical distributor's forecasting model: MAPE 8%, bias +11%. Systematic overprediction drives chronic overstock — 3.2 months cover vs 2.0 month target. The 1.2-month excess represents £18M in tied working capital. Correcting the bias by applying a rolling mean-bias correction factor to forecasts recovers most of that capital.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-rolling-bias">
+    <div class="term-header" onclick="toggleTerm('t-rolling-bias')">
+      <div style="flex:1"><div class="term-name">Rolling Bias and Forecast Drift</div><div class="term-short">Bias computed over a rolling window — a governance early warning signal that detects model deterioration before it shows in point error metrics.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you whether the model's errors are shifting direction over time. A model unbiased last year that now consistently underpredicts indicates the world has changed in a way the model has not adapted to. Rolling bias detects this shift 4–8 weeks earlier than MAE/RMSE deterioration, providing an early signal to trigger model review.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Rolling bias(t) = mean(ŷ − y) over last k periods</span><span class="formula-plain">Compute over a 4–12 week window. Alert when |rolling bias| exceeds ±5% of mean actuals. Combine with rolling MAPE: if bias shifts but MAPE is stable, the model has changed direction without losing accuracy — a pattern suggesting changed seasonality or trend. Both shifting together suggests broader deterioration.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In model monitoring dashboards, supply chain weekly review packs, and any production forecasting system with governance requirements.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask how long a rolling bias alert was present before action was taken. Monitoring without escalation protocols means the alert system creates an audit trail of ignored warnings rather than improved decisions.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A retailer's demand forecasting model begins drifting negative (underforecast) 6 weeks after a competitor closure brings new customers into their stores. Rolling bias hits −8% on week 4. The alert triggers a manual demand uplift factor while the model is retrained on the new demand pattern — preventing stockouts during the 8-week retraining period.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 14.2</div>
+  <h2 class="section-title">Interval forecasts and probabilistic metrics</h2>
+  <p class="section-intro">Point forecasts hide uncertainty. Interval forecasts communicate what a model does not know as explicitly as what it does — and interval quality can be measured separately from point accuracy. In high-stakes operational settings, an honest uncertain forecast is more valuable than an overconfident precise one.</p>
+
+  <div class="term-block" id="t-prediction-interval">
+    <div class="term-header" onclick="toggleTerm('t-prediction-interval')">
+      <div style="flex:1"><div class="term-name">Prediction Interval</div><div class="term-short">A range within which a future individual observation is expected to fall — wider than a confidence interval because it includes both estimation uncertainty and observation noise.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the range within which the next individual data point is likely to fall. A 95% prediction interval means: if we repeated this prediction many times, approximately 95% of the actual outcomes would fall within the interval. Prediction intervals are always wider than confidence intervals for the mean — they must also account for the randomness of the individual observation around the true mean.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">PI: ŷ ± t* × SE_prediction  where SE_pred = √(SE_mean² + σ²)</span><span class="formula-plain">For safety stock: use the 80th or 90th percentile of the forecast distribution rather than the mean — this directly informs how much buffer inventory to hold against demand uncertainty. Coverage calibration: check what fraction of actuals fall within the stated interval — should match the stated confidence level.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In demand planning (safety stock sizing), financial scenario planning, risk-adjusted forecasting, and any operational context where the cost of being outside the interval is asymmetric.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether prediction interval coverage was empirically validated. A model claiming 90% prediction intervals should have approximately 90% of actuals falling within those intervals. Systematic undercoverage means intervals are too narrow and buffer stocks or risk provisions are systematically insufficient.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A retailer sets safety stock at the 85th percentile of its demand forecast distribution rather than the mean. For an item with mean weekly demand of 240 units and SD of 45 units, the 85th percentile is approximately 287 units. Setting stock at 287 rather than 240 provides a 47-unit buffer — reducing expected stockout events from 15% to 5% of weeks at the cost of 47 extra units of average inventory.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-quantile-crossing">
+    <div class="term-header" onclick="toggleTerm('t-quantile-crossing')">
+      <div style="flex:1"><div class="term-name">Quantile Crossing</div><div class="term-short">When independently estimated forecast quantiles produce intervals where the upper bound falls below the lower bound — a mathematical inconsistency that signals model failure.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you independently fitted quantile regression models have produced logically inconsistent predictions. If the 10th percentile forecast is higher than the 90th percentile forecast for the same observation, the interval is impossible. Quantile crossing occurs when separate quantile models are fitted independently and do not enforce monotonicity across quantile levels.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Prevention: use monotone quantile regression frameworks, or post-process by sorting quantile outputs at each observation so they are monotonically increasing. Detection: check for any observations where P10 > P50, P50 > P90, or P10 > P90 after fitting. Prevalence above 1–2% of observations indicates systematic model failure.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In gradient boosting quantile regression, neural network prediction interval models, and any system that fits multiple quantile forecasts independently rather than jointly.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether quantile crossing was checked before intervals were used in operations. Using crossing quantiles to set safety stock or risk limits produces nonsensical operational decisions — negative safety stock requirements or inverted risk ranges.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A food delivery platform uses gradient boosting to forecast P10, P50, P90 delivery times independently. For 4% of orders, the P10 (optimistic case) exceeds the P90 (pessimistic case) — the interval is inverted. Affected customers receive commitments like "delivery in 15–12 minutes" which are internally inconsistent and operationally unactionable. Isotonic regression post-processing eliminates all crossings at negligible accuracy cost.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-pinball-loss">
+    <div class="term-header" onclick="toggleTerm('t-pinball-loss')">
+      <div style="flex:1"><div class="term-name">Pinball Loss (Quantile Loss)</div><div class="term-short">The proper scoring rule for quantile forecasts — asymmetrically penalises over- and under-prediction depending on which quantile is being evaluated.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how well a quantile forecast is calibrated. For the 90th percentile, the pinball loss penalises underforecasting 9× more than overforecasting — reflecting the asymmetric goal of having 90% of actuals fall below the forecast. The metric provides a principled way to score probabilistic forecasts and compare quantile regression models.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">L_τ(y, ŷ) = (y−ŷ)×τ if y≥ŷ, else (ŷ−y)×(1−τ)</span><span class="formula-plain">τ = target quantile (e.g. 0.9 for P90). Minimising expected pinball loss produces the optimal quantile forecast. Winkler score extends this to interval forecasts — penalising both interval width (discourages overly wide intervals) and coverage failures (penalises when actuals fall outside the interval).</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In probabilistic forecasting model evaluation, safety stock optimisation frameworks, and energy/weather prediction where quantile accuracy is the operational requirement.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether quantile models were evaluated on pinball loss or on point-forecast metrics like RMSE. A quantile model optimised on RMSE will produce well-calibrated medians but poorly calibrated tails — exactly where safety stock and risk decisions depend on accuracy.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A retailer compares two P90 demand forecast models: Model A trained on RMSE, Model B trained on P90 pinball loss. Empirical coverage: Model A produces intervals where only 74% of actuals fall below the P90 forecast (under-coverage). Model B achieves 89% coverage — close to the target 90%. Model B generates the correct safety stock; Model A systematically understates demand peaks and causes stockouts.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Chapter Summary</div>
+  <h2 class="section-title">Chapter 14 cheat sheet</h2>
+  <div class="cheat-sheet">
+    <div class="cheat-title">Key principles from this chapter</div>
+    <div class="cheat-grid">
+      <div class="cheat-item"><div class="cheat-item-title">Match the metric to the cost structure</div><div class="cheat-item-body">Linear costs → MAE. Convex (large errors hurt disproportionately) → RMSE. Cross-product comparison → MAPE/WAPE. Never pick metrics to make the model look best.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Always benchmark against a naive model</div><div class="cheat-item-body">A model's MAE or RMSE is meaningless without comparison to a naive baseline (last-period, seasonal naive, moving average). The model must justify its complexity with material accuracy improvement.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Track bias separately from absolute error</div><div class="cheat-item-body">MAE/RMSE hide systematic directional errors. Bias = mean(ŷ−y). Low MAE with high bias means consistent wrong-direction decisions — more operationally damaging than random noise.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Rolling bias is the earliest drift signal</div><div class="cheat-item-body">Detects model deterioration 4–8 weeks before MAPE worsens. Monitor weekly in production. Alert threshold: ±5% of mean actuals over a 4-week window.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Validate interval coverage empirically</div><div class="cheat-item-body">A stated 90% prediction interval should contain ~90% of actuals in held-out data. Systematic undercoverage means safety stocks and risk provisions are chronically insufficient.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Use pinball loss for quantile models</div><div class="cheat-item-body">RMSE-optimised models produce poor tail quantiles. Train P10/P90 models on pinball loss to get correctly calibrated intervals for safety stock and risk decisions.</div></div>
+    </div>
+  </div>
+  <div style="margin-top:28px">
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:12px">Chapter 15 moves from prediction metrics to clustering and segmentation — where no ground truth exists and evaluation must be done through internal cohesion measures and business interpretability. Chapter 16 covers time series decomposition and forecasting methods.</p>
+    <a href="../ml-for-strategy-v2/ML_Strategy_Playbook.html" class="companion">↗ ML Strategy Playbook — companion reference</a>
+  </div>
+</div>
+<script>
+function toggleTerm(id){const b=document.getElementById(id);const o=b.classList.contains('open');b.classList.toggle('open',!o);b.querySelector('.term-toggle').textContent=o?'expand':'collapse';}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const all=document.querySelectorAll('.term-block');if(e.key==='e'){all.forEach(b=>{b.classList.add('open');b.querySelector('.term-toggle').textContent='collapse';})}if(e.key==='c'){all.forEach(b=>{b.classList.remove('open');b.querySelector('.term-toggle').textContent='expand';})}});
+</script>
+</body>
+</html>

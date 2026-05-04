@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 10 — Causal Inference | Stats Foundations for Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;
+  --cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;
+  --accent:#8b2500;--accent2:#c4440d;
+  --wine:#4a0a2a;--wine2:#9a1a5a;--wine3:#f8e0ea;
+  --gold:#7a5a00;--gold2:#c49a00;--gold3:#fdf5dc;
+  --blue2:#2d5f8a;--blue3:#ddeaf7;
+  --green2:#2d7a4a;--green3:#ddf0e5;
+  --border:#d4cdc4;
+  --serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);--shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+@media(prefers-color-scheme:dark){
+  :root{--ink:#f0ece4;--ink2:#d8d0c4;--ink3:#a09488;--ink4:#6a6058;--cream:#181612;--cream2:#201e1a;--cream3:#2a2620;--accent2:#e8784a;--wine2:#d04a8a;--wine3:#280a18;--gold2:#e4c050;--gold3:#221e10;--blue3:#1a2a3a;--green3:#1a2a20;--border:#38342e;}
+  body{background:#141210}.narrative{background:#141210;border-bottom-color:#2a2620}
+  .term-block{background:#1e1c18}.term-header{background:#1e1c18}.term-body{border-top-color:#2a2620}.field-row{border-bottom-color:#2a2620}.field-value.formula{background:#2a2620}
+  .callout-insight{background:#221e10;border-color:#e4c050}.callout-warning{background:#280a18;border-color:#d04a8a}.callout-rule{background:#1a2a3a;border-color:#5a9fdf}.callout-green{background:#1a2a20;border-color:#5aba7a}
+  .ch-progress{background:#1e1c18;border-bottom-color:#38342e}.progress-bar{background:#2a2620}.progress-fill{background:#d04a8a}
+  .ch-hero{background:#1e0810}.cheat-sheet{background:#1e0810}.cheat-item{background:rgba(255,255,255,0.05);border-left-color:#d04a8a}
+  .companion{color:#d04a8a}.companion:hover{background:#d04a8a;color:#141210}
+  p{color:var(--ink2)}.section-intro{color:var(--ink3);border-left-color:#d04a8a}
+  .term-toggle{background:#2a2620;border-color:#38342e;color:var(--ink3)}.term-block.open .term-toggle{background:#f0ece4;color:#141210;border-color:#f0ece4}
+  .term-name{color:var(--ink)}.term-short{color:var(--ink3)}.section-title{color:var(--ink)}.section-label{color:#d04a8a}.field-label{color:var(--ink4)}.field-value{color:var(--ink2)}
+  .field-value.formula .formula-math{color:#d04a8a}.field-value.formula .formula-plain{color:var(--ink3)}.redflag{color:#e8784a}
+  .cheat-title{color:rgba(220,160,190,0.7)}.cheat-item-title{color:#f0ece4}.cheat-item-body{color:rgba(240,236,228,0.5)}
+  .ch-eyebrow{color:rgba(220,160,190,0.7)}.ch-title{color:#f4f0e8}.ch-intro{color:rgba(240,236,228,0.85)}.ch-meta{color:rgba(240,236,228,0.58)}.ch-meta span em{color:rgba(240,236,228,0.88)}.ch-progress span{color:#a09488}
+  svg text{fill:#6a6058 !important}
+}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.ch-hero{background:var(--wine);color:var(--cream);padding:72px 72px 56px;position:relative;overflow:hidden}
+.ch-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 60%,rgba(154,26,90,0.5) 0%,transparent 55%);pointer-events:none}
+.ch-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(220,160,190,0.7);margin-bottom:16px}
+.ch-title{font-family:var(--display);font-size:44px;font-weight:700;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin-bottom:20px;max-width:700px}
+.ch-title em{color:#f4a0c8;font-style:normal}
+.ch-intro{font-size:16px;color:rgba(255,255,255,0.75);max-width:600px;line-height:1.7;margin-bottom:36px}
+.ch-meta{display:flex;flex-wrap:wrap;gap:24px;font-size:10px;color:rgba(255,255,255,0.42);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono)}
+.ch-meta span em{color:rgba(255,255,255,0.72);font-style:normal}
+.ch-progress{display:flex;align-items:center;gap:12px;padding:16px 72px;background:var(--cream2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:0.05em}
+.progress-bar{flex:1;height:3px;background:var(--cream3);border-radius:2px;max-width:200px}
+.progress-fill{height:100%;background:var(--wine2);border-radius:2px;width:55.5%}
+.narrative{padding:56px 72px 48px;border-bottom:1px solid var(--border);max-width:960px}
+.narrative:last-child{border-bottom:none}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--wine2);margin-bottom:8px;font-weight:500}
+.section-title{font-family:var(--display);font-size:26px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:8px;letter-spacing:-0.01em}
+.section-intro{font-size:14.5px;color:var(--ink3);line-height:1.75;max-width:680px;margin-bottom:36px;padding-left:16px;border-left:3px solid var(--wine3)}
+.term-block{background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s}
+.term-block:hover{box-shadow:var(--shadow-lg)}
+.term-header{display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;cursor:pointer;user-select:none}
+.term-name{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);line-height:1.25;flex:1}
+.term-short{font-size:12.5px;color:var(--ink3);line-height:1.5;flex:1;font-style:italic;margin-top:3px}
+.term-toggle{font-family:var(--mono);font-size:11px;color:var(--ink4);border:1px solid var(--border);border-radius:3px;padding:2px 8px;flex-shrink:0;margin-top:2px;transition:all 0.15s;background:var(--cream)}
+.term-block.open .term-toggle{background:var(--wine);color:#fff;border-color:var(--wine)}
+.term-body{display:none;padding:0 24px 20px;border-top:1px solid var(--cream2)}
+.term-block.open .term-body{display:block}
+.field-row{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--cream3);align-items:baseline}
+.field-row:last-child{border-bottom:none}
+.field-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);font-weight:500;padding-top:1px}
+.field-value{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.field-value.formula{font-family:var(--mono);font-size:12.5px;background:var(--cream2);padding:10px 14px;border-radius:3px;color:var(--ink);line-height:1.65}
+.field-value.formula .formula-math{color:var(--wine2);font-weight:500;display:block;margin-bottom:4px;font-size:13px}
+.field-value.formula .formula-plain{color:var(--ink3);font-family:var(--serif);font-size:12.5px;font-style:italic}
+.redflag{color:var(--accent);font-size:13px}.redflag::before{content:'⚑ ';font-style:normal}
+.callout{padding:16px 20px;border-radius:4px;margin:20px 0;border-left:3px solid;font-size:13.5px;line-height:1.65}
+.callout-insight{background:var(--gold3);border-color:var(--gold2);color:var(--ink2)}
+.callout-warning{background:var(--wine3);border-color:var(--wine2);color:var(--ink2)}
+.callout-rule{background:var(--blue3);border-color:var(--blue2);color:var(--ink2)}
+.callout-green{background:var(--green3);border-color:var(--green2);color:var(--ink2)}
+.callout strong{font-weight:600;display:block;margin-bottom:5px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.65}
+.cheat-sheet{background:var(--wine);color:#fff;border-radius:6px;padding:28px 32px;margin-top:24px}
+.cheat-title{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(220,160,190,0.7);margin-bottom:16px}
+.cheat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cheat-item{padding:12px 14px;background:rgba(255,255,255,0.08);border-radius:4px;border-left:2px solid #f4a0c8}
+.cheat-item-title{font-size:11.5px;font-weight:600;color:#fff;margin-bottom:4px;font-family:var(--serif)}
+.cheat-item-body{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.55}
+.companion{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--wine2);text-decoration:none;border:1px solid currentColor;padding:5px 12px;border-radius:3px;margin-top:4px;transition:all 0.15s}
+.companion:hover{background:var(--wine2);color:#fff}
+@media(max-width:700px){.ch-hero,.narrative{padding:40px 24px}.ch-title{font-size:30px}.field-row{grid-template-columns:1fr;gap:4px}.cheat-grid{grid-template-columns:1fr}.ch-progress{padding:12px 24px}}
+</style>
+</head>
+<body>
+<div class="ch-progress">
+  <span>Chapter 10 of 18</span>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <span>Statistical Foundations for Strategy Professionals</span>
+</div>
+<div class="ch-hero">
+  <div class="ch-eyebrow">Part 5 — Relationships in Data · Chapter 10</div>
+  <h1 class="ch-title">Causal Inference and <em>Experimental Design</em></h1>
+  <p class="ch-intro">The difference between a business that learns from data and one that merely collects it is causal thinking. This chapter covers how to establish that an intervention actually worked — using randomised experiments when possible and quasi-experimental methods when not.</p>
+  <div class="ch-meta">
+    <span>Terms covered: <em>19</em></span>
+    <span>Sections: <em>RCT · Potential outcomes · DiD · IV · RD · A/B testing · Uplift</em></span>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 10.1</div>
+  <h2 class="section-title">The fundamental problem of causal inference</h2>
+  <p class="section-intro">We can never observe the same unit in both the treated and untreated state simultaneously. A customer either received the discount or did not — we cannot know what they would have done under the alternative. All causal inference is solving this problem: constructing a credible estimate of the counterfactual — what would have happened without the intervention.</p>
+
+  <div class="term-block" id="t-potential-outcomes">
+    <div class="term-header" onclick="toggleTerm('t-potential-outcomes')">
+      <div style="flex:1"><div class="term-name">Potential Outcomes Framework</div><div class="term-short">The formal framework for causal inference: each unit has two potential outcomes — one under treatment, one under control — and only one is ever observed.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you causal inference is a missing data problem. For every customer, there exists a potential outcome under treatment (Y₁) and under control (Y₀). The individual treatment effect is Y₁ − Y₀. We can only observe one of these — the other is the counterfactual. The Average Treatment Effect (ATE) is the population average of (Y₁ − Y₀). Randomization makes Y₁ and Y₀ estimable from group averages.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">ATE = E[Y₁ − Y₀] = E[Y₁] − E[Y₀]</span><span class="formula-plain">Under random assignment: E[Y₁|treated] = E[Y₁] and E[Y₀|control] = E[Y₀]. The groups are exchangeable — treated units represent what control units would have looked like under treatment. This is why randomization identifies causal effects from observed group differences.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In experimental design methodology, programme evaluation, A/B test statistical frameworks, and any formal discussion of treatment effect estimation.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the SUTVA assumption holds — that one unit's treatment does not affect another's outcome (Stable Unit Treatment Value Assumption). Network effects, spillovers, and social influence all violate SUTVA, making standard ATE estimates biased.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A marketplace tests a seller incentive programme. SUTVA is violated if treated sellers compete directly with control sellers — improving treated sellers may reduce control seller sales simply through competition redistribution, not programme effectiveness. The estimated ATE would overstate impact by treating competitive shifts as treatment effects.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-rct">
+    <div class="term-header" onclick="toggleTerm('t-rct')">
+      <div style="flex:1"><div class="term-name">Randomised Controlled Trial (RCT)</div><div class="term-short">An experiment where units are randomly assigned to treatment or control — the gold standard for establishing causation.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you random assignment eliminates confounding by distributing all unobserved characteristics equally across groups — in expectation. No need to measure or control for every possible confounder; randomization handles them all simultaneously. The resulting observed difference in outcomes between groups estimates the causal effect, not just an association.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Causal effect = ȳ_treated − ȳ_control</span><span class="formula-plain">This simple difference estimates the ATE under randomization. Conditions for a valid RCT: (1) random assignment, (2) no contamination between groups, (3) no differential attrition (dropout), (4) pre-registered primary endpoint. Blocking (stratifying randomization by key variables) reduces variance without affecting unbiasedness.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In A/B tests, clinical trials, programme evaluations, policy pilots, and any design where causal attribution is required and random assignment is feasible.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether randomisation was verified. Check that pre-experiment characteristics are balanced between groups — a t-test on key baseline variables should yield p &gt; 0.05 for a well-randomized experiment. Imbalance suggests contamination or implementation error.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A fintech lender runs a randomised trial of credit limit increases on a random 20% sample of eligible customers. Pre-randomisation balance checks confirm comparable income, utilisation, and risk scores between groups. The resulting spend increase and default rate change in the treated group minus the control group estimates the causal effect of the limit increase — free of selection bias by design.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-attrition">
+    <div class="term-header" onclick="toggleTerm('t-attrition')">
+      <div style="flex:1"><div class="term-name">Attrition and Non-Compliance</div><div class="term-short">Dropout from an experiment or failure to take the assigned treatment — both can invalidate causal conclusions even from a randomised design.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you randomization is only the beginning — how the experiment is administered matters too. If treated units opt out at higher rates than controls (differential attrition), the remaining groups are no longer comparable. If not everyone takes up the assigned treatment (non-compliance), the naive treated-vs-control comparison estimates something different from the intended ATE.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Intent-to-treat (ITT): compare assigned groups regardless of whether they actually received treatment — preserves randomization but dilutes estimated effect. Per-protocol: compare those who actually received treatment vs control — risks selection bias from non-random non-compliance. Local Average Treatment Effect (LATE / IV estimator): estimates effect for "compliers" — those who take treatment if and only if assigned to it.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In clinical trials (patient dropout), consumer product A/B tests (users switching apps mid-test), workplace training evaluations (voluntary non-attendance), and policy evaluations with imperfect rollout.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what the attrition rate was and whether it differed between groups. Differential attrition rates above a few percent can bias results meaningfully. Report ITT estimates as the primary result and note they represent a lower bound on the true treatment effect for compliers.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A SaaS company tests a new onboarding programme. 35% of treated users switch to the old onboarding before completing — the treatment takeup rate is 65%. ITT analysis (all treated vs all control) shows +4.2% activation. LATE estimate adjusts for non-compliance: true effect for completers ≈ +4.2%/0.65 = +6.5%. The naive ITT understates the true programme effect for those who actually participate.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 10.2</div>
+  <h2 class="section-title">Quasi-experimental methods — when randomization is not possible</h2>
+  <p class="section-intro">Most business interventions cannot be randomized after the fact — a policy already implemented, a product already launched, an acquisition already completed. Quasi-experimental methods use naturally occurring variation to approximate the counterfactual without random assignment. They require strong assumptions, but when those assumptions hold, they provide credible causal estimates from observational data.</p>
+
+  <div class="term-block" id="t-did">
+    <div class="term-header" onclick="toggleTerm('t-did')">
+      <div style="flex:1"><div class="term-name">Difference-in-Differences (DiD)</div><div class="term-short">Estimates a causal effect by comparing outcome changes over time in treated vs control groups — using the control group's trend as the counterfactual.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the treatment effect is estimated as: (change in treated group) minus (change in control group). The control group's trend proxies what the treated group would have done without the intervention. This "parallel trends" assumption — that both groups would have followed the same trajectory in the absence of treatment — is the key identifying assumption.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">DiD = (Ȳ_treated,post − Ȳ_treated,pre) − (Ȳ_control,post − Ȳ_control,pre)</span><span class="formula-plain">Equivalently: regress outcome on treatment indicator, time indicator, and their interaction. The interaction coefficient is the DiD estimate. Critical assumption: parallel pre-trends — verify by testing whether trends diverged before treatment. Failure of parallel trends invalidates the estimate.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In policy evaluations (minimum wage effects), geographic rollouts (new store impact on regional sales), platform feature launches affecting one user cohort, and natural experiment analyses.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask for the pre-trend plot. If treated and control groups were diverging before the intervention, parallel trends cannot be assumed and the DiD estimate will conflate pre-existing differences with treatment effects.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A grocery chain opens delivery service in 5 cities and uses 5 similar non-expansion cities as controls. Pre-expansion: both groups show flat sales trends. Post-expansion: treated cities grow 12%; control cities grow 3%. DiD estimate: +9 percentage points attributable to delivery launch. The parallel trends assumption is supported by the flat pre-period, giving credibility to the causal attribution.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-iv">
+    <div class="term-header" onclick="toggleTerm('t-iv')">
+      <div style="flex:1"><div class="term-name">Instrumental Variables (IV)</div><div class="term-short">Uses a variable that affects treatment but has no direct effect on the outcome to isolate the causal variation in the treatment.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you causal identification is achieved by finding a source of variation in treatment that is "as good as random" — unrelated to confounders. A valid instrument creates a natural experiment within observational data. The classic example: military draft lottery as instrument for education (randomly assigned draft risk affects years served which affects civilian earnings — but lottery number has no direct earnings effect).</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">LATE = Cov(Y, Z) / Cov(D, Z)  [where Z = instrument, D = treatment]</span><span class="formula-plain">Two requirements for a valid instrument: (1) Relevance — Z must be correlated with D (first stage F &gt; 10). (2) Exclusion restriction — Z affects Y only through D, not directly. The exclusion restriction cannot be tested — it must be argued on substantive grounds. Weak instruments (F &lt; 10) produce severely biased IV estimates.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In academic economic research, programme evaluations where treatment is non-random, and any analysis where an exogenous source of variation in treatment can be credibly defended.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the exclusion restriction can be defended. The instrument must affect the outcome only through the treatment — any direct path invalidates the instrument. This assumption is often assumed rather than demonstrated, making IV results in observational research frequently contested.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A streaming platform wants to estimate causal effect of watching a specific genre on subscription renewal. Genre preference is confounded by overall engagement. An instrument: whether the first recommended video in a new user's session happened to be from that genre (driven by recommender randomness, not user preference). First stage: genre exposure predicts subsequent genre watching. LATE estimates the causal renewal effect for users influenced by the initial recommendation.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-rdd">
+    <div class="term-header" onclick="toggleTerm('t-rdd')">
+      <div style="flex:1"><div class="term-name">Regression Discontinuity Design (RDD)</div><div class="term-short">Exploits a threshold rule that assigns treatment discontinuously — units just above and below the threshold are used as natural treatment and control groups.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you that units just below a cutoff score (not treated) are excellent counterfactuals for units just above it (treated) because they are otherwise similar — they differ primarily in whether they crossed the threshold. The causal effect is estimated as the discontinuous jump in outcomes at the threshold. The key assumption is that potential outcomes vary smoothly around the cutoff — no other discontinuous change at exactly that point.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">RDD effect = lim_{x↓c} E[Y|X=x] − lim_{x↑c} E[Y|X=x]</span><span class="formula-plain">Estimate the jump at the threshold c using local linear regression on both sides. Bandwidth selection is critical — too narrow gives high variance, too wide introduces bias from units far from the threshold. Check for manipulation: if agents can precisely control their running variable to select treatment, the design is invalid (McCrary density test).</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In credit limit assignment (score threshold), scholarship award (grade cutoff), medication dosage rules, and any policy with a sharp eligibility threshold based on a measurable criterion.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether units could have manipulated their running variable to cross the threshold. If applicants know the cutoff and can time or adjust their applications to qualify, the design is contaminated — units near the threshold are no longer similar above and below it.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A lender approves all applicants scoring above 650 on their internal model. Comparing customers scoring 645–649 (declined) with those scoring 650–655 (approved) estimates the causal effect of loan access. Near the threshold, the only systematic difference between groups is approval status — other characteristics (income, employment, intent) should be continuous through 650, making the comparison locally unconfounded.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-uplift">
+    <div class="term-header" onclick="toggleTerm('t-uplift')">
+      <div style="flex:1"><div class="term-name">Uplift Modeling</div><div class="term-short">Predicts the causal effect of treatment for each individual — identifying who actually benefits, unlike standard models that predict outcome regardless of treatment.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you that the population of customers is not homogeneous in their response to an intervention. Four types exist: Persuadables (benefit from treatment — the ones you want to target), Sure Things (buy regardless — waste of marketing budget), Lost Causes (will not buy regardless — also wasted budget), and Sleeping Dogs (actually harmed by treatment — the most dangerous). Standard outcome models find all of these — uplift models isolate persuadables.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Uplift = P(Y=1|T=1, X) − P(Y=1|T=0, X)</span><span class="formula-plain">Two-model approach (T-learner): train separate outcome models for treated and control, then score each unit on both and take the difference. Requires randomised training data with treatment indicator. Evaluate with Qini curve or uplift by decile table — targeting top uplift deciles maximizes incremental ROI.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In retention marketing (who is genuinely at-risk and responsive to outreach), promotional targeting (who is swayed by discounts vs who would buy anyway), and any CRM intervention where heterogeneous treatment effects matter.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the uplift model was evaluated on held-out data with an Qini curve, not accuracy. Evaluating uplift models with standard classification metrics is meaningless — the counterfactual is never observed. Qini measures incremental lift over random selection.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A subscription company runs churn retention campaigns on all at-risk customers. An uplift model trained on a randomised experiment reveals: 40% of targeted customers were "sure things" who would have stayed anyway (discount wasted), 15% were "sleeping dogs" who were more likely to churn after receiving a promotional message (discount actively harmful), and only 30% were genuine persuadables. Targeting only persuadables reduces retention spend 55% while maintaining the same incremental retention outcome.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-srm">
+    <div class="term-header" onclick="toggleTerm('t-srm')">
+      <div style="flex:1"><div class="term-name">Sample Ratio Mismatch (SRM)</div><div class="term-short">When the actual allocation of users to experiment arms differs from the intended split — a sign of implementation error that invalidates causal conclusions.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the experiment was not implemented as designed — users were not randomised as intended. If you designed a 50/50 split and see 52/48, the randomiser may have a bug, a caching issue may be re-routing users, or bot traffic may be falling disproportionately into one arm. SRM means the treatment and control groups may not be comparable and the causal estimate is unreliable.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Chi-square test: χ² = Σ(observed − expected)² / expected</span><span class="formula-plain">Check whether the observed split matches the intended allocation. For a 50/50 split with n=10,000: expected 5,000 each. If observed is 5,300/4,700 without an intentional reason, investigate before interpreting results. Small p-value on the SRM chi-square test = allocation problem.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">As a standard experiment health check in mature A/B testing platforms, and in post-hoc diagnosis when experiment results are counterintuitive or inconsistent.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether SRM checks were run before results were interpreted. Running significance tests on a biased experiment produces statistically precise but causally meaningless estimates. SRM should be checked before any results are communicated.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A mobile app A/B test targeting 50/50 split shows 58/42 in actual delivery. Investigation reveals a caching bug on iOS was keeping some users on the control experience while logging them as treated. The "treated" group contained a disproportionate share of Android users — who have systematically different engagement patterns. All experiment results for that period are discarded.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Chapter Summary</div>
+  <h2 class="section-title">Chapter 10 cheat sheet</h2>
+  <div class="cheat-sheet">
+    <div class="cheat-title">Key principles from this chapter</div>
+    <div class="cheat-grid">
+      <div class="cheat-item"><div class="cheat-item-title">Causal inference is a missing data problem</div><div class="cheat-item-body">The counterfactual is never observed. Every causal method is a different strategy for constructing a credible estimate of what would have happened without the intervention.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Randomization eliminates confounding</div><div class="cheat-item-body">Random assignment makes groups comparable on all observed and unobserved characteristics in expectation. It is the most reliable causal identification strategy when feasible.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Parallel trends must be verified for DiD</div><div class="cheat-item-body">Check pre-period trends before interpreting DiD estimates. Groups diverging before treatment invalidates the control group as a counterfactual.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">IV requires a credible exclusion restriction</div><div class="cheat-item-body">The instrument must affect the outcome only through the treatment. This cannot be statistically tested — it must be justified substantively. Contested exclusion restrictions make IV results contestable.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Always check SRM before reporting</div><div class="cheat-item-body">An experiment with wrong allocation ratios was not properly randomized. Interpret results only after confirming actual splits match intended splits.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Uplift models find persuadables</div><div class="cheat-item-body">Standard outcome models predict who buys — not who buys because of treatment. Uplift models identify the segment where treatment has positive incremental effect, avoiding wasted spend on sure things and sleeping dogs.</div></div>
+    </div>
+  </div>
+  <div style="margin-top:28px">
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:12px">Chapter 12 returns to regression in a predictive modeling context — regularisation, cross-validation, and the bias-variance tradeoff. The causal foundations here are revisited in Chapter 19 (Causal Inference) in the ML Playbook companion.</p>
+    <a href="../ml-for-strategy-v2/ML_Strategy_Playbook.html" class="companion">↗ ML Strategy Playbook — companion reference</a>
+  </div>
+</div>
+<script>
+function toggleTerm(id){const b=document.getElementById(id);const o=b.classList.contains('open');b.classList.toggle('open',!o);b.querySelector('.term-toggle').textContent=o?'expand':'collapse';}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const all=document.querySelectorAll('.term-block');if(e.key==='e'){all.forEach(b=>{b.classList.add('open');b.querySelector('.term-toggle').textContent='collapse';})}if(e.key==='c'){all.forEach(b=>{b.classList.remove('open');b.querySelector('.term-toggle').textContent='expand';})}});
+</script>
+</body>
+</html>

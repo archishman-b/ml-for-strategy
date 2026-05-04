@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 16 — Time Series & Forecasting | Stats Foundations for Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;
+  --cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;
+  --accent:#8b2500;--accent2:#c4440d;
+  --ocean:#0a2a4a;--ocean2:#1a6a9a;--ocean3:#d0eaf8;
+  --gold:#7a5a00;--gold2:#c49a00;--gold3:#fdf5dc;
+  --green2:#2d7a4a;--green3:#ddf0e5;
+  --border:#d4cdc4;
+  --serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);--shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+@media(prefers-color-scheme:dark){
+  :root{--ink:#f0ece4;--ink2:#d8d0c4;--ink3:#a09488;--ink4:#6a6058;--cream:#181612;--cream2:#201e1a;--cream3:#2a2620;--accent2:#e8784a;--ocean2:#3a9ada;--ocean3:#0a1e30;--gold2:#e4c050;--gold3:#221e10;--green3:#1a2a20;--border:#38342e;}
+  body{background:#141210}.narrative{background:#141210;border-bottom-color:#2a2620}
+  .term-block{background:#1e1c18}.term-header{background:#1e1c18}.term-body{border-top-color:#2a2620}.field-row{border-bottom-color:#2a2620}.field-value.formula{background:#2a2620}
+  .callout-insight{background:#221e10;border-color:#e4c050}.callout-warning{background:#221410;border-color:#e8784a}.callout-rule{background:#0a1e30;border-color:#3a9ada}
+  .illustration{background:#1e1c18;border-color:#38342e}.illustration-caption{border-top-color:#2a2620;background:#1e1c18}
+  .ch-progress{background:#1e1c18;border-bottom-color:#38342e}.progress-bar{background:#2a2620}.progress-fill{background:#3a9ada}
+  .ch-hero{background:#051828}.cheat-sheet{background:#051828}.cheat-item{background:rgba(255,255,255,0.05);border-left-color:#3a9ada}
+  .companion{color:#3a9ada}.companion:hover{background:#3a9ada;color:#141210}
+  p{color:var(--ink2)}.section-intro{color:var(--ink3);border-left-color:#3a9ada}
+  .term-toggle{background:#2a2620;border-color:#38342e;color:var(--ink3)}.term-block.open .term-toggle{background:#f0ece4;color:#141210;border-color:#f0ece4}
+  .term-name{color:var(--ink)}.term-short{color:var(--ink3)}.section-title{color:var(--ink)}.section-label{color:#3a9ada}.field-label{color:var(--ink4)}.field-value{color:var(--ink2)}
+  .field-value.formula .formula-math{color:#3a9ada}.field-value.formula .formula-plain{color:var(--ink3)}.redflag{color:#e8784a}
+  .cheat-title{color:rgba(140,200,240,0.7)}.cheat-item-title{color:#f0ece4}.cheat-item-body{color:rgba(240,236,228,0.5)}
+  .ch-eyebrow{color:rgba(140,200,240,0.7)}.ch-title{color:#f4f0e8}.ch-intro{color:rgba(240,236,228,0.85)}.ch-meta{color:rgba(240,236,228,0.58)}.ch-meta span em{color:rgba(240,236,228,0.88)}.ch-progress span{color:#a09488}
+  svg text{fill:#6a6058 !important}
+}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.ch-hero{background:var(--ocean);color:var(--cream);padding:72px 72px 56px;position:relative;overflow:hidden}
+.ch-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 90% 60%,rgba(26,106,154,0.5) 0%,transparent 55%);pointer-events:none}
+.ch-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(140,200,240,0.7);margin-bottom:16px}
+.ch-title{font-family:var(--display);font-size:44px;font-weight:700;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin-bottom:20px;max-width:700px}
+.ch-title em{color:#80c8f0;font-style:normal}
+.ch-intro{font-size:16px;color:rgba(255,255,255,0.75);max-width:600px;line-height:1.7;margin-bottom:36px}
+.ch-meta{display:flex;flex-wrap:wrap;gap:24px;font-size:10px;color:rgba(255,255,255,0.42);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono)}
+.ch-meta span em{color:rgba(255,255,255,0.72);font-style:normal}
+.ch-progress{display:flex;align-items:center;gap:12px;padding:16px 72px;background:var(--cream2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:0.05em}
+.progress-bar{flex:1;height:3px;background:var(--cream3);border-radius:2px;max-width:200px}
+.progress-fill{height:100%;background:var(--ocean2);border-radius:2px;width:88.5%}
+.narrative{padding:56px 72px 48px;border-bottom:1px solid var(--border);max-width:960px}
+.narrative:last-child{border-bottom:none}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ocean2);margin-bottom:8px;font-weight:500}
+.section-title{font-family:var(--display);font-size:26px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:8px;letter-spacing:-0.01em}
+.section-intro{font-size:14.5px;color:var(--ink3);line-height:1.75;max-width:680px;margin-bottom:36px;padding-left:16px;border-left:3px solid var(--ocean3)}
+.term-block{background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s}
+.term-block:hover{box-shadow:var(--shadow-lg)}
+.term-header{display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;cursor:pointer;user-select:none}
+.term-name{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);line-height:1.25;flex:1}
+.term-short{font-size:12.5px;color:var(--ink3);line-height:1.5;flex:1;font-style:italic;margin-top:3px}
+.term-toggle{font-family:var(--mono);font-size:11px;color:var(--ink4);border:1px solid var(--border);border-radius:3px;padding:2px 8px;flex-shrink:0;margin-top:2px;transition:all 0.15s;background:var(--cream)}
+.term-block.open .term-toggle{background:var(--ocean);color:#fff;border-color:var(--ocean)}
+.term-body{display:none;padding:0 24px 20px;border-top:1px solid var(--cream2)}
+.term-block.open .term-body{display:block}
+.field-row{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--cream3);align-items:baseline}
+.field-row:last-child{border-bottom:none}
+.field-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);font-weight:500;padding-top:1px}
+.field-value{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.field-value.formula{font-family:var(--mono);font-size:12.5px;background:var(--cream2);padding:10px 14px;border-radius:3px;color:var(--ink);line-height:1.65}
+.field-value.formula .formula-math{color:var(--ocean2);font-weight:500;display:block;margin-bottom:4px;font-size:13px}
+.field-value.formula .formula-plain{color:var(--ink3);font-family:var(--serif);font-size:12.5px;font-style:italic}
+.redflag{color:var(--accent);font-size:13px}.redflag::before{content:'⚑ ';font-style:normal}
+.callout{padding:16px 20px;border-radius:4px;margin:20px 0;border-left:3px solid;font-size:13.5px;line-height:1.65}
+.callout-insight{background:var(--gold3);border-color:var(--gold2);color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:var(--ocean3);border-color:var(--ocean2);color:var(--ink2)}
+.callout-green{background:var(--green3);border-color:var(--green2);color:var(--ink2)}
+.callout strong{font-weight:600;display:block;margin-bottom:5px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.65}
+.illustration{margin:28px 0;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:#fff}
+.illustration-caption{font-family:var(--mono);font-size:10.5px;color:var(--ink4);text-align:center;padding:10px;border-top:1px solid var(--cream2);letter-spacing:0.04em;background:var(--cream)}
+.cheat-sheet{background:var(--ocean);color:#fff;border-radius:6px;padding:28px 32px;margin-top:24px}
+.cheat-title{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(140,200,240,0.7);margin-bottom:16px}
+.cheat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cheat-item{padding:12px 14px;background:rgba(255,255,255,0.07);border-radius:4px;border-left:2px solid #80c8f0}
+.cheat-item-title{font-size:11.5px;font-weight:600;color:#fff;margin-bottom:4px;font-family:var(--serif)}
+.cheat-item-body{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.55}
+.companion{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--ocean2);text-decoration:none;border:1px solid currentColor;padding:5px 12px;border-radius:3px;margin-top:4px;transition:all 0.15s}
+.companion:hover{background:var(--ocean2);color:#fff}
+@media(max-width:700px){.ch-hero,.narrative{padding:40px 24px}.ch-title{font-size:30px}.field-row{grid-template-columns:1fr;gap:4px}.cheat-grid{grid-template-columns:1fr}.ch-progress{padding:12px 24px}}
+</style>
+</head>
+<body>
+<div class="ch-progress">
+  <span>Chapter 16 of 18</span>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <span>Statistical Foundations for Strategy Professionals</span>
+</div>
+<div class="ch-hero">
+  <div class="ch-eyebrow">Part 8 — Time & Sequential Data · Chapter 16</div>
+  <h1 class="ch-title">Time Series and <em>Forecasting</em></h1>
+  <p class="ch-intro">Time series data is different from cross-sectional data in one fundamental way: order matters. Shuffling the observations destroys information. This chapter covers decomposition, stationarity, ARIMA, structural breaks, and the operational discipline of forecasting in production environments.</p>
+  <div class="ch-meta">
+    <span>Terms covered: <em>18</em></span>
+    <span>Sections: <em>Decomposition · Stationarity · ARIMA · Structural breaks · Seasonality · Forecasting methods</em></span>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 16.1</div>
+  <h2 class="section-title">Time series decomposition — separating what changes from why</h2>
+  <p class="section-intro">Before modeling a time series, decompose it. Trend, seasonality, and noise are fundamentally different phenomena driven by different factors and requiring different handling. Conflating them produces forecasts that confuse structural change with seasonal patterns and mistake noise for signal.</p>
+
+  <div class="illustration">
+    <svg viewBox="0 0 760 230" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fff">
+      <!-- Original series -->
+      <text x="30" y="28" font-family="'JetBrains Mono',monospace" font-size="9" fill="#b0a898" letter-spacing="0.05em">ORIGINAL</text>
+      <polyline points="60,45 90,38 120,50 150,35 180,48 210,30 240,42 270,28 300,40 330,25 360,38 390,22 420,35 450,20 480,30 510,15 540,28 570,14 600,25 630,10 660,22"
+        fill="none" stroke="#1a6a9a" stroke-width="1.5"/>
+
+      <!-- Trend -->
+      <text x="30" y="100" font-family="'JetBrains Mono',monospace" font-size="9" fill="#b0a898" letter-spacing="0.05em">TREND</text>
+      <path d="M60,118 Q360,95 660,72" fill="none" stroke="#c4440d" stroke-width="2"/>
+
+      <!-- Seasonal -->
+      <text x="30" y="162" font-family="'JetBrains Mono',monospace" font-size="9" fill="#b0a898" letter-spacing="0.05em">SEASONAL</text>
+      <polyline points="60,175 90,165 120,178 150,165 180,178 210,165 240,178 270,165 300,178 330,165 360,178 390,165 420,178 450,165 480,178 510,165 540,178 570,165 600,178 630,165 660,178"
+        fill="none" stroke="#2d7a4a" stroke-width="1.5"/>
+
+      <!-- Residuals -->
+      <text x="30" y="210" font-family="'JetBrains Mono',monospace" font-size="9" fill="#b0a898" letter-spacing="0.05em">RESIDUAL</text>
+      <polyline points="60,218 90,215 120,221 150,214 180,220 210,216 240,219 270,215 300,218 330,214 360,217 390,215 420,219 450,216 480,217 510,215 540,219 570,214 600,218 630,215 660,219"
+        fill="none" stroke="#b0a898" stroke-width="1" stroke-dasharray="2,2"/>
+    </svg>
+    <div class="illustration-caption">STL decomposition separates a time series into trend (long-run direction), seasonal (recurring pattern), and residual (noise). The trend and seasonal components are modeled; the residual should look like white noise.</div>
+  </div>
+
+  <div class="term-block" id="t-decomposition">
+    <div class="term-header" onclick="toggleTerm('t-decomposition')">
+      <div style="flex:1"><div class="term-name">Time Series Decomposition</div><div class="term-short">Separating a time series into trend, seasonal, and residual components — the essential first step before any forecasting work.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you which part of what you see in the data is structural, which is periodic, and which is noise. Revenue increasing every December is seasonal — not growth. Revenue declining steadily over 18 months is trend — not a bad December. Separating these before modeling prevents misattribution of seasonal highs to strategic success and seasonal lows to operational failure.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Additive: Y = Trend + Seasonal + Residual</span><span class="formula-plain">Multiplicative: Y = Trend × Seasonal × Residual (when seasonal amplitude scales with level — common for revenue). STL decomposition (Seasonal-Trend using Loess) is the most robust method — handles multiple seasonalities, outliers, and changing seasonal patterns. Use additive for stable amplitude; multiplicative for growing amplitude.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In every production forecasting system before building models, in attribution analyses separating baseline from promotional effects, and in any business review comparing year-over-year performance.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the team decomposed the series before declaring trend changes. A business reporting "revenue grew 23% in Q4" may be entirely attributable to seasonal Q4 patterns — year-over-year comparison on seasonally adjusted data is the appropriate metric.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A fashion retailer's raw monthly revenue shows apparent strong growth. STL decomposition reveals: trend is flat; seasonal component explains 89% of observed variation; residuals are small and structurally well-behaved. The "growth" is December seasonality repeated annually. Year-over-year seasonally adjusted comparison shows no underlying trend growth — a very different strategy implication.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-stationarity">
+    <div class="term-header" onclick="toggleTerm('t-stationarity')">
+      <div style="flex:1"><div class="term-name">Stationarity</div><div class="term-short">A time series is stationary when its statistical properties (mean, variance, autocorrelation structure) do not change over time — required by most classical forecasting models.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the series is well-behaved enough for standard time series methods. A trending series is not stationary — its mean is changing. A series with increasing volatility is not stationary — its variance is changing. ARIMA models require stationarity and use differencing to achieve it. Neural network models are more tolerant but still benefit from trend removal.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">ADF test: H₀: unit root (non-stationary). Low p-value → stationary</span><span class="formula-plain">Augmented Dickey-Fuller test: p &lt; 0.05 means the series is stationary. If non-stationary: first difference (yₜ − yₜ₋₁) often achieves stationarity. Log-transform first if variance is growing. Second-difference if first difference is still non-stationary. Never over-difference — it introduces unnecessary complexity.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In ARIMA model specification, time series regression diagnostics, and the pre-modeling checklist for any sequential data analysis.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the stationarity test was conducted before fitting the model. Fitting ARIMA to a trending series without differencing produces spurious results — the model will find apparent relationships that are entirely driven by shared trends rather than true dependence.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">An analyst regresses website traffic on ad spend using both series in levels (not differenced). Both series trend upward over 3 years. The regression finds a strong positive relationship (R²=0.87) — but a spurious regression: any two trending series will appear correlated. ADF tests on both series confirm non-stationarity. First-differencing both series (week-over-week changes) reduces R² to 0.31 — the true short-run relationship between ad spend changes and traffic changes.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-arima">
+    <div class="term-header" onclick="toggleTerm('t-arima')">
+      <div style="flex:1"><div class="term-name">ARIMA</div><div class="term-short">AutoRegressive Integrated Moving Average — the classical framework for univariate time series forecasting using lagged values and lagged errors.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the model predicts future values using a combination of: past values of the series itself (autoregressive part), the number of differences needed for stationarity (integrated part), and past forecast errors (moving average part). ARIMA is optimal for linear time series with stable statistical properties and no external predictors.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">ARIMA(p,d,q): p=AR lags, d=differences, q=MA lags</span><span class="formula-plain">Use ADF test to determine d. Use ACF/PACF plots to guide p and q. Seasonal ARIMA: SARIMA(p,d,q)(P,D,Q)[s] adds seasonal AR, differencing, and MA terms at lag s. In practice: auto.arima() in R or pmdarima in Python searches the order space automatically. Evaluate with AIC/BIC for model selection.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In economic forecasting, financial time series, energy demand modeling, and any univariate series with sufficient history and stable structure.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether residuals were checked after fitting. ARIMA residuals should be white noise — if significant autocorrelation remains, the model is misspecified and forecasts are suboptimal. Check with Ljung-Box test.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A utility models monthly gas consumption. ADF test confirms non-stationarity. Auto.arima selects SARIMA(1,1,1)(1,1,1)[12] — first-differenced, seasonal period 12 months. Model MAPE on held-out 12 months: 6.8% vs naive seasonal benchmark of 11.2%. Residuals pass Ljung-Box test. The SARIMA captures the serial autocorrelation and annual seasonality meaningfully better than naive methods.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-structural-break">
+    <div class="term-header" onclick="toggleTerm('t-structural-break')">
+      <div style="flex:1"><div class="term-name">Structural Break</div><div class="term-short">A point in a time series where the underlying data-generating process fundamentally changes — invalidating any model trained on pre-break data.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the world changed in a way that makes pre-break data poor predictors of post-break outcomes. COVID-19, a new competitor entry, a regulatory change, or a pricing restructure can all create structural breaks. A model trained entirely on pre-break data will not just be slightly inaccurate — its core learned patterns may be reversed or irrelevant.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Chow test: F-test for parameter equality across two subperiods</span><span class="formula-plain">Detect: Chow test at known break date, or Bai-Perron test to detect unknown break dates. Response: (1) Exclude pre-break data and retrain. (2) Include a break dummy variable if break is partial. (3) Use models robust to breaks (shorter training windows, regime-switching models). Rolling validation is critical for detecting breaks in production.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In model performance diagnostics after major market events, regulatory changes, or business disruptions, and in any model governance process for models trained on multi-year historical data.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether a model trained before a major structural event was revalidated (not just monitored) after the event. Post-event revalidation with a statistical break test is more reliable than watching performance metrics degrade.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A hospitality company's occupancy forecasting model was trained on 2015–2019 data. COVID-19 created a structural break in March 2020. The model assumes pre-pandemic seasonality, travel patterns, and baseline demand — all invalidated. Even post-reopening in 2022, behavioural shifts (remote work, different travel patterns) mean the pre-break data is contaminated. The model is rebuilt on 2021–2023 data with a shorter training window explicitly chosen to exclude the break period.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-prophet">
+    <div class="term-header" onclick="toggleTerm('t-prophet')">
+      <div style="flex:1"><div class="term-name">Prophet and Modern Forecasting Frameworks</div><div class="term-short">Decomposable forecasting models designed for business time series — handling multiple seasonalities, holidays, and structural breaks with minimal tuning.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you business time series have features that classical ARIMA handles poorly: multiple seasonalities (weekly and annual simultaneously), irregular holidays, known changepoints, and missing values. Facebook's Prophet and similar frameworks explicitly decompose into trend + seasonalities + holidays, fitting each component by curve-fitting rather than differencing. They are more robust to irregularities and more interpretable than black-box ML forecasters.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">y(t) = g(t) + s(t) + h(t) + ε(t)</span><span class="formula-plain">g(t) = piecewise linear or logistic trend with changepoints. s(t) = Fourier series seasonality (multiple periods). h(t) = holiday effects (user-specified). Fit by Stan (Bayesian). Key advantage: handles daily data with weekly + annual seasonality naturally. Changepoints can be manually specified for known structural breaks.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In retail, media, SaaS, and e-commerce forecasting where daily/weekly granularity and business calendar effects matter and classical ARIMA would require extensive manual specification.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether Prophet's uncertainty intervals were validated for coverage. Prophet provides prediction intervals by default, but these are based on assumed uncertainty propagation — empirical coverage should be checked on held-out data before trusting them for safety stock or risk planning.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A food delivery platform forecasts daily order volume across 50 cities. Each city has weekly cycles, national holidays, and local events. Prophet fits each city independently, automatically capturing weekly seasonality and national holiday effects specified in the holiday calendar. MAPE across cities: 8.4% vs SARIMA benchmark of 12.1%. The improvement comes from handling multiple seasonalities simultaneously rather than the structural flexibility of the framework.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Chapter Summary</div>
+  <h2 class="section-title">Chapter 16 cheat sheet</h2>
+  <div class="cheat-sheet">
+    <div class="cheat-title">Key principles from this chapter</div>
+    <div class="cheat-grid">
+      <div class="cheat-item"><div class="cheat-item-title">Decompose before modeling</div><div class="cheat-item-body">Always separate trend, seasonality, and residuals before any forecasting work. STL decomposition handles multiple seasonalities and outliers robustly.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Test for stationarity before ARIMA</div><div class="cheat-item-body">ADF test determines d (differencing order). Fitting ARIMA to a trending series without differencing produces spurious results and unreliable forecasts.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Check ARIMA residuals for white noise</div><div class="cheat-item-body">Ljung-Box test on residuals. Remaining autocorrelation means the model is misspecified and leaving predictable structure unexploited.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Structural breaks invalidate training data</div><div class="cheat-item-body">After major market events, don't just monitor — revalidate with a Chow test or Bai-Perron test. Pre-break data may be more harmful than helpful for post-break forecasting.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Use temporal cross-validation</div><div class="cheat-item-body">Never use random k-fold on time series. Always train on past, evaluate on future — with expanding or rolling windows. Random splits create look-ahead bias.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Prophet for multi-seasonality business series</div><div class="cheat-item-body">When daily data has both weekly and annual seasonality plus holiday effects, Prophet's explicit decomposition outperforms classical ARIMA with far less manual specification.</div></div>
+    </div>
+  </div>
+  <div style="margin-top:28px">
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:12px">Chapter 17 covers business analytics applications — bringing together the statistical methods from earlier chapters into integrated analytical workflows for specific business domains. Chapter 18 closes with model governance, explainability, and fairness.</p>
+    <a href="../ml-for-strategy-v2/ML_Strategy_Playbook.html" class="companion">↗ ML Strategy Playbook — companion reference</a>
+  </div>
+</div>
+<script>
+function toggleTerm(id){const b=document.getElementById(id);const o=b.classList.contains('open');b.classList.toggle('open',!o);b.querySelector('.term-toggle').textContent=o?'expand':'collapse';}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const all=document.querySelectorAll('.term-block');if(e.key==='e'){all.forEach(b=>{b.classList.add('open');b.querySelector('.term-toggle').textContent='collapse';})}if(e.key==='c'){all.forEach(b=>{b.classList.remove('open');b.querySelector('.term-toggle').textContent='expand';})}});
+</script>
+</body>
+</html>

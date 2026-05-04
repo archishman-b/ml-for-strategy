@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 2 — Data Fundamentals | Stats Foundations for Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;
+  --ink2:#3d3830;
+  --ink3:#7a7060;
+  --ink4:#b0a898;
+  --cream:#f7f4ef;
+  --cream2:#ede8df;
+  --cream3:#e2dbd0;
+  --accent:#8b2500;
+  --accent2:#c4440d;
+  --accent3:#e8c4a0;
+  --blue:#1a3a5c;
+  --blue2:#2d5f8a;
+  --blue3:#ddeaf7;
+  --green:#1a4a2e;
+  --green2:#2d7a4a;
+  --green3:#ddf0e5;
+  --gold:#7a5a00;
+  --gold2:#c49a00;
+  --gold3:#fdf5dc;
+  --border:#d4cdc4;
+  --border2:#c4bdb4;
+  --serif:'Source Serif 4',Georgia,serif;
+  --display:'Playfair Display',Georgia,serif;
+  --mono:'JetBrains Mono',monospace;
+  --radius:4px;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);
+  --shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+
+/* ── DARK MODE ── */
+@media(prefers-color-scheme:dark){
+  :root{
+    --ink:#f0ece4;
+    --ink2:#d8d0c4;
+    --ink3:#a09488;
+    --ink4:#6a6058;
+    --cream:#181612;
+    --cream2:#201e1a;
+    --cream3:#2a2620;
+    --accent:#e86030;
+    --accent2:#e8784a;
+    --accent3:#c4845a;
+    --blue2:#5a9fdf;
+    --blue3:#1a2a3a;
+    --green2:#5aba7a;
+    --green3:#1a2a20;
+    --gold2:#e4c050;
+    --gold3:#221e10;
+    --border:#38342e;
+    --border2:#48443e;
+  }
+  body{background:#141210}
+  .narrative{background:#141210;border-bottom-color:#2a2620}
+  .term-block{background:#1e1c18}
+  .term-header{background:#1e1c18}
+  .term-body{border-top-color:#2a2620}
+  .field-row{border-bottom-color:#2a2620}
+  .field-value.formula{background:#2a2620}
+  .callout-insight{background:#221e10;border-color:#e4c050}
+  .callout-warning{background:#221410;border-color:#e8784a}
+  .callout-rule{background:#10181e;border-color:#5a9fdf}
+  .callout-green{background:#101e14;border-color:#5aba7a}
+  .illustration{background:#1e1c18;border-color:#38342e}
+  .illustration svg{background:#1e1c18 !important}
+  .illustration-caption{border-top-color:#2a2620;background:#1e1c18}
+  .ch-progress{background:#1e1c18;border-bottom-color:#38342e}
+  .progress-bar{background:#2a2620}
+  .progress-fill{background:#e8784a}
+  .ch-hero{background:#0e0c0a}
+  .ch-hero::before{background:radial-gradient(ellipse at 20% 60%,rgba(90,159,223,0.12) 0%,transparent 60%)}
+  .cheat-sheet{background:#0e0c0a}
+  .cheat-item{background:rgba(255,255,255,0.04);border-left-color:#e8784a}
+  .type-grid-item{background:#1e1c18;border-color:#38342e}
+  .type-label{background:#2a2620}
+  .missing-card{background:#1e1c18;border-color:#38342e}
+  .missing-badge{background:#2a2620}
+  .companion{color:#e8784a}
+  .companion:hover{background:#e8784a;color:#141210}
+  p{color:var(--ink2)}
+  .section-intro{color:var(--ink3);border-left-color:#c4845a}
+  .term-toggle{background:#2a2620;border-color:#38342e;color:var(--ink3)}
+  .term-block.open .term-toggle{background:#f0ece4;color:#141210;border-color:#f0ece4}
+  .term-name{color:var(--ink)}
+  .term-short{color:var(--ink3)}
+  .section-title{color:var(--ink)}
+  .section-label{color:#e8784a}
+  .field-label{color:var(--ink4)}
+  .field-value{color:var(--ink2)}
+  .field-value.formula .formula-math{color:#e8784a}
+  .field-value.formula .formula-plain{color:var(--ink3)}
+  .redflag{color:#e8784a}
+  .cheat-title{color:#c4845a}
+  .cheat-item-title{color:#f0ece4}
+  .cheat-item-body{color:rgba(240,236,228,0.5)}
+  .ch-eyebrow{color:#7ab8e8}
+  .ch-title{color:#f4f0e8}
+  .ch-intro{color:rgba(240,236,228,0.85)}
+  .ch-meta{color:rgba(240,236,228,0.58)}
+  .ch-meta span em{color:rgba(240,236,228,0.88)}
+  .ch-progress span{color:#a09488}
+  .type-grid-item .type-name{color:var(--ink)}
+  .type-grid-item .type-def{color:var(--ink3)}
+  .type-label{color:var(--ink4)}
+  .missing-card .missing-name{color:var(--ink)}
+  .missing-card .missing-def{color:var(--ink3)}
+  .missing-badge{color:var(--ink4)}
+  .quality-table{border-color:#38342e}
+  .quality-table th{background:#1e1c18;color:var(--ink3);border-color:#38342e}
+  .quality-table td{border-color:#2a2620;color:var(--ink2)}
+  .quality-table tr:nth-child(even) td{background:#1c1a16}
+  svg text{fill:#6a6058 !important}
+  svg rect[fill="#f7f4ef"]{fill:#1e1c18 !important}
+  svg rect[fill="#ede8df"]{fill:#2a2620 !important}
+  svg rect[fill="#ddeaf7"]{fill:#1a2a3a !important}
+  svg rect[fill="#ddf0e5"]{fill:#1a2a20 !important}
+  svg rect[fill="#fdf5dc"]{fill:#221e10 !important}
+  svg rect[fill="#fef5f0"]{fill:#221410 !important}
+}
+
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+
+/* ── CHAPTER HEADER ── */
+.ch-hero{
+  background:var(--blue);color:var(--cream);
+  padding:72px 72px 56px;position:relative;overflow:hidden;
+}
+.ch-hero::before{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:radial-gradient(ellipse at 20% 60%,rgba(45,95,138,0.5) 0%,transparent 60%),
+             radial-gradient(ellipse at 90% 20%,rgba(26,26,58,0.4) 0%,transparent 50%);
+  pointer-events:none;
+}
+.ch-eyebrow{
+  font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;
+  color:rgba(200,220,240,0.7);margin-bottom:16px;
+}
+.ch-title{
+  font-family:var(--display);font-size:44px;font-weight:700;line-height:1.15;
+  letter-spacing:-0.02em;color:#fff;margin-bottom:20px;max-width:700px;
+}
+.ch-title em{color:#9dcef4;font-style:normal}
+.ch-intro{
+  font-size:16px;color:rgba(255,255,255,0.72);max-width:600px;line-height:1.7;margin-bottom:36px;
+}
+.ch-meta{
+  display:flex;flex-wrap:wrap;gap:24px;
+  font-size:10px;color:rgba(255,255,255,0.42);letter-spacing:0.06em;
+  text-transform:uppercase;font-family:var(--mono);
+}
+.ch-meta span em{color:rgba(255,255,255,0.72);font-style:normal}
+
+/* ── PROGRESS ── */
+.ch-progress{
+  display:flex;align-items:center;gap:12px;padding:16px 72px;
+  background:var(--cream2);border-bottom:1px solid var(--border);
+  font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:0.05em;
+}
+.progress-bar{flex:1;height:3px;background:var(--cream3);border-radius:2px;max-width:200px}
+.progress-fill{height:100%;background:var(--blue2);border-radius:2px;width:11%}
+
+/* ── NARRATIVE ── */
+.narrative{padding:56px 72px 48px;border-bottom:1px solid var(--border);max-width:960px}
+.narrative:last-child{border-bottom:none}
+.section-label{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--blue2);margin-bottom:8px;font-weight:500;
+}
+.section-title{
+  font-family:var(--display);font-size:26px;font-weight:600;color:var(--ink);
+  line-height:1.25;margin-bottom:8px;letter-spacing:-0.01em;
+}
+.section-intro{
+  font-size:14.5px;color:var(--ink3);line-height:1.75;max-width:680px;
+  margin-bottom:36px;padding-left:16px;border-left:3px solid #9dcef4;
+}
+
+/* ── TERMS ── */
+.term-block{
+  background:#fff;border:1px solid var(--border);border-radius:6px;
+  margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s;
+}
+.term-block:hover{box-shadow:var(--shadow-lg)}
+.term-header{display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;cursor:pointer;user-select:none}
+.term-name{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);line-height:1.25;flex:1}
+.term-short{font-size:12.5px;color:var(--ink3);line-height:1.5;flex:1;font-style:italic;margin-top:3px}
+.term-toggle{
+  font-family:var(--mono);font-size:11px;color:var(--ink4);
+  border:1px solid var(--border);border-radius:3px;padding:2px 8px;
+  flex-shrink:0;margin-top:2px;transition:all 0.15s;background:var(--cream);
+}
+.term-block.open .term-toggle{background:var(--blue);color:#fff;border-color:var(--blue)}
+.term-body{display:none;padding:0 24px 20px;border-top:1px solid var(--cream2)}
+.term-block.open .term-body{display:block}
+.field-row{
+  display:grid;grid-template-columns:140px 1fr;gap:12px;
+  padding:11px 0;border-bottom:1px solid var(--cream3);align-items:baseline;
+}
+.field-row:last-child{border-bottom:none}
+.field-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);font-weight:500;padding-top:1px}
+.field-value{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.field-value.formula{
+  font-family:var(--mono);font-size:12.5px;background:var(--cream2);
+  padding:10px 14px;border-radius:3px;color:var(--ink);line-height:1.65;
+}
+.field-value.formula .formula-math{color:var(--blue);font-weight:500;display:block;margin-bottom:4px;font-size:13px}
+.field-value.formula .formula-plain{color:var(--ink3);font-family:var(--serif);font-size:12.5px;font-style:italic}
+.redflag{color:var(--accent);font-size:13px}
+.redflag::before{content:'⚑ ';font-style:normal}
+
+/* ── CALLOUTS ── */
+.callout{padding:16px 20px;border-radius:var(--radius);margin:20px 0;border-left:3px solid;font-size:13.5px;line-height:1.65}
+.callout-insight{background:var(--gold3);border-color:var(--gold2);color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:var(--blue3);border-color:var(--blue2);color:var(--ink2)}
+.callout-green{background:var(--green3);border-color:var(--green2);color:var(--ink2)}
+.callout strong{font-weight:600;display:block;margin-bottom:5px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.65}
+
+/* ── DATA TYPE GRID ── */
+.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:24px 0}
+.type-grid-item{
+  background:#fff;border:1px solid var(--border);border-radius:6px;
+  padding:14px 16px;box-shadow:var(--shadow);
+}
+.type-label{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;
+  background:var(--cream2);color:var(--ink4);padding:2px 7px;border-radius:3px;
+  display:inline-block;margin-bottom:8px;
+}
+.type-name{font-family:var(--display);font-size:14px;font-weight:600;color:var(--ink);margin-bottom:5px}
+.type-def{font-size:12px;color:var(--ink3);line-height:1.55;margin-bottom:6px}
+.type-eg{font-family:var(--mono);font-size:10.5px;color:var(--blue2)}
+
+/* ── MISSING DATA CARDS ── */
+.missing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}
+.missing-card{
+  background:#fff;border:1px solid var(--border);border-radius:6px;
+  padding:14px 16px;box-shadow:var(--shadow);
+}
+.missing-badge{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.07em;text-transform:uppercase;
+  background:var(--cream2);color:var(--ink4);padding:2px 7px;border-radius:3px;
+  display:inline-block;margin-bottom:8px;
+}
+.missing-name{font-family:var(--display);font-size:13px;font-weight:600;color:var(--ink);margin-bottom:5px}
+.missing-def{font-size:12px;color:var(--ink3);line-height:1.55;margin-bottom:5px}
+.missing-eg{font-size:11px;color:var(--ink4);font-style:italic;line-height:1.45}
+
+/* ── QUALITY TABLE ── */
+.quality-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:12.5px}
+.quality-table th{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.07em;text-transform:uppercase;
+  color:var(--ink4);background:var(--cream2);padding:10px 14px;
+  text-align:left;border:1px solid var(--border);
+}
+.quality-table td{padding:10px 14px;border:1px solid var(--cream3);color:var(--ink2);vertical-align:top;line-height:1.6}
+.quality-table tr:nth-child(even) td{background:var(--cream)}
+.quality-table .bad{color:var(--accent2);font-weight:500}
+.quality-table .good{color:var(--green2);font-weight:500}
+
+/* ── ILLUSTRATION ── */
+.illustration{margin:28px 0;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:#fff}
+.illustration-caption{
+  font-family:var(--mono);font-size:10.5px;color:var(--ink4);
+  text-align:center;padding:10px;border-top:1px solid var(--cream2);letter-spacing:0.04em;
+  background:var(--cream);
+}
+
+/* ── CHEAT SHEET ── */
+.cheat-sheet{background:var(--blue);color:#fff;border-radius:6px;padding:28px 32px;margin-top:24px}
+.cheat-title{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(180,215,245,0.7);margin-bottom:16px}
+.cheat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cheat-item{padding:12px 14px;background:rgba(255,255,255,0.08);border-radius:4px;border-left:2px solid #9dcef4}
+.cheat-item-title{font-size:11.5px;font-weight:600;color:#fff;margin-bottom:4px;font-family:var(--serif)}
+.cheat-item-body{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.55}
+
+/* ── COMPANION ── */
+.companion{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:11px;color:var(--blue2);
+  text-decoration:none;border:1px solid currentColor;
+  padding:5px 12px;border-radius:3px;margin-top:4px;transition:all 0.15s;
+}
+.companion:hover{background:var(--blue2);color:#fff}
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  .ch-hero,.narrative{padding:40px 24px}
+  .ch-title{font-size:30px}
+  .field-row{grid-template-columns:1fr;gap:4px}
+  .type-grid,.missing-grid,.cheat-grid{grid-template-columns:1fr}
+  .ch-progress{padding:12px 24px}
+}
+</style>
+</head>
+<body>
+
+<div class="ch-progress">
+  <span>Chapter 2 of 18</span>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <span>Statistical Foundations for Strategy Professionals</span>
+</div>
+
+<div class="ch-hero">
+  <div class="ch-eyebrow">Part 1 — Thinking With Data · Chapter 2</div>
+  <h1 class="ch-title">Data Fundamentals — <em>Types, Quality, and Structure</em></h1>
+  <p class="ch-intro">Before building models, running experiments, or drawing conclusions, you need to understand what your data actually is — its type, its structure, and where it can go wrong. This chapter covers the vocabulary that appears in every data science brief, every model specification, and every analytical QA conversation.</p>
+  <div class="ch-meta">
+    <span>Terms covered: <em>24</em></span>
+    <span>Sections: <em>Variable types · Data quality · Missing data · Leakage & drift</em></span>
+    <span>Audience: <em>Strategy, PM, Analytics-adjacent</em></span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 1: VARIABLE TYPES -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="narrative">
+  <div class="section-label">Section 2.1</div>
+  <h2 class="section-title">Variable types and measurement scales</h2>
+  <p class="section-intro">Not all data is the same kind of thing. Whether a variable is a category, a rank, a count, or a continuous measurement determines which statistical methods are valid, how it should be encoded for models, and how it should be displayed on dashboards. Using the wrong method for the wrong data type is one of the most common sources of silent analytical errors.</p>
+
+  <p>The distinction between types is not academic. A model that treats a nominal category like region as if it were an ordered number will invent a fake ordering — North (1) is not "less than" South (2). A correlation calculation applied to ordinal survey responses assumes equal gaps between "agree" and "strongly agree" that do not exist. Getting variable types right is the prerequisite for everything else.</p>
+
+  <!-- Type grid -->
+  <div class="type-grid">
+    <div class="type-grid-item">
+      <span class="type-label">Nominal</span>
+      <div class="type-name">Categorical</div>
+      <div class="type-def">Discrete groups with no inherent order. Averaging is meaningless.</div>
+      <div class="type-eg">region, product_type, channel, payment_method</div>
+    </div>
+    <div class="type-grid-item">
+      <span class="type-label">Ordinal</span>
+      <div class="type-name">Ordered Categorical</div>
+      <div class="type-def">Categories with a meaningful order but unknown gap sizes between levels.</div>
+      <div class="type-eg">satisfaction (low/med/high), risk_band, loyalty_tier</div>
+    </div>
+    <div class="type-grid-item">
+      <span class="type-grid-item type-label">Binary</span>
+      <div class="type-name">Binary / Indicator</div>
+      <div class="type-def">Only two values. Technically categorical but treated specially in models.</div>
+      <div class="type-eg">churned (0/1), has_prior_claim, email_opened</div>
+    </div>
+    <div class="type-grid-item">
+      <span class="type-label">Discrete</span>
+      <div class="type-name">Count / Integer</div>
+      <div class="type-def">Numeric, restricted to whole numbers. Cannot be negative in most business contexts.</div>
+      <div class="type-eg">order_count, support_calls, num_products_held</div>
+    </div>
+    <div class="type-grid-item">
+      <span class="type-label">Continuous</span>
+      <div class="type-name">Continuous</div>
+      <div class="type-def">Any numeric value in a range. Differences and ratios are both meaningful.</div>
+      <div class="type-eg">revenue, age, delivery_time_hours, cltv</div>
+    </div>
+    <div class="type-grid-item">
+      <span class="type-label">Temporal</span>
+      <div class="type-name">Date / Time Series</div>
+      <div class="type-def">Observations indexed by time. Order matters — shuffling destroys information.</div>
+      <div class="type-eg">daily_sales, login_timestamp, cohort_week</div>
+    </div>
+  </div>
+
+  <div class="callout callout-warning">
+    <strong>The silent error to watch for</strong>
+    Categorical variables are frequently stored as integers in databases — region coded as 1, 2, 3, or product tier coded as 1, 2, 3, 4. If these get fed into a model as numeric values without encoding, the model infers an ordering and spacing that does not exist. Always check the data dictionary before assuming an integer column is a true numeric variable.
+  </div>
+
+  <!-- Terms -->
+  <div class="term-block" id="t-categorical">
+    <div class="term-header" onclick="toggleTerm('t-categorical')">
+      <div style="flex:1">
+        <div class="term-name">Categorical Variable</div>
+        <div class="term-short">A variable that places observations into distinct groups with no inherent numeric meaning.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you which bucket an observation belongs to — not how much of something it has. You cannot average a categorical variable. You can count frequencies, compare proportions, and test whether distributions differ across groups.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">Nominal: treat as labels only — no arithmetic. For modeling, encode using one-hot encoding (one binary column per category) or target encoding (replace with outcome average). Never feed raw category codes as numbers into a linear model.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In customer segmentation tables, product mix reports, survey response data, and model feature specifications where column values are labels rather than quantities.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask whether integer-coded categories were accidentally treated as numeric in any preprocessing step. A "mean region" is a meaningless number that a model will happily learn from if not caught.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A retail bank's churn model includes account_type coded as 1 (checking), 2 (savings), 3 (investment). Without one-hot encoding, the model learns that investment accounts are "3 times" checking accounts — a fabricated relationship that distorts coefficient estimates for every variable correlated with account type.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-ordinal">
+    <div class="term-header" onclick="toggleTerm('t-ordinal')">
+      <div style="flex:1">
+        <div class="term-name">Ordinal Variable</div>
+        <div class="term-short">A categorical variable whose levels have a meaningful order but unknown gap sizes between them.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you observations can be ranked but not measured. The difference between "satisfied" and "very satisfied" is not the same as the difference between "dissatisfied" and "satisfied" — or at least there is no evidence it is. Treating ordinal data as if gaps are equal systematically distorts averages and model coefficients.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">Use the rank information — avoid computing arithmetic means of ordinal codes. For 5-point Likert scales, report medians or distributions rather than means. For modeling, either treat as ordered categories or apply label encoding if tree-based models will handle the nonlinearity.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In customer satisfaction surveys (NPS detractor/passive/promoter), employee engagement scores, credit risk bands, SLA priority levels, and any five-point Likert scale.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask whether the analysis is computing a mean of ordinal codes and presenting it as if it were a continuous measurement. "Average satisfaction of 3.8 out of 5" assumes equal gaps that the scale does not guarantee.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A healthcare insurer tracks member satisfaction on a five-point scale. The analytics team reports "average satisfaction improved from 3.4 to 3.7." Whether this is meaningful depends on whether the middle of the scale represents a psychologically equal distance from each adjacent point — an assumption that survey research frequently violates.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-continuous">
+    <div class="term-header" onclick="toggleTerm('t-continuous')">
+      <div style="flex:1">
+        <div class="term-name">Continuous Variable</div>
+        <div class="term-short">A numeric variable that can take any value in a range, where differences and ratios are both meaningful.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you the metric is measured on a true numeric scale where arithmetic is valid. You can compute means, standard deviations, correlations, and regression coefficients. Most quantitative analytical methods are designed for continuous variables, which is why so much effort goes into making other variable types behave like them.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">Check two things before treating a variable as continuous: (1) can it take non-integer values, and (2) does zero have a meaningful interpretation? Revenue has a true zero; temperature in Celsius does not — which affects which statistics make sense.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In financial metrics, time measurements, behavioral counts, pricing data, and most model input and output variables.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask whether the variable can plausibly take the values implied by treating it as continuous. Order count is technically discrete — and models trained on it may predict negative orders unless the structure is acknowledged.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">An e-commerce company models delivery time as a continuous variable in days. This is appropriate — 1.5 days is a meaningful value, the scale has a true zero, and arithmetic comparisons between values carry real meaning for customer experience planning.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-binary">
+    <div class="term-header" onclick="toggleTerm('t-binary')">
+      <div style="flex:1">
+        <div class="term-name">Binary Variable</div>
+        <div class="term-short">A variable with exactly two values, usually coded 0 and 1, representing presence or absence of a condition.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you whether something happened or a condition holds. Binary variables are the targets for classification models (churned or not), the outputs of rule-based flags, and common inputs to regression when a categorical variable has only two levels. The mean of a binary variable is the proportion of 1s — one of the few cases where averaging a non-continuous variable is perfectly valid.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-math">Mean of binary variable = proportion of 1s = P(event)</span>
+          <span class="formula-plain">A binary variable with mean 0.04 means the event occurs in 4% of observations. That proportion is the base rate — a critical input for understanding model performance in rare-event settings.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">As model targets (default/no default, churn/retain, fraud/not fraud), as flags in customer data (has_complaint, is_loyalty_member), and as encoded dummy variables in regression.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask what coding convention was used and whether it is consistent. If 1 means churned in one dataset and 1 means retained in another, joining them creates a perfectly inverted target variable — a catastrophic and silent error.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A lender's model uses a binary default indicator as its target. The variable has a mean of 0.032 — meaning only 3.2 percent of the population defaulted. This low base rate means accuracy is a misleading evaluation metric; a model predicting "no default" for everyone would be 96.8 percent accurate while being completely useless.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-structured">
+    <div class="term-header" onclick="toggleTerm('t-structured')">
+      <div style="flex:1">
+        <div class="term-name">Structured vs Unstructured Data</div>
+        <div class="term-short">Structured data fits predefined rows and columns; unstructured data is free-form content — text, images, audio, or documents.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you whether the data is analysis-ready or requires a transformation step first. Structured data — transaction records, CRM fields, clickstream logs — can be queried and modeled directly. Unstructured data — call center transcripts, support ticket text, contract documents — contains often richer signal but requires NLP, OCR, or feature extraction before it can be used analytically.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">Structured: rows × columns table with a defined schema. Unstructured: raw content requiring preprocessing to extract features. Semi-structured (JSON logs, API responses) sits between — it has some organization but no rigid schema.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In data strategy discussions, analytics scoping, AI use-case prioritization, and any conversation about what data "we have" versus what data "we can analyze."</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask whether "available data" means structured and analysis-ready or merely stored somewhere. An insurer may have years of adjuster notes — rich unstructured signal — but if those have never been processed into features, they are not available for a model without significant additional work.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A telecom operator has structured billing records, usage logs, and network events alongside unstructured customer service call transcripts. The structured data feeds churn and revenue models directly. Extracting complaint themes and sentiment from the transcripts requires an NLP pipeline first — adding weeks to a project timeline and a separate governance consideration.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 2: DATA QUALITY -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="narrative">
+  <div class="section-label">Section 2.2</div>
+  <h2 class="section-title">Data quality — the silent driver of analytical failure</h2>
+  <p class="section-intro">Most analytics projects fail or underperform not because of algorithm choice or model complexity, but because of data quality problems that were not caught before analysis began. Poor quality data does not announce itself — it produces results that look plausible, pass initial checks, and only reveal themselves when predictions fail in production or decisions go wrong at scale.</p>
+
+  <p>Data quality has four dimensions worth keeping distinct. <strong>Completeness</strong> — are the values present? <strong>Accuracy</strong> — do the values reflect reality? <strong>Consistency</strong> — do the same entities look the same across different sources and time periods? <strong>Timeliness</strong> — was the data current at the moment the prediction needed to be made? Each can fail independently, and each failure has different consequences and remedies.</p>
+
+  <!-- Illustration: Data quality dimensions -->
+  <div class="illustration">
+    <svg viewBox="0 0 760 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fff;padding:8px 0">
+      <!-- Four dimension boxes -->
+      <!-- Completeness -->
+      <rect x="30" y="30" width="160" height="100" rx="5" fill="#f7f4ef" stroke="#d4cdc4" stroke-width="1"/>
+      <text x="110" y="52" font-family="'JetBrains Mono',monospace" font-size="9" fill="#b0a898" text-anchor="middle" letter-spacing="0.08em">COMPLETENESS</text>
+      <text x="110" y="72" font-family="'Source Serif 4',serif" font-size="12" fill="#3d3830" text-anchor="middle">Are values present?</text>
+      <text x="110" y="92" font-family="'JetBrains Mono',monospace" font-size="10" fill="#c4440d" text-anchor="middle">Missing data,</text>
+      <text x="110" y="106" font-family="'JetBrains Mono',monospace" font-size="10" fill="#c4440d" text-anchor="middle">nulls, blanks</text>
+      <!-- Accuracy -->
+      <rect x="210" y="30" width="160" height="100" rx="5" fill="#ddeaf7" stroke="#2d5f8a" stroke-width="1"/>
+      <text x="290" y="52" font-family="'JetBrains Mono',monospace" font-size="9" fill="#2d5f8a" text-anchor="middle" letter-spacing="0.08em">ACCURACY</text>
+      <text x="290" y="72" font-family="'Source Serif 4',serif" font-size="12" fill="#1a3a5c" text-anchor="middle">Do values reflect reality?</text>
+      <text x="290" y="92" font-family="'JetBrains Mono',monospace" font-size="10" fill="#1a3a5c" text-anchor="middle">Wrong values,</text>
+      <text x="290" y="106" font-family="'JetBrains Mono',monospace" font-size="10" fill="#1a3a5c" text-anchor="middle">measurement errors</text>
+      <!-- Consistency -->
+      <rect x="390" y="30" width="160" height="100" rx="5" fill="#ddf0e5" stroke="#2d7a4a" stroke-width="1"/>
+      <text x="470" y="52" font-family="'JetBrains Mono',monospace" font-size="9" fill="#2d7a4a" text-anchor="middle" letter-spacing="0.08em">CONSISTENCY</text>
+      <text x="470" y="72" font-family="'Source Serif 4',serif" font-size="12" fill="#1a4a2e" text-anchor="middle">Same entity, same value?</text>
+      <text x="470" y="92" font-family="'JetBrains Mono',monospace" font-size="10" fill="#1a4a2e" text-anchor="middle">Duplicates, conflicting</text>
+      <text x="470" y="106" font-family="'JetBrains Mono',monospace" font-size="10" fill="#1a4a2e" text-anchor="middle">definitions across sources</text>
+      <!-- Timeliness -->
+      <rect x="570" y="30" width="160" height="100" rx="5" fill="#fdf5dc" stroke="#c49a00" stroke-width="1"/>
+      <text x="650" y="52" font-family="'JetBrains Mono',monospace" font-size="9" fill="#7a5a00" text-anchor="middle" letter-spacing="0.08em">TIMELINESS</text>
+      <text x="650" y="72" font-family="'Source Serif 4',serif" font-size="12" fill="#7a5a00" text-anchor="middle">Was data current?</text>
+      <text x="650" y="92" font-family="'JetBrains Mono',monospace" font-size="10" fill="#7a5a00" text-anchor="middle">Reporting lag, stale</text>
+      <text x="650" y="106" font-family="'JetBrains Mono',monospace" font-size="10" fill="#7a5a00" text-anchor="middle">features at score time</text>
+    </svg>
+    <div class="illustration-caption">The four dimensions of data quality — each can fail independently and each creates different downstream errors.</div>
+  </div>
+
+  <!-- Quality table -->
+  <table class="quality-table">
+    <thead>
+      <tr>
+        <th>Quality Problem</th>
+        <th>What it looks like</th>
+        <th>Typical consequence</th>
+        <th>Detection approach</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Missing values</strong></td>
+        <td>NULLs, blanks, placeholder codes (999, -1)</td>
+        <td>Model drops rows or imputes incorrectly; biased analysis if missingness is non-random</td>
+        <td>Completeness check per column; missingness rate by segment</td>
+      </tr>
+      <tr>
+        <td><strong>Duplicates</strong></td>
+        <td>Same transaction appears twice; customer_id matches multiple records</td>
+        <td>Inflated counts, double-weighted observations distort model training</td>
+        <td>Count distinct vs total rows; join cardinality checks</td>
+      </tr>
+      <tr>
+        <td><strong>Type mismatches</strong></td>
+        <td>Dates stored as strings; numbers stored with currency symbols</td>
+        <td>Operations fail silently; comparisons produce wrong results</td>
+        <td>Schema validation; dtype profiling</td>
+      </tr>
+      <tr>
+        <td><strong>Outliers / implausible values</strong></td>
+        <td>Age of 312, revenue of -£50,000, 47 support calls in one day</td>
+        <td>Pull means and model coefficients in wrong direction; distort distributions</td>
+        <td>Range checks; percentile inspection; domain rule validation</td>
+      </tr>
+      <tr>
+        <td><strong>Inconsistent coding</strong></td>
+        <td>"Male", "M", "male", "1" all meaning the same thing in the same column</td>
+        <td>Categories inflate; groups get split; one-hot encoding creates phantom variables</td>
+        <td>Value frequency tables; case-normalized deduplication</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="term-block" id="t-outlier-treatment">
+    <div class="term-header" onclick="toggleTerm('t-outlier-treatment')">
+      <div style="flex:1">
+        <div class="term-name">Outlier Treatment</div>
+        <div class="term-short">The handling of unusually extreme observations — through removal, capping, transformation, or separate modeling.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you the team made a deliberate choice about extreme values rather than letting them distort results silently. The choice matters enormously: removing an outlier that is actually the most commercially important case is a much worse error than keeping it.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-math">IQR rule: flag values below Q1 − 1.5×IQR or above Q3 + 1.5×IQR</span>
+          <span class="formula-plain">Common approaches: (1) remove — only if confirmed data error. (2) Winsorize — cap at a chosen percentile (e.g. 99th) to limit influence while preserving the observation. (3) Transform — log or square root to compress the scale. (4) Separate model — model extremes explicitly if they follow different patterns.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In data cleaning pipelines, preprocessing decisions, model documentation, and post-hoc reviews when a model underperforms on high-value customers or edge cases.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask whether the outlier is a data error or a real business case. A payment of £450,000 may be outlying in distribution but represent the single most strategically important transaction in the dataset — capping it silently destroys value signal.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A payments company caps transaction amounts at the 99th percentile before training a fraud model. The top 1 percent of transactions are the highest-value targets for fraud — by treating them as noise, the model is systematically weaker exactly where it matters most. The cap should at minimum be documented and the model's performance on those transactions tested separately.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-imputation">
+    <div class="term-header" onclick="toggleTerm('t-imputation')">
+      <div style="flex:1">
+        <div class="term-name">Imputation</div>
+        <div class="term-short">The process of filling in missing values using a chosen rule or model estimate.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you the team replaced gaps in the data so analysis or modeling could proceed. Imputation is always an assumption — it substitutes a manufactured value for an unknown one. The method chosen should match the reason values are missing, not just the statistical convenience of the analyst.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">Mean/median imputation: replace with column average or median. Fast, but reduces variance and distorts correlations. Regression imputation: predict missing values from other columns. KNN imputation: fill from similar complete records. Indicator variable: always add a binary flag for whether the value was missing — the pattern of missingness is itself often predictive.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In preprocessing pipelines, feature engineering documentation, model cards, and any analysis where the raw data had non-trivial null rates.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask whether a missingness indicator was also created alongside the imputed value. A customer with missing income is different from one with high reported income — the missingness itself may carry predictive signal that gets discarded by silent imputation.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A mortgage lender imputes missing self-employment income with the column median. Self-employed applicants have higher income variance and structurally different repayment patterns — median imputation understates their actual income for high earners and makes the model treat them as near-average when they are categorically different. A missingness flag plus segment-specific imputation would be materially more accurate.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 3: MISSING DATA MECHANISMS -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="narrative">
+  <div class="section-label">Section 2.3</div>
+  <h2 class="section-title">Missing data mechanisms — why it matters how values go missing</h2>
+  <p class="section-intro">Not all missing data is the same. The reason values are absent determines whether you can safely impute, whether you need to model the missingness itself, and whether any analysis using that column will be biased. This is one of the most underappreciated distinctions in applied analytics — and the one most commonly ignored in practice.</p>
+
+  <div class="missing-grid">
+    <div class="missing-card">
+      <span class="missing-badge">MCAR</span>
+      <div class="missing-name">Missing Completely at Random</div>
+      <div class="missing-def">Values are absent for reasons unrelated to any observed or unobserved data. The easiest case — imputation introduces no systematic bias.</div>
+      <div class="missing-eg">Example: survey respondents randomly skipped a question due to form rendering errors on certain device types.</div>
+    </div>
+    <div class="missing-card">
+      <span class="missing-badge" style="background:#ddeaf7;color:#2d5f8a">MAR</span>
+      <div class="missing-name">Missing at Random</div>
+      <div class="missing-def">Missingness is related to observed data but not to the missing value itself. Can be addressed by conditioning on other variables — more manageable than MNAR.</div>
+      <div class="missing-eg">Example: older customers are less likely to provide email addresses — missingness depends on age (observed), not on the email address value itself.</div>
+    </div>
+    <div class="missing-card">
+      <span class="missing-badge" style="background:#fef5f0;color:#c4440d">MNAR</span>
+      <div class="missing-name">Missing Not at Random</div>
+      <div class="missing-def">Missingness is related to the missing value itself. The hardest case — naive imputation introduces systematic bias that is difficult to correct.</div>
+      <div class="missing-eg">Example: high earners decline to report income. The missing income values are systematically higher than reported ones — imputing with the mean understates income for the most important segment.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-insight">
+    <strong>Why the mechanism matters in practice</strong>
+    If data is MNAR and you impute with the mean, you are replacing high values with average values — the analysis will systematically underestimate effects for the population where missingness is concentrated. In credit models, this can mean systematically mispricing risk for the most creditworthy or least creditworthy segments. Always ask: could the type of person who doesn't answer this question be systematically different from those who do?
+  </div>
+
+  <div class="term-block" id="t-missing-data">
+    <div class="term-header" onclick="toggleTerm('t-missing-data')">
+      <div style="flex:1">
+        <div class="term-name">Missing Data</div>
+        <div class="term-short">Values that are absent from the dataset for some observations — requiring a decision about how to handle them before analysis proceeds.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you the data is incomplete in a way that may or may not be random. Missing data is not just a technical problem to solve before modeling — it is information about the data-generating process. The fact that something is missing can be as telling as what value was recorded.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">Step 1: quantify missingness rate per column. Step 2: check whether missingness correlates with the outcome or key predictors. Step 3: determine the likely mechanism (MCAR / MAR / MNAR). Step 4: choose imputation method appropriate to the mechanism. Step 5: always create a missingness indicator flag alongside any imputed value.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In every real-world dataset — missing rates above 5 percent on key variables are worth investigating. Above 20 percent should trigger a question about whether the variable is usable at all.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask why the data is missing and whether the pattern of missingness correlates with the outcome. If it does, the missingness is itself a signal — and treating it as a nuisance to be filled in silently will destroy that signal.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A fintech lender's model uses a credit bureau score that is absent for 18 percent of applicants — primarily recent immigrants and young adults with no credit history. These applicants are not missing at random; they represent a distinct segment. Imputing their score with the population median misclassifies an underserved population that may actually be a strong credit risk based on alternative signals.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 4: LEAKAGE AND DRIFT -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="narrative">
+  <div class="section-label">Section 2.4</div>
+  <h2 class="section-title">Data leakage, look-ahead bias, and drift — three ways data silently breaks models</h2>
+  <p class="section-intro">These three concepts are the most consequential data quality issues for predictive models. Unlike missing values or type errors, they do not produce obvious errors during development — they produce models that look excellent and then fail quietly or catastrophically in production. Every model deployment should be checked for all three before going live.</p>
+
+  <div class="term-block" id="t-leakage">
+    <div class="term-header" onclick="toggleTerm('t-leakage')">
+      <div style="flex:1">
+        <div class="term-name">Data Leakage</div>
+        <div class="term-short">Using information during model training that would not actually be available at the moment the model needs to make a prediction.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you the model is cheating — often without anyone knowing it. Leakage creates false confidence: training performance looks exceptional, validation metrics are strong, and the model is deployed. Then it fails immediately in production because the features that drove its training-time performance are not available when real predictions are needed.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">For every feature ask: would this value be known at the exact moment this prediction needs to be made in production? If a feature is derived from the outcome, computed after the event, or available only in hindsight — it is leakage. AUC of 0.99+ on a real business problem almost always signals leakage.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In model development reviews, production readiness checks, and post-deployment diagnosis when model performance drops sharply from development metrics.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask whether performance metrics are suspiciously high. On real, messy business data, an AUC above 0.95 for a churn or default model should trigger immediate leakage investigation — real business signals rarely separate that cleanly.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A hospital readmission model includes "total cost of care in the 30 days following discharge" as a feature. That variable is determined after the prediction event — a patient cannot be scored at discharge using information from their subsequent stay. The model achieves 0.97 AUC in development and near-random performance in production. The leaky feature drove all the apparent predictive power.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-target-leakage">
+    <div class="term-header" onclick="toggleTerm('t-target-leakage')">
+      <div style="flex:1">
+        <div class="term-name">Target Leakage</div>
+        <div class="term-short">A specific form of leakage where a feature is an effect or proxy of the target variable — making prediction artificially easy and useless in practice.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you a feature was included that essentially gives the answer away — not because it predicts the future, but because it reflects the outcome that has already happened. The model learns from a label disguised as a feature. This is distinct from general leakage: target leakage specifically involves including outcomes or their immediate proxies as inputs.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">Ask for every high-importance feature: could this variable have been computed from or after the target? If yes, it is target leakage. Common examples: including cancellation_reason to predict churn (the reason is recorded at cancellation), or including claim_status_final to predict fraud (the status reflects the investigation outcome).</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In feature importance reports where one variable dominates all others by a wide margin, in models where SHAP values point to a single feature accounting for most predictions.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask what the top SHAP feature represents and trace its data lineage. If a feature that should not logically be the most powerful driver is shown as far more important than business experts would expect, investigate its construction immediately.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A subscription churn model includes "days_since_last_login_at_cancellation_date" as a feature. That variable is computed on the same day the customer cancels — it is an artefact of the outcome, not an early warning signal. The model achieves near-perfect training performance and zero production value.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-lookahead">
+    <div class="term-header" onclick="toggleTerm('t-lookahead')">
+      <div style="flex:1">
+        <div class="term-name">Look-Ahead Bias</div>
+        <div class="term-short">Using future information in a historical analysis — making backtests or validation results look better than any real-world deployment could achieve.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you the model was trained or evaluated with hindsight it would never have in production. Look-ahead bias is especially common in time series work — because time-based features are easy to miscalculate — and in financial backtesting, where it can make worthless strategies appear profitable.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">For time series: every feature must use only data available up to and including the prediction date. Reporting lag matters — a financial figure published 30 days after month-end cannot be used as a feature for a model predicting events on month-end. Always use point-in-time feature construction.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In time-series forecasting, financial model backtesting, demand planning models, and any analysis where the same data is used to construct both features and labels for overlapping time windows.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask when each feature value was actually available versus when the event being predicted occurred. A 1-day lag assumption may be wrong if data pipelines have 3-day refresh cycles — the feature would not have been current at prediction time.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">An asset manager backtests a strategy using end-of-month accounting data. The data is published 25 days after month-end. When the backtest uses the data as if it were available on month-end, the strategy appears profitable. When the backtest is reconstructed using publication dates, performance is materially worse — the look-ahead bias was worth 6 percentage points of annual return.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-data-drift">
+    <div class="term-header" onclick="toggleTerm('t-data-drift')">
+      <div style="flex:1">
+        <div class="term-name">Data Drift</div>
+        <div class="term-short">A change over time in the distribution of input features used by a model — signaling that the population reaching the model is no longer the same as when it was trained.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you the model's inputs are shifting in ways it was not designed for. A model trained on last year's customer mix may receive a materially different customer mix this year — and the features that were predictive then may no longer carry the same signal. Data drift can degrade performance even when the underlying relationship between inputs and outcomes has not changed.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-math">PSI = Σ (Actual% − Expected%) × ln(Actual% / Expected%)</span>
+          <span class="formula-plain">Population Stability Index (PSI): compare current feature distributions with training-time distributions. PSI below 0.1 = stable. PSI 0.1–0.2 = moderate drift, investigate. PSI above 0.2 = significant drift, revalidate model performance.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In model monitoring dashboards, post-deployment performance reviews, and any context where the customer mix, product mix, or channel composition has changed significantly since the model was trained.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask which variables have drifted and whether those variables are important predictors in the model. Drift in an irrelevant feature is less concerning than drift in a top-5 SHAP feature — focus investigation on the features that drive model decisions.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A lender's credit model was trained on applications acquired primarily through branch channels. After launching a digital acquisition programme, the applicant mix shifts: younger, thinner credit files, different income profiles. PSI spikes on income and employment tenure features. The model's Gini drops 8 points over the next quarter — data drift preceded the performance decay by three months.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-concept-drift">
+    <div class="term-header" onclick="toggleTerm('t-concept-drift')">
+      <div style="flex:1">
+        <div class="term-name">Concept Drift</div>
+        <div class="term-short">A change over time in the fundamental relationship between inputs and the target outcome — making a model's learned patterns obsolete even if the inputs themselves are stable.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you the world has changed in a way that invalidates what the model learned. Data drift affects the inputs; concept drift affects the relationship between inputs and outputs. Concept drift is harder to detect because input monitoring looks normal — only outcome monitoring reveals that predictions are becoming systematically wrong.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">Monitor: (1) model calibration over time — are predicted probabilities still matching observed rates? (2) Model discrimination — is Gini or AUC holding? (3) Feature-outcome correlations — are top predictors still as strongly associated with the outcome? If (1) and (2) deteriorate while PSI is stable, concept drift is the likely cause.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">After major market or behavioral shifts: COVID-19, a pricing restructure, a regulatory change, a major competitor entering the market. Any event that genuinely changes how customers behave relative to what was historically predictive.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask whether performance decay is happening even though input distributions look stable. If PSI is low but model accuracy is falling, concept drift is the likely culprit — and more data in the old pattern will not fix it. A retrain on recent data is needed.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A retail churn model trained pre-pandemic used in-store visit frequency as a top predictor. After lockdowns, customers who previously visited often now visit rarely but have not churned — they shifted to online. The old relationship between visit frequency and churn is inverted. Adding more pre-pandemic data makes the model worse; it needs to be retrained on post-behavioral-shift data.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-PSI">
+    <div class="term-header" onclick="toggleTerm('t-PSI')">
+      <div style="flex:1">
+        <div class="term-name">PSI — Population Stability Index</div>
+        <div class="term-short">A metric that quantifies how much a variable's distribution has shifted from a reference period — the standard early warning tool for model input monitoring.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you whether the population reaching the model still looks like the population it was trained on. PSI is not proof that the model has deteriorated — it is a trigger to investigate whether deterioration may be occurring. A high PSI on a weak predictor matters less than a moderate PSI on a top-5 predictor.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-math">PSI = Σ (A_i − E_i) × ln(A_i / E_i)</span>
+          <span class="formula-plain">Where A_i = actual proportion in current period for bin i, E_i = expected proportion from training period. Bin the variable into 10 equal buckets. PSI &lt; 0.1: stable. PSI 0.1–0.2: monitor closely. PSI &gt; 0.2: investigate and consider revalidation.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In model monitoring reports, credit governance packs, scorecard validation tables, and any production analytics environment where models are tracked over time.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask what action follows a PSI alert and whether the investigation has been completed. PSI is an alarm — not a diagnosis. Seeing a flagged PSI in a governance report with no accompanying investigation note is a model risk management gap.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A card issuer monitors PSI monthly across 40 model input features after launching a new digital acquisition channel. Three features — age, employment type, and revolving utilization — show PSI above 0.2 in month four. All three are top-10 SHAP predictors. The governance team triggers an out-of-cycle model review, finding the model's Gini has already deteriorated by 6 points.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- CHEAT SHEET -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="narrative">
+  <div class="section-label">Chapter Summary</div>
+  <h2 class="section-title">Chapter 2 cheat sheet</h2>
+
+  <div class="cheat-sheet">
+    <div class="cheat-title">Key principles from this chapter</div>
+    <div class="cheat-grid">
+      <div class="cheat-item">
+        <div class="cheat-item-title">Variable type determines valid operations</div>
+        <div class="cheat-item-body">Categorical cannot be averaged. Ordinal gaps are not equal. Integer-coded categories are not numeric. Check types before any operation.</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-item-title">Data quality has four dimensions</div>
+        <div class="cheat-item-body">Completeness, accuracy, consistency, and timeliness can fail independently. Each failure has different consequences and different remedies.</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-item-title">Why values are missing matters as much as that they are missing</div>
+        <div class="cheat-item-body">MCAR allows simple imputation. MAR allows conditional imputation. MNAR requires modeling the missingness mechanism — silent mean imputation creates systematic bias.</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-item-title">Leakage makes models look better than they are</div>
+        <div class="cheat-item-body">Data leakage, target leakage, and look-ahead bias all produce optimistic development metrics and poor production performance. AUC above 0.95 on real data should always trigger leakage investigation.</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-item-title">Drift comes in two forms with different fixes</div>
+        <div class="cheat-item-body">Data drift: input distributions shift — monitored by PSI. Concept drift: input-outcome relationship shifts — only revealed by outcome monitoring. More training data fixes neither if the world has changed.</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-item-title">PSI is a trigger, not a verdict</div>
+        <div class="cheat-item-body">PSI above 0.2 means investigate, not retire. Prioritise investigation for features that are top predictors — not all drift matters equally.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:28px">
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:12px">Chapter 3 builds directly on variable types to introduce descriptive statistics — the right summary depends entirely on whether a variable is continuous, skewed, or categorical. Chapter 13 revisits data leakage and look-ahead bias in the specific context of predictive model development.</p>
+    <a href="../ml-for-strategy-v2/ML_Strategy_Playbook.html" class="companion">↗ ML Strategy Playbook — companion reference</a>
+  </div>
+</div>
+
+<script>
+function toggleTerm(id){
+  const b=document.getElementById(id);
+  const open=b.classList.contains('open');
+  b.classList.toggle('open',!open);
+  b.querySelector('.term-toggle').textContent=open?'expand':'collapse';
+}
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT')return;
+  const all=document.querySelectorAll('.term-block');
+  if(e.key==='e'){all.forEach(b=>{b.classList.add('open');b.querySelector('.term-toggle').textContent='collapse';})}
+  if(e.key==='c'){all.forEach(b=>{b.classList.remove('open');b.querySelector('.term-toggle').textContent='expand';})}
+});
+</script>
+</body>
+</html>

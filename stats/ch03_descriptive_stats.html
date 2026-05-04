@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 3 — Descriptive Statistics | Stats Foundations for Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;
+  --cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;
+  --accent:#8b2500;--accent2:#c4440d;--accent3:#e8c4a0;
+  --blue:#1a3a5c;--blue2:#2d5f8a;--blue3:#ddeaf7;
+  --green:#1a4a2e;--green2:#2d7a4a;--green3:#ddf0e5;
+  --gold:#7a5a00;--gold2:#c49a00;--gold3:#fdf5dc;
+  --purple:#4a1a7a;--purple2:#7a3abf;--purple3:#ede0f7;
+  --border:#d4cdc4;--border2:#c4bdb4;
+  --serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace;
+  --radius:4px;--shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);--shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+@media(prefers-color-scheme:dark){
+  :root{--ink:#f0ece4;--ink2:#d8d0c4;--ink3:#a09488;--ink4:#6a6058;--cream:#181612;--cream2:#201e1a;--cream3:#2a2620;--accent2:#e8784a;--accent3:#c4845a;--blue2:#5a9fdf;--blue3:#1a2a3a;--green2:#5aba7a;--green3:#1a2a20;--gold2:#e4c050;--gold3:#221e10;--purple2:#9a5ae0;--purple3:#2a1a3a;--border:#38342e;--border2:#48443e;}
+  body{background:#141210}.narrative{background:#141210;border-bottom-color:#2a2620}
+  .term-block{background:#1e1c18}.term-header{background:#1e1c18}.term-body{border-top-color:#2a2620}.field-row{border-bottom-color:#2a2620}.field-value.formula{background:#2a2620}
+  .callout-insight{background:#221e10;border-color:#e4c050}.callout-warning{background:#221410;border-color:#e8784a}.callout-rule{background:#10181e;border-color:#5a9fdf}.callout-green{background:#101e14;border-color:#5aba7a}.callout-purple{background:#1a1028;border-color:#9a5ae0}
+  .illustration{background:#1e1c18;border-color:#38342e}.illustration-caption{border-top-color:#2a2620;background:#1e1c18}
+  .ch-progress{background:#1e1c18;border-bottom-color:#38342e}.progress-bar{background:#2a2620}.progress-fill{background:#9a5ae0}
+  .ch-hero{background:#0e0c0a}.cheat-sheet{background:#0e0c0a}.cheat-item{background:rgba(255,255,255,0.04);border-left-color:#9a5ae0}
+  .companion{color:#9a5ae0}.companion:hover{background:#9a5ae0;color:#141210}
+  p{color:var(--ink2)}.section-intro{color:var(--ink3);border-left-color:#9a5ae0}
+  .term-toggle{background:#2a2620;border-color:#38342e;color:var(--ink3)}.term-block.open .term-toggle{background:#f0ece4;color:#141210;border-color:#f0ece4}
+  .term-name{color:var(--ink)}.term-short{color:var(--ink3)}.section-title{color:var(--ink)}.section-label{color:#9a5ae0}.field-label{color:var(--ink4)}.field-value{color:var(--ink2)}
+  .field-value.formula .formula-math{color:#9a5ae0}.field-value.formula .formula-plain{color:var(--ink3)}.redflag{color:#e8784a}
+  .cheat-title{color:#c4845a}.cheat-item-title{color:#f0ece4}.cheat-item-body{color:rgba(240,236,228,0.5)}
+  .ch-eyebrow{color:#c4a0e8}.ch-title{color:#f4f0e8}.ch-intro{color:rgba(240,236,228,0.85)}.ch-meta{color:rgba(240,236,228,0.58)}.ch-meta span em{color:rgba(240,236,228,0.88)}.ch-progress span{color:#a09488}
+  svg text{fill:#6a6058 !important}
+}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.ch-hero{background:var(--purple);color:var(--cream);padding:72px 72px 56px;position:relative;overflow:hidden}
+.ch-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 90% 30%,rgba(122,58,191,0.4) 0%,transparent 60%);pointer-events:none}
+.ch-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(200,180,240,0.7);margin-bottom:16px}
+.ch-title{font-family:var(--display);font-size:44px;font-weight:700;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin-bottom:20px;max-width:700px}
+.ch-title em{color:#d4b4f4;font-style:normal}
+.ch-intro{font-size:16px;color:rgba(255,255,255,0.75);max-width:600px;line-height:1.7;margin-bottom:36px}
+.ch-meta{display:flex;flex-wrap:wrap;gap:24px;font-size:10px;color:rgba(255,255,255,0.42);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono)}
+.ch-meta span em{color:rgba(255,255,255,0.72);font-style:normal}
+.ch-progress{display:flex;align-items:center;gap:12px;padding:16px 72px;background:var(--cream2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:0.05em}
+.progress-bar{flex:1;height:3px;background:var(--cream3);border-radius:2px;max-width:200px}
+.progress-fill{height:100%;background:var(--purple2);border-radius:2px;width:16.5%}
+.narrative{padding:56px 72px 48px;border-bottom:1px solid var(--border);max-width:960px}
+.narrative:last-child{border-bottom:none}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--purple2);margin-bottom:8px;font-weight:500}
+.section-title{font-family:var(--display);font-size:26px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:8px;letter-spacing:-0.01em}
+.section-intro{font-size:14.5px;color:var(--ink3);line-height:1.75;max-width:680px;margin-bottom:36px;padding-left:16px;border-left:3px solid var(--purple3)}
+.term-block{background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s}
+.term-block:hover{box-shadow:var(--shadow-lg)}
+.term-header{display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;cursor:pointer;user-select:none}
+.term-name{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);line-height:1.25;flex:1}
+.term-short{font-size:12.5px;color:var(--ink3);line-height:1.5;flex:1;font-style:italic;margin-top:3px}
+.term-toggle{font-family:var(--mono);font-size:11px;color:var(--ink4);border:1px solid var(--border);border-radius:3px;padding:2px 8px;flex-shrink:0;margin-top:2px;transition:all 0.15s;background:var(--cream)}
+.term-block.open .term-toggle{background:var(--purple);color:#fff;border-color:var(--purple)}
+.term-body{display:none;padding:0 24px 20px;border-top:1px solid var(--cream2)}
+.term-block.open .term-body{display:block}
+.field-row{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--cream3);align-items:baseline}
+.field-row:last-child{border-bottom:none}
+.field-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);font-weight:500;padding-top:1px}
+.field-value{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.field-value.formula{font-family:var(--mono);font-size:12.5px;background:var(--cream2);padding:10px 14px;border-radius:3px;color:var(--ink);line-height:1.65}
+.field-value.formula .formula-math{color:var(--purple2);font-weight:500;display:block;margin-bottom:4px;font-size:13px}
+.field-value.formula .formula-plain{color:var(--ink3);font-family:var(--serif);font-size:12.5px;font-style:italic}
+.redflag{color:var(--accent);font-size:13px}.redflag::before{content:'⚑ ';font-style:normal}
+.callout{padding:16px 20px;border-radius:var(--radius);margin:20px 0;border-left:3px solid;font-size:13.5px;line-height:1.65}
+.callout-insight{background:var(--gold3);border-color:var(--gold2);color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:var(--blue3);border-color:var(--blue2);color:var(--ink2)}
+.callout-green{background:var(--green3);border-color:var(--green2);color:var(--ink2)}
+.callout-purple{background:var(--purple3);border-color:var(--purple2);color:var(--ink2)}
+.callout strong{font-weight:600;display:block;margin-bottom:5px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.65}
+.illustration{margin:28px 0;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:#fff}
+.illustration-caption{font-family:var(--mono);font-size:10.5px;color:var(--ink4);text-align:center;padding:10px;border-top:1px solid var(--cream2);letter-spacing:0.04em;background:var(--cream)}
+.cheat-sheet{background:var(--purple);color:#fff;border-radius:6px;padding:28px 32px;margin-top:24px}
+.cheat-title{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(200,180,240,0.7);margin-bottom:16px}
+.cheat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cheat-item{padding:12px 14px;background:rgba(255,255,255,0.08);border-radius:4px;border-left:2px solid #d4b4f4}
+.cheat-item-title{font-size:11.5px;font-weight:600;color:#fff;margin-bottom:4px;font-family:var(--serif)}
+.cheat-item-body{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.55}
+.companion{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--purple2);text-decoration:none;border:1px solid currentColor;padding:5px 12px;border-radius:3px;margin-top:4px;transition:all 0.15s}
+.companion:hover{background:var(--purple2);color:#fff}
+@media(max-width:700px){.ch-hero,.narrative{padding:40px 24px}.ch-title{font-size:30px}.field-row{grid-template-columns:1fr;gap:4px}.cheat-grid{grid-template-columns:1fr}.ch-progress{padding:12px 24px}}
+</style>
+</head>
+<body>
+<div class="ch-progress">
+  <span>Chapter 3 of 18</span>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <span>Statistical Foundations for Strategy Professionals</span>
+</div>
+<div class="ch-hero">
+  <div class="ch-eyebrow">Part 2 — Describing What You Have · Chapter 3</div>
+  <h1 class="ch-title">Measures of Center and Spread — <em>What a Single Number Hides</em></h1>
+  <p class="ch-intro">Every business dashboard collapses distributions into single summary numbers. Understanding which summary is appropriate — and what it hides — is one of the most practically valuable statistical skills a strategy professional can have.</p>
+  <div class="ch-meta">
+    <span>Terms covered: <em>22</em></span>
+    <span>Sections: <em>Center · Spread · Shape · Distributions · Standardization</em></span>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 3.1</div>
+  <h2 class="section-title">Measures of center — what is typical?</h2>
+  <p class="section-intro">The first question anyone asks about a business metric is: what is the typical value? The answer depends entirely on what you mean by typical. Mean, median, and mode give different answers, and the difference between them is often the most important thing a number can tell you.</p>
+
+  <div class="illustration">
+    <svg viewBox="0 0 760 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fff">
+      <!-- Symmetric distribution — mean=median -->
+      <text x="130" y="22" font-family="'JetBrains Mono',monospace" font-size="9" fill="#b0a898" text-anchor="middle" letter-spacing="0.06em">SYMMETRIC</text>
+      <path d="M30,160 Q80,160 100,60 Q130,160 230,160" fill="#ede8df" stroke="#d4cdc4" stroke-width="1"/>
+      <line x1="130" y1="55" x2="130" y2="165" stroke="#7a3abf" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <text x="130" y="178" font-family="'JetBrains Mono',monospace" font-size="8" fill="#7a3abf" text-anchor="middle">mean = median</text>
+
+      <!-- Right-skewed distribution -->
+      <text x="420" y="22" font-family="'JetBrains Mono',monospace" font-size="9" fill="#b0a898" text-anchor="middle" letter-spacing="0.06em">RIGHT-SKEWED (revenue, wealth)</text>
+      <path d="M300,160 Q340,160 360,55 Q380,100 400,130 Q440,155 550,160 Q600,160 680,160" fill="#fef5f0" stroke="#d4cdc4" stroke-width="1"/>
+      <line x1="368" y1="50" x2="368" y2="165" stroke="#2d7a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <line x1="410" y1="50" x2="410" y2="165" stroke="#c4440d" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <text x="368" y="178" font-family="'JetBrains Mono',monospace" font-size="8" fill="#2d7a4a" text-anchor="middle">median</text>
+      <text x="414" y="178" font-family="'JetBrains Mono',monospace" font-size="8" fill="#c4440d" text-anchor="middle">mean</text>
+      <text x="560" y="110" font-family="'Source Serif 4',serif" font-size="10" fill="#b0a898" font-style="italic">long right tail</text>
+    </svg>
+    <div class="illustration-caption">For symmetric distributions, mean and median coincide. For right-skewed business data (revenue, CLV, transaction size), the mean is pulled above the median by a few large values — making the median a better description of what is typical.</div>
+  </div>
+
+  <div class="term-block" id="t-mean">
+    <div class="term-header" onclick="toggleTerm('t-mean')">
+      <div style="flex:1"><div class="term-name">Mean</div><div class="term-short">The arithmetic average — sum of all values divided by count.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you what every observation would be worth if the total were distributed equally. Most useful when the data is roughly symmetric and not dominated by extreme values. For business metrics like revenue, order value, or customer spend, the mean describes the central tendency of the distribution — but only faithfully when the distribution is not heavily skewed.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">x̄ = (1/n) Σxᵢ</span><span class="formula-plain">Add all values, divide by how many there are. For a business: total revenue ÷ number of customers = mean revenue per customer.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In KPI dashboards, operating reviews, model evaluation reports, and any context where a headline summary of a metric is needed.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether a few extreme values are pulling the average up or down. If customer spend or claim size is skewed, the mean may describe almost no individual customer's actual experience.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A SaaS company reports mean monthly spend of £420 per customer. Three enterprise accounts at £18,000 per month each pull the mean far above the £120 median. The product team designing for the "average customer" would be designing for nobody if they used the mean.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-median">
+    <div class="term-header" onclick="toggleTerm('t-median')">
+      <div style="flex:1"><div class="term-name">Median</div><div class="term-short">The middle value when observations are sorted — half above, half below.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you what a typical case looks like in the most literal sense: exactly half your customers spend more, half spend less. The median is robust to outliers because it is determined by position, not value — one customer spending 100× the average does not change it at all.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Median = value at position (n+1)/2 when sorted</span><span class="formula-plain">Sort all values low to high. Take the middle one (or average the two middle values if n is even). For business data that is right-skewed — revenue, wait time, CLV — prefer median over mean for describing "typical."</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In compensation benchmarking, property price reporting, customer spend summaries, and any distribution with meaningful outliers where the median better represents what most people experience.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether choosing the median is hiding the economic importance of the top of the distribution. Median spend is the right metric for product design; mean spend is the right metric for revenue planning.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A retail bank reports median household balance of £1,200 and mean balance of £8,400. The gap tells the whole story: a small number of wealthy customers hold most of the deposit base. Retention strategy for high-value customers must be designed for the tail, not the median.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-mode">
+    <div class="term-header" onclick="toggleTerm('t-mode')">
+      <div style="flex:1"><div class="term-name">Mode</div><div class="term-short">The most frequently occurring value or category.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you what happens most often — useful for categorical data where mean and median are meaningless, and for continuous distributions to identify the most common "bucket" of outcomes. A bimodal distribution has two modes, which is often the most strategically interesting finding: two different populations are mixed together.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Find the value or category that appears most often. For continuous data, compute the modal bin using a histogram. Multiple modes indicate multiple subpopulations — often more actionable than the mean or median alone.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In categorical feature summaries, product mix analysis, customer type distributions, and whenever understanding "what is most common" matters more than average size.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether a bimodal pattern is being obscured by reporting only the mode. Two peaks in session length — short casual visits and long deep-engagement sessions — may represent two fundamentally different user types requiring different product strategies.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A telecom operator finds the modal data plan is the 15GB mid-tier. But looking at the full distribution reveals a bimodal pattern: heavy usage at 5GB (budget segment) and 50GB+ (power users). A product strategy built around the modal plan may serve neither segment well.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-weighted-mean">
+    <div class="term-header" onclick="toggleTerm('t-weighted-mean')">
+      <div style="flex:1"><div class="term-name">Weighted Mean</div><div class="term-short">An average where each observation counts differently based on assigned importance.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the average after giving larger, more important, or more relevant observations more influence. When you want the portfolio average margin rather than the average of individual product margins, you weight by revenue — otherwise small low-margin products distort the picture as much as large high-margin ones.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">x̄_w = Σ(wᵢ × xᵢ) / Σwᵢ</span><span class="formula-plain">Multiply each value by its weight, sum those products, divide by the total weight. Common weights: revenue, volume, exposure, population size.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In portfolio metrics (revenue-weighted margin), index returns, market share calculations, blended pricing, and any analysis where observations should not all count equally.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what the weights are and whether they reflect the business objective. A simple average of store conversion rates treats a 5-transaction pilot store and a 50,000-transaction flagship equally — revenue weighting would give a more meaningful portfolio view.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">An automotive manufacturer tracks defect rates across five plants. A simple average gives every plant equal weight. A production-weighted average shows that the highest-volume plant's 2.1% defect rate dominates the portfolio economics — the equally weighted average of 1.8% understates actual customer-facing quality risk.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-geometric-mean">
+    <div class="term-header" onclick="toggleTerm('t-geometric-mean')">
+      <div style="flex:1"><div class="term-name">Geometric Mean</div><div class="term-short">The nth root of the product of n values — the correct average for compounded growth rates.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the equivalent steady growth rate that would produce the same cumulative result as a series of varying rates. When you average percentage changes — revenue growth, return on investment, price changes — arithmetic averages systematically overstate performance. The geometric mean is what actually happened over time.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">G = (x₁ × x₂ × ... × xₙ)^(1/n)</span><span class="formula-plain">Multiply all the growth factors (not percentages — add 1 first), then take the nth root. Or equivalently: exp(mean of log values). A portfolio up 50% then down 50% has arithmetic mean +0% but geometric mean −13.4% — the geometric mean is the truth.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In CAGR calculations, investment return summaries, multi-year revenue growth presentations, and any analysis that compounds percentage changes over time.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the growth rate being reported is arithmetic or geometric. For multi-year performance, arithmetic average of annual growth rates always overstates true compound performance — sometimes materially.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A media company's revenue grows 40% in year 1, 20% in year 2, and falls 15% in year 3. Arithmetic mean: +15%. Geometric mean (CAGR): +12.4%. The difference matters when forecasting future value or comparing against a benchmark compounding at a stated rate.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 3.2</div>
+  <h2 class="section-title">Measures of spread — how much does it vary?</h2>
+  <p class="section-intro">The center of a distribution tells you what is typical. The spread tells you how wrong you would be to assume everyone is typical. Two businesses with identical mean revenue per customer can have dramatically different risk profiles, operational challenges, and strategic opportunities depending on how much that revenue varies.</p>
+
+  <div class="term-block" id="t-variance">
+    <div class="term-header" onclick="toggleTerm('t-variance')">
+      <div style="flex:1"><div class="term-name">Variance</div><div class="term-short">The average squared deviation from the mean — a measure of how spread out values are.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you whether outcomes cluster tightly around the center or spread widely. High variance means the average hides substantial instability — a store with mean weekly sales of £50,000 and high variance may swing between £20,000 and £90,000, making planning and staffing very different from a store with the same mean and low variance.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">s² = Σ(xᵢ − x̄)² / (n−1)  [sample]</span><span class="formula-plain">Take each value, subtract the mean, square the difference (to make all deviations positive and penalize large ones more), then average those squared differences. Use n−1 for samples. Units are squared — so a variance of 400 for a revenue metric in £ means the spread is measured in £².</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In risk analysis, portfolio metrics, forecasting diagnostics, and quality control — often as an intermediate calculation rather than a direct business metric because its units are squared.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the variance is interpretable given its squared units. Standard deviation is almost always the more communicable version — variance is a stepping stone, not usually the final metric to put in front of stakeholders.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">Two grocery regions have identical mean weekly basket size of £45. Region A has variance of 120 (SD ~£11); Region B has variance of 810 (SD ~£28.5). Region B's customer behavior is far more heterogeneous — requiring different inventory buffering, promotion design, and staffing flexibility despite identical averages.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-sd">
+    <div class="term-header" onclick="toggleTerm('t-sd')">
+      <div style="flex:1"><div class="term-name">Standard Deviation</div><div class="term-short">The square root of variance — how far values typically deviate from the mean, in original units.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the typical distance between individual observations and the average — in the same units as the original data. A delivery time standard deviation of 0.8 days means most deliveries fall within roughly ±0.8 days of the mean. It is the most widely used spread metric because it is interpretable, mathematically convenient, and fundamental to hypothesis testing and model evaluation.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">s = √[Σ(xᵢ − x̄)² / (n−1)]</span><span class="formula-plain">Take the square root of the variance to return to original units. For roughly symmetric data: ~68% of values fall within ±1 SD of the mean, ~95% within ±2 SD, ~99.7% within ±3 SD (the empirical rule, valid for approximately normal distributions).</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In forecasting uncertainty bands, A/B test power calculations, model evaluation metrics, financial risk reports, and quality control dashboards.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the distribution is roughly symmetric. For heavily skewed data like revenue or transaction size, standard deviation is misleading — a single enterprise customer can inflate the SD to the point where the ±1 SD range extends into negative numbers, which is impossible.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A logistics company reports average delivery time of 2.3 days with SD 1.8 days. That SD suggests deliveries commonly range from 0.5 to 4.1 days — a wide band that will produce significant customer dissatisfaction at the upper end despite the benign-sounding average.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-iqr">
+    <div class="term-header" onclick="toggleTerm('t-iqr')">
+      <div style="flex:1"><div class="term-name">IQR — Interquartile Range</div><div class="term-short">The spread of the middle 50% of the data — Q3 minus Q1 — robust to outliers.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how wide the typical range is once you set aside the top and bottom quarters. The IQR is unaffected by extreme values at either end — which makes it much more reliable than standard deviation for skewed business data. A customer spend IQR of £40–£110 tells you where the bulk of your customers actually sit, regardless of a few high spenders.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">IQR = Q3 − Q1</span><span class="formula-plain">Sort the data. Q1 is the 25th percentile, Q3 is the 75th percentile. IQR is their difference. Outlier detection rule: values below Q1 − 1.5×IQR or above Q3 + 1.5×IQR are flagged as potential outliers.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In box plots, customer spend summaries, compensation benchmarking, and any analysis of skewed data where standard deviation would be misleading.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the top or bottom quartile matters commercially. IQR deliberately excludes the extremes — but for a premium strategy, the top quartile may be the entire business case, and IQR tells you nothing about it.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A SaaS company finds an IQR of 40–110 seats for monthly active usage. Mean is 180 seats — pulled up by a handful of 2,000-seat enterprise accounts. Product investment decisions made using the IQR (designing for the typical customer) and mean (designing for maximum revenue) will produce very different roadmaps.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-mad">
+    <div class="term-header" onclick="toggleTerm('t-mad')">
+      <div style="flex:1"><div class="term-name">MAD — Median Absolute Deviation</div><div class="term-short">The median of absolute deviations from the median — the most outlier-robust spread measure.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the typical distance from the center with the most resistance to extreme values. While standard deviation squares deviations (amplifying outliers) and IQR discards extremes entirely, MAD uses absolute distances and bases everything on the median — making it the most robust spread measure for heavily skewed or contaminated data.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">MAD = median(|xᵢ − median(x)|)</span><span class="formula-plain">Compute the median of all observations. Measure each observation's absolute distance from that median. Take the median of all those distances. MAD × 1.4826 ≈ SD for a normal distribution, enabling comparison with SD-based methods.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In anomaly detection baselines, robust outlier flagging, transaction monitoring, and any setting where extreme values should not distort the sense of "how much does this normally vary."</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether using MAD is making the situation appear more stable than it really is. If tail events drive most of the business risk or value, a measure that deliberately excludes them may understate what matters most.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A payments fraud team sets anomaly thresholds using MAD rather than standard deviation because a few very large legitimate wire transfers would inflate the SD and cause those transfers to appear anomalous. MAD captures the typical variation among ordinary transactions without that distortion.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-cv">
+    <div class="term-header" onclick="toggleTerm('t-cv')">
+      <div style="flex:1"><div class="term-name">Coefficient of Variation</div><div class="term-short">Standard deviation divided by the mean — relative variability enabling comparison across different scales.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how large the spread is relative to the typical level. Two product categories with the same standard deviation of £500 in weekly sales look equally variable in absolute terms — but if one has mean sales of £1,000 and the other £20,000, the first is far more variable in relative terms. CV makes this comparison possible.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">CV = s / x̄  (often expressed as a percentage)</span><span class="formula-plain">Divide standard deviation by mean. Only valid when mean is positive and meaningfully distant from zero. CV of 0.2 means the typical deviation is 20% of the mean — higher CV means relatively more volatile.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In cross-category demand volatility comparisons, portfolio risk benchmarking, and supply chain planning where you need to compare variability across products at very different volume levels.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the mean is close to zero for any category being compared. CV becomes unstable and misleading when the mean approaches zero — a product selling a few units per week will always show extreme CV.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A consumer goods company compares demand variability across beverage (CV 0.18), snacks (CV 0.31), and specialty items (CV 0.67). Despite specialty items having the lowest absolute volume, their high relative variability drives disproportionate safety stock requirements and forecast investment.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 3.3</div>
+  <h2 class="section-title">Shape — skewness, kurtosis, and distribution patterns</h2>
+  <p class="section-intro">Center and spread describe where a distribution is and how wide it is. Shape describes what it looks like — whether it is symmetric or lopsided, whether extreme values occur more often than chance would predict, and whether it behaves like one population or several mixed together. Shape is often where the most strategically important information lives.</p>
+
+  <div class="term-block" id="t-skewness">
+    <div class="term-header" onclick="toggleTerm('t-skewness')">
+      <div style="flex:1"><div class="term-name">Skewness</div><div class="term-short">A measure of asymmetry — whether the distribution has a longer tail on one side.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you which direction the distribution is pulled. Positive skew (long right tail) is the rule in business: revenue, claim size, customer lifetime value, and transaction amounts all have many small values and a few very large ones. Negative skew is rarer but appears in quality metrics close to an upper bound (e.g., completion rates clustered near 100% with a few failures dragging down the left).</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Skewness = (1/n) Σ[(xᵢ−x̄)/s]³</span><span class="formula-plain">Positive skewness: mean > median > mode. Right tail is longer. Common in revenue, wealth, and waiting time data. Negative skewness: mean < median < mode. Left tail is longer. Skewness beyond ±1 is typically substantial enough to matter for analysis choices.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In data profiling, distribution shape assessments, and any decision about whether mean or median is the right summary statistic.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the analysis is using mean-based methods on heavily skewed data. For right-skewed metrics, mean-based models and statistics can be dominated by extreme values and fail to describe what most customers or transactions experience.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">An insurer's claims distribution has positive skewness of 4.2. The mean claim is £8,400; the median is £2,100. A pricing model based on mean claims will systematically overprice low-risk segments. Modeling the distribution explicitly — rather than assuming symmetry — is essential for accurate pricing.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-kurtosis">
+    <div class="term-header" onclick="toggleTerm('t-kurtosis')">
+      <div style="flex:1"><div class="term-name">Kurtosis</div><div class="term-short">A measure of tail heaviness — whether extreme values occur more frequently than a normal distribution would predict.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you whether the distribution has unusually heavy tails — meaning outliers and extreme events occur more often than chance would suggest. High kurtosis (leptokurtic) is a warning that the system you are analyzing produces extreme outcomes more frequently than standard models assume. This is central to risk management: normal-distribution-based risk models systematically underestimate tail events in high-kurtosis data.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Kurtosis = (1/n) Σ[(xᵢ−x̄)/s]⁴  [excess kurtosis = kurtosis − 3]</span><span class="formula-plain">Normal distribution has kurtosis of 3 (excess kurtosis 0). Excess kurtosis > 0 means heavier tails than normal (more extreme events). Most financial return distributions have excess kurtosis of 2–10 — the normal distribution dramatically underestimates tail risk.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In risk reports, financial return distributions, stress testing methodology, and model diagnostics for any process that might produce rare but extreme outcomes.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the risk model accounts for heavy tails. A VaR model calibrated assuming normal returns will consistently underestimate extreme losses in leptokurtic distributions — sometimes called "fat tail risk."</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A consumer lender's monthly default rate has excess kurtosis of 6. Most months cluster tightly around 2.8% — but tail events (economic shocks, sector-specific stress) produce loss months of 12–18% far more often than a normal distribution would predict. Capital provisioning based on normal distribution assumptions leaves the business chronically underprepared for realistic stress scenarios.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-outlier">
+    <div class="term-header" onclick="toggleTerm('t-outlier')">
+      <div style="flex:1"><div class="term-name">Outlier</div><div class="term-short">An observation unusually distant from the rest — which may be an error, a rare event, or the most important signal in the data.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you something is atypical enough to warrant investigation before any analytical decision is made. The critical judgment is whether the outlier is a data error (remove it), a genuine rare event that follows a different process (model it separately), or the single most commercially important observation in the dataset (preserve it and pay attention to it).</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">IQR rule: outlier if x < Q1 − 1.5×IQR  or  x > Q3 + 1.5×IQR</span><span class="formula-plain">Z-score rule: outlier if |z| > 3. Domain rules: impossible values (negative counts, ages over 120) should always be flagged regardless of statistical thresholds. Treat detection as a flagging step, not an automatic deletion step.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In data QA, model preprocessing, anomaly detection, and any post-analysis review when results look surprising.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what was done with outliers before the analysis and why. A model with outliers removed may have deleted the exact customers or transactions that represent the business's greatest risk or greatest opportunity.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A grocery delivery platform sees one London borough with 4× the usual weekly order volume during a three-day heat wave. That outlier — if removed for being "anomalous" — erases the evidence needed to build weather-responsive demand models and emergency capacity protocols.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-longtail">
+    <div class="term-header" onclick="toggleTerm('t-longtail')">
+      <div style="flex:1"><div class="term-name">Long Tail</div><div class="term-short">A distribution where many low-frequency items extend far to the right, collectively representing significant volume.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you that rarity is not the same as insignificance. In content libraries, product catalogs, and marketplace SKUs, the top 20 items may drive 60% of volume — but the remaining 80% of volume is spread across thousands of items, none individually important but collectively essential. Long-tail economics are often mismanaged because focus on the "head" of the distribution ignores the aggregate importance of the tail.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Pareto rule of thumb: if 20% of items drive 80% of volume, the remaining 80% of items are the "long tail." The key question is: what is the collective revenue, cost, or risk contribution of all tail items combined? If substantial, the tail deserves dedicated management — even if no individual tail item does.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In SKU management, content strategy, search query analysis, marketplace seller performance, and any context where demand or usage is distributed across many items of varying popularity.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what the collective revenue contribution of the bottom 80% of SKUs is and what it costs to serve them. The long tail can be a growth opportunity or an operational drag — both require quantification to manage.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A streaming platform's top 200 titles account for 55% of viewing. The remaining 45% is spread across 48,000 titles. The tail collectively justifies catalog maintenance costs and drives subscriber acquisition among niche interest groups — eliminating it would increase unit economics but likely reduce subscriber retention and differentiation.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 3.4</div>
+  <h2 class="section-title">Percentiles, ranking, and standardization</h2>
+  <p class="section-intro">Absolute values tell you what something is. Relative standing tells you where it sits. Percentiles, deciles, and z-scores all answer the question "compared to what?" — which is often more strategically useful than the raw number itself.</p>
+
+  <div class="term-block" id="t-percentile">
+    <div class="term-header" onclick="toggleTerm('t-percentile')">
+      <div style="flex:1"><div class="term-name">Percentile</div><div class="term-short">The value below which a given percentage of observations fall.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you where a value sits relative to the entire distribution. A customer at the 85th percentile of spending is in the top 15% — that framing is often more actionable than the absolute amount. Percentiles communicate relative standing in a way that is immediately understandable across metrics with different scales and units.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">pth percentile: value below which p% of observations fall</span><span class="formula-plain">Sort data. The 50th percentile is the median. The 90th percentile means 90% of observations are below this value and 10% are above. Commonly used in SLA monitoring: "P90 latency" means 90% of requests were faster than this.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In SLA dashboards (P95, P99 response times), compensation benchmarking (60th percentile of market), customer targeting models (top decile of spend), and clinical risk stratification.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask which population the percentile is computed over. A customer in the 90th percentile of your loyalty database may be very different from a customer in the 90th percentile of the addressable market — the comparison set completely changes the meaning.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A logistics firm reports P90 delivery time of 4.8 days, meaning 10% of shipments take longer. That framing is more operationally useful than mean delivery time of 2.3 days — the P90 reveals what the customer experience looks like at the worst-served tail, which is where SLA breaches and complaints are generated.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-decile">
+    <div class="term-header" onclick="toggleTerm('t-decile')">
+      <div style="flex:1"><div class="term-name">Decile</div><div class="term-short">One of ten equal rank groups in an ordered dataset — standard in model scoring and customer prioritization.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you relative rank with practical granularity. Deciles are the standard unit for evaluating classification model performance (lift by decile) and for customer targeting (contact the top two deciles of churn risk). They provide enough granularity to see performance variation without drowning in detail.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Sort observations by a score or variable. Split into 10 equal groups. Decile 1 = highest scores (top 10%), Decile 10 = lowest scores. For model evaluation: compare event rate in each decile. Good models show steep lift at the top deciles falling to near-base-rate at the bottom.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In credit risk scorecards (Gini/KS reported by decile), churn model evaluation, marketing targeting analysis, and customer value segmentation.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the model shows meaningful lift across deciles or whether the top decile's performance is driven by a single extreme segment. Flat lift beyond the first decile means targeting efficiency drops sharply once you expand beyond the clearest cases.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A retail bank's churn model shows a top-decile churn rate of 22% versus a base rate of 4.3%. The second decile shows 14%, third 9%, then rapid flattening. This pattern tells the retention team to focus interventions tightly on the top two deciles — below that, the model adds little targeting value over random selection.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-zscore">
+    <div class="term-header" onclick="toggleTerm('t-zscore')">
+      <div style="flex:1"><div class="term-name">Z-Score</div><div class="term-short">The number of standard deviations an observation is from the mean — making different metrics directly comparable.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how unusual a value is relative to its distribution, on a universal scale. A z-score of 2.5 means "2.5 standard deviations above average" — which is comparably unusual whether you are talking about revenue, conversion rate, or delivery time. Z-scores eliminate units, enabling direct comparisons across fundamentally different metrics.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">z = (x − x̄) / s</span><span class="formula-plain">Subtract the mean, divide by standard deviation. A z-score of 0 means exactly average; +1 means one SD above; −2 means two SDs below. For approximately normal distributions: z > 2 is unusual (top ~2.5%), z > 3 is very unusual (top ~0.15%).</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In anomaly detection (flag transactions with |z| > 3), store performance benchmarking, feature scaling before modeling, and cross-metric comparison in performance dashboards.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the underlying distribution is approximately normal before using z-score thresholds. For heavily right-skewed data, a z-score of 3 may correspond to a common business outcome rather than a truly rare event.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A retail chain uses z-scores to compare store performance across regions where unit volumes differ by 10×. A store with a z-score of −1.8 on customer satisfaction and −2.1 on net revenue per visit is clearly underperforming on both dimensions relative to its peer group, regardless of the very different absolute scales of those two metrics.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-standardisation">
+    <div class="term-header" onclick="toggleTerm('t-standardisation')">
+      <div style="flex:1"><div class="term-name">Standardisation</div><div class="term-short">Rescaling a variable to mean zero and standard deviation one — essential before combining variables in models.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you variables have been put on a common scale so that differences in measurement units do not dominate model behavior. Without standardisation, income (range: £20,000–£200,000) would overwhelm number of transactions (range: 1–50) purely because of scale — even if the latter is equally predictive.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">x_scaled = (x − x̄) / s</span><span class="formula-plain">Apply to each variable separately before combining in distance-based or regularized models. Critical rule: fit scaling parameters (mean, SD) on training data only — apply the same parameters to validation and test data. Never refit on the full dataset before evaluating.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In machine learning preprocessing, regularized regression, clustering, PCA, and any model where features with very different scales are combined.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether standardisation parameters were computed on training data only. If the full dataset was used to compute means and standard deviations — including the test set — a form of leakage has occurred and reported performance is optimistic.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A fintech lender's risk model uses income (£10k–£500k range), months_on_book (0–240 range), and missed_payments (0–12 range). Without standardisation, the model's L2 regularisation would shrink income coefficients far more than missed_payments coefficients simply due to scale — distorting the model's view of what actually predicts default.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-normalisation">
+    <div class="term-header" onclick="toggleTerm('t-normalisation')">
+      <div style="flex:1"><div class="term-name">Normalisation (Min-Max Scaling)</div><div class="term-short">Rescaling values into a fixed range — usually 0 to 1 — by dividing by the observed range.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you raw values have been compressed into a common bounded scale. Unlike standardisation, normalisation does not assume any particular distribution shape — it just maps the observed minimum to 0 and maximum to 1. It is commonly used for neural networks and composite index construction.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">x_norm = (x − x_min) / (x_max − x_min)</span><span class="formula-plain">Result is always between 0 and 1. Critical limitation: if a future value falls outside the training range, the normalised value will be outside [0,1] and the model may behave unexpectedly. Robust scaling (using percentiles rather than min/max) avoids this for data with extreme outliers.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In composite scoring systems, neural network preprocessing, city attractiveness indices, and any composite metric combining variables of different scales into a single score.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the min and max used for scaling were stable training-period values or could be exceeded in production. A maximum training-period income of £300,000 will mis-scale a new applicant earning £450,000 — normalised to 1.5 instead of something within [0,1].</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A mobility platform builds a city opportunity score combining normalised demand growth, driver supply, and trip profitability. Normalisation ensures no single variable dominates the composite purely because of its measurement scale. The resulting 0–1 score is intuitive for city managers allocating expansion resources.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Chapter Summary</div>
+  <h2 class="section-title">Chapter 3 cheat sheet</h2>
+  <div class="cheat-sheet">
+    <div class="cheat-title">Key principles from this chapter</div>
+    <div class="cheat-grid">
+      <div class="cheat-item"><div class="cheat-item-title">Use median for skewed data</div><div class="cheat-item-body">Revenue, CLV, claim size, wait times — all right-skewed. Mean is pulled by extremes. Median describes what a typical case actually experiences.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">IQR over SD for outlier-laden data</div><div class="cheat-item-body">Standard deviation squares deviations, amplifying outliers. IQR is based on position, not value — much more stable for skewed business distributions.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Skewness changes which methods are valid</div><div class="cheat-item-body">Highly skewed data violates assumptions of many standard statistical tests. Log-transform or use nonparametric alternatives before applying mean-based inference.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Kurtosis signals tail risk</div><div class="cheat-item-body">High kurtosis means extreme events happen more often than normal-distribution models assume. Critical for risk provisioning and stress testing.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Standardise before combining features</div><div class="cheat-item-body">In models and composite scores, variables with large scales will dominate variables with small scales unless rescaled. Always fit scaling on training data only.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Long tails are collectively significant</div><div class="cheat-item-body">Individual tail items may be minor. Collectively they can represent 40–50% of total volume or value. Measure tail economics before deciding management strategy.</div></div>
+    </div>
+  </div>
+  <div style="margin-top:28px">
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:12px">Chapter 4 extends these concepts into probability, which provides the theoretical underpinning for why distributions have the shapes they do. Chapter 7 revisits spread measures in the context of estimation uncertainty — standard error, confidence intervals, and the margin of error are all built on the foundations covered here.</p>
+    <a href="../ml-for-strategy-v2/ML_Strategy_Playbook.html" class="companion">↗ ML Strategy Playbook — companion reference</a>
+  </div>
+</div>
+
+<script>
+function toggleTerm(id){const b=document.getElementById(id);const o=b.classList.contains('open');b.classList.toggle('open',!o);b.querySelector('.term-toggle').textContent=o?'expand':'collapse';}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const all=document.querySelectorAll('.term-block');if(e.key==='e'){all.forEach(b=>{b.classList.add('open');b.querySelector('.term-toggle').textContent='collapse';})}if(e.key==='c'){all.forEach(b=>{b.classList.remove('open');b.querySelector('.term-toggle').textContent='expand';})}});
+</script>
+</body>
+</html>

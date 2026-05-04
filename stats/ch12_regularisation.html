@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 12 — Regularisation & Model Complexity | Stats Foundations for Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;
+  --cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;
+  --accent:#8b2500;--accent2:#c4440d;
+  --copper:#5a3010;--copper2:#c07030;--copper3:#fdf0e0;
+  --gold:#7a5a00;--gold2:#c49a00;--gold3:#fdf5dc;
+  --blue2:#2d5f8a;--blue3:#ddeaf7;
+  --border:#d4cdc4;
+  --serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);--shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+@media(prefers-color-scheme:dark){
+  :root{--ink:#f0ece4;--ink2:#d8d0c4;--ink3:#a09488;--ink4:#6a6058;--cream:#181612;--cream2:#201e1a;--cream3:#2a2620;--accent2:#e8784a;--copper2:#e09050;--copper3:#201008;--gold2:#e4c050;--gold3:#221e10;--blue3:#1a2a3a;--border:#38342e;}
+  body{background:#141210}.narrative{background:#141210;border-bottom-color:#2a2620}
+  .term-block{background:#1e1c18}.term-header{background:#1e1c18}.term-body{border-top-color:#2a2620}.field-row{border-bottom-color:#2a2620}.field-value.formula{background:#2a2620}
+  .callout-insight{background:#221e10;border-color:#e4c050}.callout-warning{background:#201008;border-color:#e09050}.callout-rule{background:#1a2a3a;border-color:#5a9fdf}
+  .ch-progress{background:#1e1c18;border-bottom-color:#38342e}.progress-bar{background:#2a2620}.progress-fill{background:#e09050}
+  .ch-hero{background:#201008}.cheat-sheet{background:#201008}.cheat-item{background:rgba(255,255,255,0.05);border-left-color:#e09050}
+  .companion{color:#e09050}.companion:hover{background:#e09050;color:#141210}
+  p{color:var(--ink2)}.section-intro{color:var(--ink3);border-left-color:#e09050}
+  .term-toggle{background:#2a2620;border-color:#38342e;color:var(--ink3)}.term-block.open .term-toggle{background:#f0ece4;color:#141210;border-color:#f0ece4}
+  .term-name{color:var(--ink)}.term-short{color:var(--ink3)}.section-title{color:var(--ink)}.section-label{color:#e09050}.field-label{color:var(--ink4)}.field-value{color:var(--ink2)}
+  .field-value.formula .formula-math{color:#e09050}.field-value.formula .formula-plain{color:var(--ink3)}.redflag{color:#e8784a}
+  .cheat-title{color:rgba(240,200,140,0.7)}.cheat-item-title{color:#f0ece4}.cheat-item-body{color:rgba(240,236,228,0.5)}
+  .ch-eyebrow{color:rgba(240,200,140,0.7)}.ch-title{color:#f4f0e8}.ch-intro{color:rgba(240,236,228,0.85)}.ch-meta{color:rgba(240,236,228,0.58)}.ch-meta span em{color:rgba(240,236,228,0.88)}.ch-progress span{color:#a09488}
+}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.ch-hero{background:var(--copper);color:var(--cream);padding:72px 72px 56px;position:relative;overflow:hidden}
+.ch-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 75% 50%,rgba(192,112,48,0.4) 0%,transparent 55%);pointer-events:none}
+.ch-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,200,140,0.7);margin-bottom:16px}
+.ch-title{font-family:var(--display);font-size:44px;font-weight:700;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin-bottom:20px;max-width:700px}
+.ch-title em{color:#f8d090;font-style:normal}
+.ch-intro{font-size:16px;color:rgba(255,255,255,0.75);max-width:600px;line-height:1.7;margin-bottom:36px}
+.ch-meta{display:flex;flex-wrap:wrap;gap:24px;font-size:10px;color:rgba(255,255,255,0.42);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono)}
+.ch-meta span em{color:rgba(255,255,255,0.72);font-style:normal}
+.ch-progress{display:flex;align-items:center;gap:12px;padding:16px 72px;background:var(--cream2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:0.05em}
+.progress-bar{flex:1;height:3px;background:var(--cream3);border-radius:2px;max-width:200px}
+.progress-fill{height:100%;background:var(--copper2);border-radius:2px;width:66.5%}
+.narrative{padding:56px 72px 48px;border-bottom:1px solid var(--border);max-width:960px}
+.narrative:last-child{border-bottom:none}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--copper2);margin-bottom:8px;font-weight:500}
+.section-title{font-family:var(--display);font-size:26px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:8px;letter-spacing:-0.01em}
+.section-intro{font-size:14.5px;color:var(--ink3);line-height:1.75;max-width:680px;margin-bottom:36px;padding-left:16px;border-left:3px solid var(--copper3)}
+.term-block{background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s}
+.term-block:hover{box-shadow:var(--shadow-lg)}
+.term-header{display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;cursor:pointer;user-select:none}
+.term-name{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);line-height:1.25;flex:1}
+.term-short{font-size:12.5px;color:var(--ink3);line-height:1.5;flex:1;font-style:italic;margin-top:3px}
+.term-toggle{font-family:var(--mono);font-size:11px;color:var(--ink4);border:1px solid var(--border);border-radius:3px;padding:2px 8px;flex-shrink:0;margin-top:2px;transition:all 0.15s;background:var(--cream)}
+.term-block.open .term-toggle{background:var(--copper);color:#fff;border-color:var(--copper)}
+.term-body{display:none;padding:0 24px 20px;border-top:1px solid var(--cream2)}
+.term-block.open .term-body{display:block}
+.field-row{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--cream3);align-items:baseline}
+.field-row:last-child{border-bottom:none}
+.field-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);font-weight:500;padding-top:1px}
+.field-value{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.field-value.formula{font-family:var(--mono);font-size:12.5px;background:var(--cream2);padding:10px 14px;border-radius:3px;color:var(--ink);line-height:1.65}
+.field-value.formula .formula-math{color:var(--copper2);font-weight:500;display:block;margin-bottom:4px;font-size:13px}
+.field-value.formula .formula-plain{color:var(--ink3);font-family:var(--serif);font-size:12.5px;font-style:italic}
+.redflag{color:var(--accent);font-size:13px}.redflag::before{content:'⚑ ';font-style:normal}
+.callout{padding:16px 20px;border-radius:4px;margin:20px 0;border-left:3px solid;font-size:13.5px;line-height:1.65}
+.callout-insight{background:var(--gold3);border-color:var(--gold2);color:var(--ink2)}
+.callout-warning{background:var(--copper3);border-color:var(--copper2);color:var(--ink2)}
+.callout-rule{background:var(--blue3);border-color:var(--blue2);color:var(--ink2)}
+.callout strong{font-weight:600;display:block;margin-bottom:5px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.65}
+.cheat-sheet{background:var(--copper);color:#fff;border-radius:6px;padding:28px 32px;margin-top:24px}
+.cheat-title{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(240,200,140,0.7);margin-bottom:16px}
+.cheat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cheat-item{padding:12px 14px;background:rgba(255,255,255,0.08);border-radius:4px;border-left:2px solid #f8d090}
+.cheat-item-title{font-size:11.5px;font-weight:600;color:#fff;margin-bottom:4px;font-family:var(--serif)}
+.cheat-item-body{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.55}
+.companion{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--copper2);text-decoration:none;border:1px solid currentColor;padding:5px 12px;border-radius:3px;margin-top:4px;transition:all 0.15s}
+.companion:hover{background:var(--copper2);color:#fff}
+@media(max-width:700px){.ch-hero,.narrative{padding:40px 24px}.ch-title{font-size:30px}.field-row{grid-template-columns:1fr;gap:4px}.cheat-grid{grid-template-columns:1fr}.ch-progress{padding:12px 24px}}
+</style>
+</head>
+<body>
+<div class="ch-progress">
+  <span>Chapter 12 of 18</span>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <span>Statistical Foundations for Strategy Professionals</span>
+</div>
+<div class="ch-hero">
+  <div class="ch-eyebrow">Part 6 — Prediction · Chapter 12</div>
+  <h1 class="ch-title">Regularisation and <em>Model Complexity</em></h1>
+  <p class="ch-intro">Regularisation adds a penalty for complexity to the model's objective function — shrinking coefficients toward zero, eliminating irrelevant features, and preventing overfitting. It is the primary tool for navigating the bias-variance tradeoff in linear and generalized linear models.</p>
+  <div class="ch-meta">
+    <span>Terms covered: <em>14</em></span>
+    <span>Sections: <em>Ridge · Lasso · ElasticNet · Hyperparameter tuning · Sparse models · Dropout</em></span>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 12.1</div>
+  <h2 class="section-title">Why regularisation works — penalising complexity</h2>
+  <p class="section-intro">Standard OLS finds coefficients that minimize the sum of squared residuals on the training data. With many features, this produces overfitted models. Regularised regression adds a penalty term to the objective function — making the model pay a cost for large coefficients, which forces it to only use features that provide enough predictive value to outweigh their complexity cost.</p>
+
+  <div class="term-block" id="t-ridge">
+    <div class="term-header" onclick="toggleTerm('t-ridge')">
+      <div style="flex:1"><div class="term-name">Ridge Regression (L2 Regularisation)</div><div class="term-short">Adds a penalty proportional to the sum of squared coefficients — shrinking all coefficients toward zero but retaining all features.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the model is prevented from placing extreme weights on any single feature — all coefficients are pulled toward zero in proportion to their size. Ridge is the appropriate choice when you believe all features are potentially relevant but want to prevent any single predictor from dominating. It is particularly effective at addressing multicollinearity — it distributes weight across correlated features rather than arbitrarily picking one.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Minimize: Σ(yᵢ−ŷᵢ)² + λΣβⱼ²</span><span class="formula-plain">λ = regularisation strength. λ=0: standard OLS. λ→∞: all coefficients shrink to zero. Optimal λ is chosen by cross-validation. Ridge shrinks all coefficients but never sets them exactly to zero — no automatic feature selection. Scale features before applying ridge (or any regularised regression).</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In marketing mix models with correlated media channels, genomics with many correlated genetic markers, economic forecasting with correlated macro variables, and any regression with multicollinearity.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether features were standardised before applying Ridge. Ridge shrinkage is proportional to coefficient size — if features are on different scales, unstandardised Ridge penalises features with large natural coefficients more heavily, creating scale-dependent bias.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A media company's marketing mix model has TV, digital, social, and OOH spend as predictors, all highly correlated (r > 0.7 between channels). OLS produces unstable, counterintuitive negative coefficients for some channels. Ridge with λ selected by 10-fold CV produces stable positive elasticities for all channels — still retaining all, but distributing attribution sensibly across correlated inputs.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-lasso">
+    <div class="term-header" onclick="toggleTerm('t-lasso')">
+      <div style="flex:1"><div class="term-name">Lasso Regression (L1 Regularisation)</div><div class="term-short">Adds a penalty proportional to the sum of absolute coefficient values — shrinking some to exactly zero, performing automatic feature selection.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the model is simultaneously selecting features and estimating their effects. The L1 penalty's geometry creates "corners" in the constraint region where exact zeros occur — Lasso naturally produces sparse models by eliminating irrelevant features entirely. This is ideal when you have many candidate features and believe most are genuinely irrelevant.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Minimize: Σ(yᵢ−ŷᵢ)² + λΣ|βⱼ|</span><span class="formula-plain">Higher λ → more coefficients set to zero → sparser model. λ optimal by CV (lambda.min gives best prediction; lambda.1se gives more parsimonious model within 1 SE). Lasso struggles when correlated predictors are both important — may arbitrarily pick one and zero the other. ElasticNet addresses this.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In high-dimensional feature selection (500 candidate features, need to identify the 20 most predictive), gene expression analysis, text analytics with many sparse features, and any context where automated feature elimination is desired.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether Lasso's sparsity is biologically/economically plausible in the domain. If the true model genuinely involves many small effects (common in social science and economics), Lasso's aggressive zeroing may create a sparser model than truth warrants, sacrificing predictive performance.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A telecom carrier's churn model starts with 340 candidate features. Lasso with λ selected by 5-fold CV retains 28 features (92% eliminated). The 28-feature Lasso model achieves AUC=0.857 vs 0.861 for the full 340-feature OLS — nearly identical predictive performance with 12× fewer features. The parsimonious model is easier to maintain, monitor, and explain to regulators.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-elasticnet">
+    <div class="term-header" onclick="toggleTerm('t-elasticnet')">
+      <div style="flex:1"><div class="term-name">ElasticNet</div><div class="term-short">A combination of Ridge and Lasso penalties — getting automatic feature selection from L1 while handling correlated features better through L2.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the model is using both penalties simultaneously — L1 for sparsity and feature selection, L2 for stability among correlated features. When two features are highly correlated, Lasso arbitrarily picks one; ElasticNet tends to include both (if both are predictive) while still eliminating genuinely irrelevant features. It is the default regularisation choice for most high-dimensional regression problems.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Minimize: Σ(yᵢ−ŷᵢ)² + λ[α|β|₁ + (1−α)|β|₂²]</span><span class="formula-plain">Two hyperparameters: λ (overall penalty strength) and α (L1 vs L2 mixing ratio, 0=Ridge, 1=Lasso). Both selected by cross-validation. In scikit-learn: l1_ratio = α. Default starting point: α=0.5 or α=0.1 (light Lasso + heavy Ridge) with λ tuned by CV.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">As the default choice for regularised linear and logistic regression in most production ML pipelines, particularly in biological and financial applications with correlated feature groups.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether both λ and α were tuned by cross-validation or whether one was fixed arbitrarily. Fixing α = 0.5 without validation may leave performance on the table if the data favours a very sparse (α near 1) or very smooth (α near 0) solution.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A pharmaceutical company predicts drug response from 1,000 biomarkers. Many biomarkers are highly correlated within pathways. Lasso selects one per pathway arbitrarily; Ridge retains all 1,000 with small coefficients. ElasticNet with α=0.3 identifies the 45 most predictive biomarkers (one to three per relevant pathway) with higher out-of-sample R² than either pure method — coherent biological interpretation and superior prediction simultaneously.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-lambda-tuning">
+    <div class="term-header" onclick="toggleTerm('t-lambda-tuning')">
+      <div style="flex:1"><div class="term-name">Hyperparameter Tuning</div><div class="term-short">The process of selecting model configuration parameters (like λ) that are not learned from data but control how the model learns.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the regularisation strength, tree depth, learning rate, and number of estimators are not fitted to the training data — they are meta-parameters that control how the model fits. Setting them too aggressively overfits; too conservatively underfits. Cross-validation is used to empirically find values that minimise validation error.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Grid search: exhaustively try all combinations. Random search: sample hyperparameter space randomly — often more efficient for high-dimensional spaces. Bayesian optimisation: use past evaluations to guide next trials — most sample-efficient. Always use cross-validation within the training set — never touch the test set during tuning.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In model development for any algorithm with hyperparameters — which is essentially all of them. The model selection pipeline is: define candidate hyperparameter ranges → CV-evaluate each configuration → select best configuration → evaluate once on test set.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the test set was used for hyperparameter selection. If performance on the test set was used to choose among hyperparameter configurations, the test set is no longer a valid measure of generalisation — a new holdout is needed.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A data team tunes a gradient boosting model using a grid of 80 hyperparameter combinations evaluated by 5-fold CV. The best configuration is selected by CV AUC, then evaluated once on the held-out test set. The test AUC (0.893) is within 0.008 of the best CV AUC (0.901) — a small gap suggesting the tuning process did not overfit the validation procedure itself.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-dropout">
+    <div class="term-header" onclick="toggleTerm('t-dropout')">
+      <div style="flex:1"><div class="term-name">Dropout</div><div class="term-short">A regularisation technique for neural networks that randomly deactivates neurons during training — preventing co-adaptation and reducing overfitting.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the neural network cannot rely on any specific combination of neurons to jointly memorize training examples. By randomly setting a fraction of neurons to zero during each training pass, dropout forces the network to learn redundant representations — equivalent to training an ensemble of many thinned networks and averaging their predictions at inference time.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Dropout rate p: each neuron zeroed with probability p during training</span><span class="formula-plain">Typical rates: 0.2–0.5. At inference time: multiply all weights by (1−p) to maintain expected activation magnitude. Dropout is applied per-layer — early layers often use low dropout (0.1), deeper layers higher (0.3–0.5). Disable completely during evaluation and inference.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In neural network architectures for any task — NLP, image recognition, tabular data, recommendation systems. Standard practice to include dropout in any deep network to reduce overfitting.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether dropout was disabled during inference. Leaving dropout active at prediction time introduces randomness into predictions — the same input produces different outputs each call. This is sometimes used intentionally for uncertainty estimation (Monte Carlo dropout) but must be flagged if unintentional.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A fintech company trains a neural network for transaction categorisation. Without dropout, the 4-layer network achieves 94.3% training accuracy vs 81.2% validation — clear overfitting. Adding dropout (0.2 on layers 1–2, 0.4 on layers 3–4) closes the gap to 92.1% training vs 89.8% validation — the model now generalises substantially better to new transaction types.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Chapter Summary</div>
+  <h2 class="section-title">Chapter 12 cheat sheet</h2>
+  <div class="cheat-sheet">
+    <div class="cheat-title">Regularisation quick reference</div>
+    <div class="cheat-grid">
+      <div class="cheat-item"><div class="cheat-item-title">Ridge (L2): correlated features</div><div class="cheat-item-body">Shrinks all coefficients toward zero, retains all features. Best when features are correlated and all potentially relevant. Stabilizes multicollinear models.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Lasso (L1): automatic feature selection</div><div class="cheat-item-body">Sets some coefficients exactly to zero. Best when most features are genuinely irrelevant. Produces sparse, interpretable models.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">ElasticNet: the practical default</div><div class="cheat-item-body">Combines both penalties. Handles correlated features better than Lasso while still providing sparsity. Default choice for most high-dimensional regressions.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Always standardise before regularising</div><div class="cheat-item-body">Regularisation penalises coefficient magnitude — which is scale-dependent. Unstandardised features receive different penalty levels based on their units, not their importance.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Tune λ by cross-validation</div><div class="cheat-item-body">Use the training and validation sets only. Never select λ based on test set performance — that contaminates your final evaluation.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Dropout for neural network regularisation</div><div class="cheat-item-body">Rates 0.2–0.5. Must be disabled during inference. Equivalent to ensemble averaging over many thinned networks.</div></div>
+    </div>
+  </div>
+  <div style="margin-top:28px">
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:12px">Chapter 13 covers classification metrics — precision, recall, AUC, Gini — which are the standard evaluation tools for the regularised models built here. Chapter 14 covers regression and forecast evaluation metrics.</p>
+    <a href="../ml-for-strategy-v2/ML_Strategy_Playbook.html" class="companion">↗ ML Strategy Playbook — companion reference</a>
+  </div>
+</div>
+<script>
+function toggleTerm(id){const b=document.getElementById(id);const o=b.classList.contains('open');b.classList.toggle('open',!o);b.querySelector('.term-toggle').textContent=o?'expand':'collapse';}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const all=document.querySelectorAll('.term-block');if(e.key==='e'){all.forEach(b=>{b.classList.add('open');b.querySelector('.term-toggle').textContent='collapse';})}if(e.key==='c'){all.forEach(b=>{b.classList.remove('open');b.querySelector('.term-toggle').textContent='expand';})}});
+</script>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 6 — Hypothesis Testing | Stats Foundations for Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;
+  --cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;
+  --accent:#8b2500;--accent2:#c4440d;
+  --navy:#0a1a3a;--navy2:#1a3a7a;--navy3:#e0e8f8;
+  --gold:#7a5a00;--gold2:#c49a00;--gold3:#fdf5dc;
+  --green2:#2d7a4a;--green3:#ddf0e5;
+  --red2:#c4400d;--red3:#fef0e8;
+  --border:#d4cdc4;
+  --serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);--shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+@media(prefers-color-scheme:dark){
+  :root{--ink:#f0ece4;--ink2:#d8d0c4;--ink3:#a09488;--ink4:#6a6058;--cream:#181612;--cream2:#201e1a;--cream3:#2a2620;--accent2:#e8784a;--navy2:#3a6ac0;--navy3:#0a1830;--gold2:#e4c050;--gold3:#221e10;--green3:#1a2a20;--red3:#2a1008;--border:#38342e;}
+  body{background:#141210}.narrative{background:#141210;border-bottom-color:#2a2620}
+  .term-block{background:#1e1c18}.term-header{background:#1e1c18}.term-body{border-top-color:#2a2620}.field-row{border-bottom-color:#2a2620}.field-value.formula{background:#2a2620}
+  .callout-insight{background:#221e10;border-color:#e4c050}.callout-warning{background:#2a1008;border-color:#e8784a}.callout-rule{background:#0a1830;border-color:#3a6ac0}.callout-green{background:#1a2a20;border-color:#5aba7a}
+  .illustration{background:#1e1c18;border-color:#38342e}.illustration-caption{border-top-color:#2a2620;background:#1e1c18}
+  .ch-progress{background:#1e1c18;border-bottom-color:#38342e}.progress-bar{background:#2a2620}.progress-fill{background:#3a6ac0}
+  .ch-hero{background:#080e20}.cheat-sheet{background:#080e20}.cheat-item{background:rgba(255,255,255,0.05);border-left-color:#3a6ac0}
+  .companion{color:#3a6ac0}.companion:hover{background:#3a6ac0;color:#141210}
+  .error-grid .error-card{background:#1e1c18;border-color:#38342e}
+  p{color:var(--ink2)}.section-intro{color:var(--ink3);border-left-color:#3a6ac0}
+  .term-toggle{background:#2a2620;border-color:#38342e;color:var(--ink3)}.term-block.open .term-toggle{background:#f0ece4;color:#141210;border-color:#f0ece4}
+  .term-name{color:var(--ink)}.term-short{color:var(--ink3)}.section-title{color:var(--ink)}.section-label{color:#3a6ac0}.field-label{color:var(--ink4)}.field-value{color:var(--ink2)}
+  .field-value.formula .formula-math{color:#3a6ac0}.field-value.formula .formula-plain{color:var(--ink3)}.redflag{color:#e8784a}
+  .cheat-title{color:rgba(160,190,240,0.7)}.cheat-item-title{color:#f0ece4}.cheat-item-body{color:rgba(240,236,228,0.5)}
+  .ch-eyebrow{color:rgba(160,190,240,0.7)}.ch-title{color:#f4f0e8}.ch-intro{color:rgba(240,236,228,0.85)}.ch-meta{color:rgba(240,236,228,0.58)}.ch-meta span em{color:rgba(240,236,228,0.88)}.ch-progress span{color:#a09488}
+  .error-card .error-type{color:var(--ink)}.error-card .error-def{color:var(--ink3)}.error-card .error-cost{color:var(--ink4)}
+  svg text{fill:#6a6058 !important}
+}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.ch-hero{background:var(--navy);color:var(--cream);padding:72px 72px 56px;position:relative;overflow:hidden}
+.ch-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 85% 20%,rgba(26,58,122,0.6) 0%,transparent 55%);pointer-events:none}
+.ch-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(160,190,240,0.7);margin-bottom:16px}
+.ch-title{font-family:var(--display);font-size:44px;font-weight:700;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin-bottom:20px;max-width:700px}
+.ch-title em{color:#a0c0f4;font-style:normal}
+.ch-intro{font-size:16px;color:rgba(255,255,255,0.75);max-width:600px;line-height:1.7;margin-bottom:36px}
+.ch-meta{display:flex;flex-wrap:wrap;gap:24px;font-size:10px;color:rgba(255,255,255,0.42);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono)}
+.ch-meta span em{color:rgba(255,255,255,0.72);font-style:normal}
+.ch-progress{display:flex;align-items:center;gap:12px;padding:16px 72px;background:var(--cream2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:0.05em}
+.progress-bar{flex:1;height:3px;background:var(--cream3);border-radius:2px;max-width:200px}
+.progress-fill{height:100%;background:var(--navy2);border-radius:2px;width:33%}
+.narrative{padding:56px 72px 48px;border-bottom:1px solid var(--border);max-width:960px}
+.narrative:last-child{border-bottom:none}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy2);margin-bottom:8px;font-weight:500}
+.section-title{font-family:var(--display);font-size:26px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:8px;letter-spacing:-0.01em}
+.section-intro{font-size:14.5px;color:var(--ink3);line-height:1.75;max-width:680px;margin-bottom:36px;padding-left:16px;border-left:3px solid var(--navy3)}
+.term-block{background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s}
+.term-block:hover{box-shadow:var(--shadow-lg)}
+.term-header{display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;cursor:pointer;user-select:none}
+.term-name{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);line-height:1.25;flex:1}
+.term-short{font-size:12.5px;color:var(--ink3);line-height:1.5;flex:1;font-style:italic;margin-top:3px}
+.term-toggle{font-family:var(--mono);font-size:11px;color:var(--ink4);border:1px solid var(--border);border-radius:3px;padding:2px 8px;flex-shrink:0;margin-top:2px;transition:all 0.15s;background:var(--cream)}
+.term-block.open .term-toggle{background:var(--navy);color:#fff;border-color:var(--navy)}
+.term-body{display:none;padding:0 24px 20px;border-top:1px solid var(--cream2)}
+.term-block.open .term-body{display:block}
+.field-row{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--cream3);align-items:baseline}
+.field-row:last-child{border-bottom:none}
+.field-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);font-weight:500;padding-top:1px}
+.field-value{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.field-value.formula{font-family:var(--mono);font-size:12.5px;background:var(--cream2);padding:10px 14px;border-radius:3px;color:var(--ink);line-height:1.65}
+.field-value.formula .formula-math{color:var(--navy2);font-weight:500;display:block;margin-bottom:4px;font-size:13px}
+.field-value.formula .formula-plain{color:var(--ink3);font-family:var(--serif);font-size:12.5px;font-style:italic}
+.redflag{color:var(--accent);font-size:13px}.redflag::before{content:'⚑ ';font-style:normal}
+.callout{padding:16px 20px;border-radius:4px;margin:20px 0;border-left:3px solid;font-size:13.5px;line-height:1.65}
+.callout-insight{background:var(--gold3);border-color:var(--gold2);color:var(--ink2)}
+.callout-warning{background:var(--red3);border-color:var(--red2);color:var(--ink2)}
+.callout-rule{background:var(--navy3);border-color:var(--navy2);color:var(--ink2)}
+.callout-green{background:var(--green3);border-color:var(--green2);color:var(--ink2)}
+.callout strong{font-weight:600;display:block;margin-bottom:5px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.65}
+.illustration{margin:28px 0;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:#fff}
+.illustration-caption{font-family:var(--mono);font-size:10.5px;color:var(--ink4);text-align:center;padding:10px;border-top:1px solid var(--cream2);letter-spacing:0.04em;background:var(--cream)}
+.error-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.error-card{background:#fff;border:1px solid var(--border);border-radius:6px;padding:18px 20px;box-shadow:var(--shadow)}
+.error-card.type1{border-top:3px solid var(--red2)}
+.error-card.type2{border-top:3px solid var(--navy2)}
+.error-type{font-family:var(--display);font-size:15px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.error-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
+.error-def{font-size:12.5px;color:var(--ink3);line-height:1.6;margin-bottom:8px}
+.error-cost{font-size:11.5px;color:var(--ink4);border-top:1px solid var(--cream2);padding-top:8px;font-style:italic}
+.cheat-sheet{background:var(--navy);color:#fff;border-radius:6px;padding:28px 32px;margin-top:24px}
+.cheat-title{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(160,190,240,0.7);margin-bottom:16px}
+.cheat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cheat-item{padding:12px 14px;background:rgba(255,255,255,0.07);border-radius:4px;border-left:2px solid #a0c0f4}
+.cheat-item-title{font-size:11.5px;font-weight:600;color:#fff;margin-bottom:4px;font-family:var(--serif)}
+.cheat-item-body{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.55}
+.companion{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--navy2);text-decoration:none;border:1px solid currentColor;padding:5px 12px;border-radius:3px;margin-top:4px;transition:all 0.15s}
+.companion:hover{background:var(--navy2);color:#fff}
+@media(max-width:700px){.ch-hero,.narrative{padding:40px 24px}.ch-title{font-size:30px}.field-row{grid-template-columns:1fr;gap:4px}.error-grid,.cheat-grid{grid-template-columns:1fr}.ch-progress{padding:12px 24px}}
+</style>
+</head>
+<body>
+<div class="ch-progress">
+  <span>Chapter 6 of 18</span>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <span>Statistical Foundations for Strategy Professionals</span>
+</div>
+<div class="ch-hero">
+  <div class="ch-eyebrow">Part 4 — Inference: From Sample to Truth · Chapter 6</div>
+  <h1 class="ch-title">Hypothesis Testing — <em>Is This Real or Just Noise?</em></h1>
+  <p class="ch-intro">Hypothesis testing is the formal framework for deciding whether observed patterns in data are real enough to act on. It is also one of the most widely misunderstood and misused tools in business analytics. This chapter makes you a harder, more discerning audience for significance claims.</p>
+  <div class="ch-meta">
+    <span>Terms covered: <em>19</em></span>
+    <span>Sections: <em>Framework · p-values · Error types · Power · Multiple testing · Pitfalls</em></span>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 6.1</div>
+  <h2 class="section-title">The hypothesis testing framework</h2>
+  <p class="section-intro">Hypothesis testing starts with a default assumption (null hypothesis) and asks whether the data provides strong enough evidence to reject it. It is a courtroom logic: the null hypothesis is innocent until proven guilty beyond a reasonable doubt — where "reasonable doubt" is defined by the chosen significance level. Understanding this framework is essential for interpreting experiment results, regression outputs, and any claim that something "reached significance."</p>
+
+  <div class="illustration">
+    <svg viewBox="0 0 760 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fff">
+      <!-- Null distribution -->
+      <path d="M60,130 Q150,130 200,40 Q250,130 360,130" fill="#e0e8f8" stroke="#1a3a7a" stroke-width="1.5"/>
+      <!-- Critical region right tail -->
+      <path d="M310,90 Q330,120 360,130 L360,130" fill="rgba(196,64,13,0.2)" stroke="#c4400d" stroke-width="1" stroke-dasharray="3,2"/>
+      <!-- Critical region left tail (two-sided) -->
+      <path d="M60,130 Q90,120 110,90" fill="rgba(196,64,13,0.2)" stroke="#c4400d" stroke-width="1" stroke-dasharray="3,2"/>
+
+      <!-- Mean marker -->
+      <line x1="210" y1="36" x2="210" y2="133" stroke="#1a3a7a" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <text x="210" y="148" font-family="'JetBrains Mono',monospace" font-size="9" fill="#1a3a7a" text-anchor="middle">H₀ mean</text>
+
+      <!-- Critical value marker -->
+      <line x1="310" y1="88" x2="310" y2="133" stroke="#c4400d" stroke-width="1.2"/>
+      <text x="310" y="148" font-family="'JetBrains Mono',monospace" font-size="8.5" fill="#c4400d" text-anchor="middle">critical</text>
+      <text x="310" y="158" font-family="'JetBrains Mono',monospace" font-size="8.5" fill="#c4400d" text-anchor="middle">value (z*)</text>
+
+      <!-- p-value arrow -->
+      <line x1="340" y1="110" x2="355" y2="128" stroke="#c4400d" stroke-width="1" marker-end="url(#arr)"/>
+      <text x="348" y="104" font-family="'JetBrains Mono',monospace" font-size="8" fill="#c4400d" text-anchor="middle">p-value</text>
+      <text x="348" y="113" font-family="'JetBrains Mono',monospace" font-size="8" fill="#c4400d" text-anchor="middle">= red area</text>
+
+      <!-- Observed test stat -->
+      <line x1="330" y1="70" x2="330" y2="133" stroke="#2d7a4a" stroke-width="2"/>
+      <text x="330" y="148" font-family="'JetBrains Mono',monospace" font-size="9" fill="#2d7a4a" text-anchor="middle">observed</text>
+
+      <!-- Labels -->
+      <text x="150" y="85" font-family="'Source Serif 4',serif" font-size="11" fill="#3d3830" text-anchor="middle" font-style="italic">Null distribution</text>
+      <text x="150" y="100" font-family="'JetBrains Mono',monospace" font-size="9" fill="#b0a898" text-anchor="middle">(expected under H₀)</text>
+
+      <!-- Right side explanation -->
+      <text x="500" y="50" font-family="'JetBrains Mono',monospace" font-size="9" fill="#b0a898" letter-spacing="0.05em">IF p-value &lt; α: reject H₀</text>
+      <text x="500" y="68" font-family="'JetBrains Mono',monospace" font-size="9" fill="#b0a898" letter-spacing="0.05em">IF p-value ≥ α: fail to reject H₀</text>
+      <text x="500" y="100" font-family="'Source Serif 4',serif" font-size="10" fill="#c4440d" font-style="italic">Low p-value = observed result</text>
+      <text x="500" y="113" font-family="'Source Serif 4',serif" font-size="10" fill="#c4440d" font-style="italic">is surprising under H₀</text>
+
+      <defs><marker id="arr" markerWidth="5" markerHeight="3" refX="5" refY="1.5" orient="auto"><polygon points="0 0,5 1.5,0 3" fill="#c4400d"/></marker></defs>
+    </svg>
+    <div class="illustration-caption">The null distribution shows what test statistics look like when H₀ is true. The p-value is the probability of seeing a result at least as extreme as the observed one — the red shaded area. If the observed statistic falls in the critical region, we reject H₀.</div>
+  </div>
+
+  <div class="term-block" id="t-null-h">
+    <div class="term-header" onclick="toggleTerm('t-null-h')">
+      <div style="flex:1"><div class="term-name">Null Hypothesis (H₀)</div><div class="term-short">The default claim — no effect, no difference, no relationship — which the data must provide strong evidence against before it is rejected.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you what the test treats as the status quo. The burden of proof lies entirely with the data — the null is assumed true unless the evidence against it is overwhelming. In business terms: "this change did not improve the metric" is the null. The test asks if the data provides enough evidence to reject that default assumption and declare the change effective.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">H₀: μ₁ = μ₂  (or: effect = 0, or: β = 0)</span><span class="formula-plain">The null specifies the value of the parameter under "no effect." Common forms: means are equal, proportion difference is zero, regression coefficient is zero, correlation is zero. The null should always be defined before seeing the data.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In A/B test setup, regression output (each coefficient has an associated H₀: β = 0), chi-squared tests, and any formal statistical test report.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the null hypothesis reflects the real business question. The null of "no difference in means" may not be the same as "not worth rolling out" — a tiny positive effect that passes significance testing may still be too small to justify the cost of implementation.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A streaming service tests a new recommendation algorithm. H₀: daily watch time per user is the same under both algorithms. After one week, the new algorithm shows +4.2 minutes per user per day (p = 0.003). The test rejects the null — but the team also checks whether 4 extra minutes justifies the engineering cost and latency increase of the new algorithm.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-pvalue">
+    <div class="term-header" onclick="toggleTerm('t-pvalue')">
+      <div style="flex:1"><div class="term-name">P-Value</div><div class="term-short">The probability of observing results at least as extreme as those obtained, assuming the null hypothesis is true.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how surprising the observed data is under the assumption that nothing is happening. A small p-value means "if the null were true, this result or something more extreme would occur very rarely" — which is evidence against the null. It does not tell you the probability that the null is true, the probability that the alternative is true, or how large the effect is.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">p-value = P(data as extreme or more | H₀ true)</span><span class="formula-plain">Compute the test statistic from the data. Ask: if H₀ were true, what fraction of possible samples would produce this extreme or a more extreme test statistic? That fraction is the p-value. Decision: reject H₀ if p-value &lt; α (significance level). Never: accept H₀ if p-value &gt; α — you merely "fail to reject."</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In A/B test dashboards, regression outputs (p-values on each coefficient), model comparison tests, and any table reporting statistical test results.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask for the effect size alongside the p-value. With a large enough sample, any non-zero effect becomes statistically significant regardless of practical importance. A p-value of 0.0001 on a 0.02% conversion lift is statistically significant and commercially irrelevant.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A retailer with 500,000 weekly website visitors tests a button color change. With this traffic volume, even a 0.01% conversion difference produces p &lt; 0.001. The result is "highly significant" by any conventional threshold — but 0.01% lift on 500,000 visitors generates ~50 extra transactions per week. Whether that justifies even a half-day of engineering work requires calculating expected revenue, not reading a p-value.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-significance-level">
+    <div class="term-header" onclick="toggleTerm('t-significance-level')">
+      <div style="flex:1"><div class="term-name">Significance Level (α)</div><div class="term-short">The pre-chosen threshold for rejecting the null hypothesis — the acceptable false positive rate.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how strict the test is about false alarms. Setting α = 0.05 means: if the null is true, I will incorrectly reject it 5% of the time — and I am comfortable accepting that error rate. Lower α (0.01, 0.001) means requiring stronger evidence before declaring a result, at the cost of missing more real effects.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Reject H₀ ⟺ p-value &lt; α</span><span class="formula-plain">α must be set before the analysis. Conventional defaults: α = 0.05 (general business), α = 0.01 (higher stakes), α = 0.001 (safety-critical). The choice should reflect the cost of a false positive — launching a bad feature, publishing wrong findings, making a false medical claim. Never adjust α after seeing the data.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In experiment pre-registration, test design, methodology sections, and any analysis where a binary "significant/not significant" decision is made.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether α was set before the analysis. Choosing α = 0.05 and finding p = 0.04 is different from planning to use α = 0.01, finding p = 0.04, then switching to α = 0.05 to achieve significance. The latter inflates false positive rates.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A medical device company sets α = 0.001 for a clinical trial — much stricter than the default 0.05 used for a marketing campaign test. The asymmetry is deliberate: a false positive in device safety leads to patient harm; a false positive in marketing wastes budget. Business context should always determine significance level, not convention.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 6.2</div>
+  <h2 class="section-title">Type I and Type II errors — the fundamental tradeoff</h2>
+  <p class="section-intro">Every hypothesis test can be wrong in two different ways. Understanding which type of error is more costly for a given business decision is the key to setting up tests correctly — and to interpreting their results appropriately.</p>
+
+  <div class="error-grid">
+    <div class="error-card type1">
+      <div class="error-label" style="color:#c4400d">Type I Error — False Positive</div>
+      <div class="error-type">Rejecting H₀ when it is true</div>
+      <div class="error-def">Declaring an effect exists when it doesn't. Probability = α (the significance level you chose). You controlled this when setting up the test.</div>
+      <div class="error-cost">Business cost: rolling out a feature that does nothing. Wasted engineering, distracted roadmap, misplaced confidence.</div>
+    </div>
+    <div class="error-card type2">
+      <div class="error-label" style="color:#1a3a7a">Type II Error — False Negative</div>
+      <div class="error-type">Failing to reject H₀ when it is false</div>
+      <div class="error-def">Missing a real effect. Probability = β (related to power: 1−β = power). Reducing Type II error requires larger samples or higher α.</div>
+      <div class="error-cost">Business cost: failing to ship a genuinely better feature. Lost competitive improvement, missed opportunity.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-insight">
+    <strong>The error tradeoff in practice</strong>
+    Reducing α (stricter threshold) reduces Type I errors but increases Type II errors — you miss more real effects. Increasing sample size reduces both error types simultaneously — the only free lunch in hypothesis testing. For decisions where false positives are cheap and false negatives are costly (e.g., testing a new onboarding flow), relax α or increase power. For decisions where false positives are costly (e.g., medical claims, safety decisions), tighten α.
+  </div>
+
+  <div class="term-block" id="t-type1">
+    <div class="term-header" onclick="toggleTerm('t-type1')">
+      <div style="flex:1"><div class="term-name">Type I Error (False Positive)</div><div class="term-short">Rejecting the null hypothesis when it is actually true — declaring a win when nothing changed.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the test produced a false alarm. At α = 0.05, this happens 5% of the time even when the null is true — meaning if you run 20 independent tests on truly ineffective changes, you expect one false positive purely by chance. This is not a flaw in the test — it is a direct consequence of the acceptable error rate you chose.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">P(Type I Error) = α</span><span class="formula-plain">You directly control Type I error rate via the significance level. But control applies on average, not to any specific test. The test cannot tell you whether this particular significant result is a true positive or the 1-in-20 false alarm.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In discussions about what false positive rate is acceptable for the decision at hand, and in retrospective analysis when "significant" A/B test winners fail to produce expected gains post-launch.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what the business cost is if this statistically significant result is actually a Type I error. A significant result that would cost millions to implement should require stronger evidence (lower α) than a result requiring only an afternoon of engineering work.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A fintech product team runs 30 A/B tests per quarter at α = 0.05 on genuinely null changes (no real effects). They expect approximately 1.5 false positives per quarter — tests that will appear significant purely by chance. Without pre-registration and holdback validation, these false wins enter the product roadmap and fail to replicate post-launch.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-type2">
+    <div class="term-header" onclick="toggleTerm('t-type2')">
+      <div style="flex:1"><div class="term-name">Type II Error (False Negative)</div><div class="term-short">Failing to reject the null hypothesis when it is false — missing a real effect.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the test was not sensitive enough to detect a real effect — the improvement was genuine, but the data was too noisy or too small to confirm it. The most common cause is running tests with insufficient sample sizes. A failed test that was underpowered cannot be interpreted as evidence the null is true — it merely tells you the test was too weak to detect the effect.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">P(Type II Error) = β = 1 − Power</span><span class="formula-plain">You control β through sample size and effect size specification. To reduce Type II errors: collect more data, lower the noise (better measurement, more homogeneous population), or accept detecting only larger effects. Underpowered tests (β &gt; 0.2, power &lt; 80%) should not be run — their non-significant results are nearly uninterpretable.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In sample size planning, power analysis, and post-test evaluation when results are non-significant — particularly when the team expected a positive effect but the data "didn't show it."</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the test was adequately powered before interpreting a null result as evidence of no effect. "We ran the test and found no significant improvement" is meaningless without knowing whether the test had 80% power to detect a commercially meaningful effect.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A SaaS company tests a new onboarding flow on 400 users per arm, expecting a 15% improvement in 30-day activation. The test returns p = 0.14 — not significant at α = 0.05. But power analysis shows the test was only 45% powered to detect a 15% improvement at this sample size. The result is ambiguous — not "the flow doesn't work" but "we can't tell with this much data."</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-power">
+    <div class="term-header" onclick="toggleTerm('t-power')">
+      <div style="flex:1"><div class="term-name">Statistical Power</div><div class="term-short">The probability of correctly detecting a real effect of a given size — the test's sensitivity.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you whether the test has a fair chance of finding what you're looking for. Low power means you will often miss genuine effects — not because they are not there, but because the data is too noisy or sparse to detect them reliably. The industry standard of 80% power means accepting a 20% chance of missing a real effect of the specified size.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Power = 1 − β = P(reject H₀ | H₁ true)</span><span class="formula-plain">Power increases with: larger sample size, larger true effect size, lower variability, and higher α. Required sample size: n ≈ (z_α/2 + z_β)² × 2σ² / δ² for two-sample mean comparison. Target ≥80% power (β ≤ 0.20). Use 90% power for high-stakes decisions.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In experiment pre-planning, sample size calculators, power analysis reports, and any discussion of whether an experiment was adequately designed before interpreting results.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what minimum detectable effect the experiment was designed to detect. A non-significant result from a test designed to detect 5% lift tells you almost nothing about whether there is a 2% lift — the test was never set up to see that.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A grocery retailer wants to detect a 2% uplift in basket size from a loyalty programme pilot. With weekly basket SD of £18 and α = 0.05, achieving 80% power requires approximately 3,140 customers per arm. Running the pilot on 500 per arm would have only 28% power — almost certain to miss a real 2% effect. The decision to run the pilot at all should depend on whether 6,280 customers can be enrolled.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-effect-size">
+    <div class="term-header" onclick="toggleTerm('t-effect-size')">
+      <div style="flex:1"><div class="term-name">Effect Size and Practical Significance</div><div class="term-short">The magnitude of a difference or relationship, independent of sample size — the "how much" beyond the "is it real."</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you whether a statistically significant result is also commercially meaningful. Statistical significance tells you the effect likely exists. Effect size tells you whether it is large enough to matter. With large samples, even trivially small effects reach significance — which is why every significant result should be accompanied by an effect size and a business value calculation.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Cohen's d = (μ₁ − μ₂) / s_pooled</span><span class="formula-plain">Small: d = 0.2. Medium: d = 0.5. Large: d = 0.8. For business purposes: state the effect in business units first (£ revenue change, % conversion lift, minutes saved) before any standardised metric. Business stakeholders care whether the effect justifies the cost — Cohen's d is a secondary diagnostic.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In experiment result write-ups, meta-analyses, power analyses, and any context where distinguishing statistical significance from business importance matters.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask for the effect in business units alongside the p-value. A p-value of 0.001 with an effect of £0.03 per customer per year says this test should not be on the roadmap, regardless of its statistical purity.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">An e-commerce platform's A/B test finds a button placement change that increases conversion rate by 0.08 percentage points (from 3.42% to 3.50%). With 800,000 monthly visitors, this is 640 extra conversions at £45 AOV = £28,800/month. Statistically significant (p &lt; 0.001) and commercially worthwhile (£346k/year with minimal maintenance cost). Effect size puts the significance in business context.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 6.3</div>
+  <h2 class="section-title">Multiple testing — the silent false positive factory</h2>
+  <p class="section-intro">The multiple testing problem is one of the most underappreciated sources of spurious findings in business analytics. Every additional test you run at α = 0.05 creates another 5% chance of a false positive from noise alone. Run 20 tests and you expect one false positive even if nothing is real. Run 100 tests and you expect five. This is not a failure of the tests — it is probability math.</p>
+
+  <div class="term-block" id="t-multiple-testing">
+    <div class="term-header" onclick="toggleTerm('t-multiple-testing')">
+      <div style="flex:1"><div class="term-name">Multiple Testing Problem</div><div class="term-short">The inflated false positive rate that results from testing many hypotheses simultaneously without adjusting for the number of comparisons.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you that the more things you test, the more "significant" results you will find by chance — even if all the null hypotheses are true. This is not cheating or bad faith; it is basic probability. With 20 independent tests at α = 0.05: P(at least one false positive) = 1 − 0.95²⁰ ≈ 64%. More than half the time, you will find at least one false positive regardless of whether anything real happened.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">P(≥1 false positive | m tests, all H₀ true) = 1 − (1−α)ᵐ</span><span class="formula-plain">For m = 20 tests, α = 0.05: probability ≈ 0.64. This is the Family-Wise Error Rate (FWER) — the probability of at least one false positive across the family of tests. Solutions: Bonferroni correction, Benjamini-Hochberg FDR control, or pre-registering only the primary test hypothesis.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In dashboards with many KPIs, A/B tests with many subgroup cuts, feature screening in ML, and any analytical context where many tests are run and results cherry-picked.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask how many tests were run to arrive at this significant result. If someone says "we found a significant lift in the 35–44 female urban segment" after testing 40 demographic subgroups, that result needs a Bonferroni correction or a replication before being trusted.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A subscription platform launches a feature and then checks impact across 8 user segments, 12 engagement metrics, and 3 time windows — 288 combinations in total. Reporting only the 15 combinations that show p &lt; 0.05 as "findings" is statistically indistinguishable from random noise. Expected false positives at α = 0.05: approximately 14. Almost all 15 "findings" are likely spurious.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-bonferroni">
+    <div class="term-header" onclick="toggleTerm('t-bonferroni')">
+      <div style="flex:1"><div class="term-name">Bonferroni Correction</div><div class="term-short">Dividing the significance threshold by the number of tests to control family-wise error rate — conservative but simple.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the test is being held to a stricter standard because many comparisons are being made. If you run 20 tests and want to keep overall false positive rate at 5%, each individual test needs a threshold of 0.05/20 = 0.0025. It is simple, transparent, and conservative — it may be too strict when tests are correlated, making it harder to detect real effects.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">α_adjusted = α / m  (where m = number of tests)</span><span class="formula-plain">Controls FWER at α. Conservative because it assumes tests are independent — correlated tests need less correction. For large m, consider FDR control (Benjamini-Hochberg) instead: it allows some false positives among discoveries rather than controlling the chance of any false positive, giving more power when many tests are run.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In subgroup analysis, multiple endpoint testing, feature selection, and any study design where pre-planned multiple comparisons are acknowledged and controlled.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the correction is appropriate for the decision. Bonferroni is often too conservative in exploratory screening — where discovering something is better than missing it. It is most appropriate when the cost of any single false positive is high.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A pharmaceutical company compares a new drug across 8 secondary endpoints alongside the primary endpoint. Using Bonferroni: each secondary test requires p &lt; 0.05/8 = 0.00625 for significance. A secondary endpoint showing p = 0.02 would be non-significant — the correction is aggressive precisely because each false secondary claim has real regulatory and reputational consequences.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-phacking">
+    <div class="term-header" onclick="toggleTerm('t-phacking')">
+      <div style="flex:1"><div class="term-name">P-Hacking and HARKing</div><div class="term-short">P-hacking: running analyses until significance is found. HARKing: Hypothesizing After Results are Known — both inflate false positive rates and undermine analytical credibility.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you that analytical degrees of freedom — choices about which data to include, which metric to use, which subgroup to focus on — can be exploited to find significance that would not survive pre-registration. Most p-hacking is not intentional fraud; it is motivated reasoning applied to flexible analytical choices. The result is an epidemic of findings that fail to replicate.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Prevention: pre-register the primary hypothesis, metric, and analysis approach before data collection. Separate exploratory analysis (generate hypotheses) from confirmatory analysis (test them). Pre-registered hypotheses are protected from multiple testing inflation. Post-hoc hypotheses need replication in fresh data before being acted on.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">When experiment reports lead with subgroup findings rather than primary metrics, when the methodology section mentions "we also tested" extensively, or when conclusions change after the initial result was not significant.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the hypothesis was registered before the data was collected. If the most prominent finding in an A/B test report is a subgroup or secondary metric rather than the pre-specified primary outcome, treat it as an exploratory signal requiring replication.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A product team runs an A/B test on a checkout redesign. The primary metric (conversion rate) shows no significant improvement. The team then examines 15 subgroups and finds that mobile users aged 25–34 show significant improvement (p = 0.041). This subgroup analysis was not pre-specified — with 15 subgroups tested, approximately one false positive is expected. The finding should be treated as a hypothesis for a dedicated future test, not as evidence to justify a redesign.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Chapter Summary</div>
+  <h2 class="section-title">Chapter 6 cheat sheet</h2>
+  <div class="cheat-sheet">
+    <div class="cheat-title">Key principles from this chapter</div>
+    <div class="cheat-grid">
+      <div class="cheat-item"><div class="cheat-item-title">p-value ≠ probability of null being true</div><div class="cheat-item-body">p-value = P(data this extreme | H₀ true). Not P(H₀ true | this data). This distinction matters for every significance claim.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Statistical ≠ practical significance</div><div class="cheat-item-body">With large samples, trivially small effects become significant. Always report effect size in business units alongside p-values.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Non-significant ≠ no effect</div><div class="cheat-item-body">Failing to reject H₀ only means lack of evidence — not evidence of lack. An underpowered test is nearly uninterpretable.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Multiple tests require correction</div><div class="cheat-item-body">Every test at α=0.05 has 5% false positive rate. 20 tests = ~64% chance of at least one false positive. Apply Bonferroni or FDR control.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Pre-register primary hypotheses</div><div class="cheat-item-body">Pre-specified primary tests are protected from multiple testing inflation. Post-hoc subgroup findings are hypotheses requiring replication.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Power ≥ 80% before running tests</div><div class="cheat-item-body">Calculate required sample size before collecting data. A test without 80% power to detect your minimum detectable effect probably shouldn't be run.</div></div>
+    </div>
+  </div>
+  <div style="margin-top:28px">
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:12px">Chapter 7 applies the hypothesis testing framework to specific statistical tests — t-tests, chi-squared, ANOVA, and their non-parametric alternatives. Chapter 14 (Experimentation) builds on all of Chapter 6 when designing and analyzing A/B tests in business settings.</p>
+    <a href="../ml-for-strategy-v2/ML_Strategy_Playbook.html" class="companion">↗ ML Strategy Playbook — companion reference</a>
+  </div>
+</div>
+
+<script>
+function toggleTerm(id){const b=document.getElementById(id);const o=b.classList.contains('open');b.classList.toggle('open',!o);b.querySelector('.term-toggle').textContent=o?'expand':'collapse';}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const all=document.querySelectorAll('.term-block');if(e.key==='e'){all.forEach(b=>{b.classList.add('open');b.querySelector('.term-toggle').textContent='collapse';})}if(e.key==='c'){all.forEach(b=>{b.classList.remove('open');b.querySelector('.term-toggle').textContent='expand';})}});
+</script>
+</body>
+</html>

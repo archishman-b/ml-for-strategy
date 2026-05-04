@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 18 — Model Governance, Explainability & Fairness | Stats Foundations for Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;
+  --cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;
+  --accent:#8b2500;--accent2:#c4440d;
+  --charcoal:#2a2a2a;--charcoal2:#5a5a5a;--charcoal3:#ebebeb;
+  --gold:#7a5a00;--gold2:#c49a00;--gold3:#fdf5dc;
+  --blue2:#2d5f8a;--blue3:#ddeaf7;
+  --green2:#2d7a4a;--green3:#ddf0e5;
+  --border:#d4cdc4;
+  --serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);--shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+@media(prefers-color-scheme:dark){
+  :root{--ink:#f0ece4;--ink2:#d8d0c4;--ink3:#a09488;--ink4:#6a6058;--cream:#181612;--cream2:#201e1a;--cream3:#2a2620;--accent2:#e8784a;--charcoal2:#909090;--charcoal3:#1e1c18;--gold2:#e4c050;--gold3:#221e10;--blue3:#1a2a3a;--green3:#1a2a20;--border:#38342e;}
+  body{background:#141210}.narrative{background:#141210;border-bottom-color:#2a2620}
+  .term-block{background:#1e1c18}.term-header{background:#1e1c18}.term-body{border-top-color:#2a2620}.field-row{border-bottom-color:#2a2620}.field-value.formula{background:#2a2620}
+  .callout-insight{background:#221e10;border-color:#e4c050}.callout-warning{background:#221410;border-color:#e8784a}.callout-rule{background:#1a2a3a;border-color:#5a9fdf}.callout-green{background:#1a2a20;border-color:#5aba7a}
+  .ch-progress{background:#1e1c18;border-bottom-color:#38342e}.progress-bar{background:#2a2620}.progress-fill{background:#909090}
+  .ch-hero{background:#141414}.cheat-sheet{background:#141414}.cheat-item{background:rgba(255,255,255,0.06);border-left-color:#909090}
+  .pillar-card{background:#1e1c18;border-color:#38342e}
+  .companion{color:#909090}.companion:hover{background:#909090;color:#141210}
+  p{color:var(--ink2)}.section-intro{color:var(--ink3);border-left-color:#909090}
+  .term-toggle{background:#2a2620;border-color:#38342e;color:var(--ink3)}.term-block.open .term-toggle{background:#f0ece4;color:#141210;border-color:#f0ece4}
+  .term-name{color:var(--ink)}.term-short{color:var(--ink3)}.section-title{color:var(--ink)}.section-label{color:#909090}.field-label{color:var(--ink4)}.field-value{color:var(--ink2)}
+  .field-value.formula .formula-math{color:#909090}.field-value.formula .formula-plain{color:var(--ink3)}.redflag{color:#e8784a}
+  .cheat-title{color:rgba(200,200,200,0.7)}.cheat-item-title{color:#f0ece4}.cheat-item-body{color:rgba(240,236,228,0.5)}
+  .ch-eyebrow{color:rgba(200,200,200,0.7)}.ch-title{color:#f4f0e8}.ch-intro{color:rgba(240,236,228,0.85)}.ch-meta{color:rgba(240,236,228,0.58)}.ch-meta span em{color:rgba(240,236,228,0.88)}.ch-progress span{color:#a09488}
+  .pillar-name{color:var(--ink)}.pillar-def{color:var(--ink3)}
+}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.ch-hero{background:var(--charcoal);color:var(--cream);padding:72px 72px 56px;position:relative;overflow:hidden}
+.ch-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(90,90,90,0.3) 0%,transparent 60%);pointer-events:none}
+.ch-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(200,200,200,0.7);margin-bottom:16px}
+.ch-title{font-family:var(--display);font-size:44px;font-weight:700;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin-bottom:20px;max-width:700px}
+.ch-title em{color:#d8d8d8;font-style:normal}
+.ch-intro{font-size:16px;color:rgba(255,255,255,0.75);max-width:600px;line-height:1.7;margin-bottom:36px}
+.ch-meta{display:flex;flex-wrap:wrap;gap:24px;font-size:10px;color:rgba(255,255,255,0.42);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono)}
+.ch-meta span em{color:rgba(255,255,255,0.72);font-style:normal}
+.ch-progress{display:flex;align-items:center;gap:12px;padding:16px 72px;background:var(--cream2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:0.05em}
+.progress-bar{flex:1;height:3px;background:var(--cream3);border-radius:2px;max-width:200px}
+.progress-fill{height:100%;background:var(--charcoal2);border-radius:2px;width:100%}
+.narrative{padding:56px 72px 48px;border-bottom:1px solid var(--border);max-width:960px}
+.narrative:last-child{border-bottom:none}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--charcoal2);margin-bottom:8px;font-weight:500}
+.section-title{font-family:var(--display);font-size:26px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:8px;letter-spacing:-0.01em}
+.section-intro{font-size:14.5px;color:var(--ink3);line-height:1.75;max-width:680px;margin-bottom:36px;padding-left:16px;border-left:3px solid var(--charcoal3)}
+.term-block{background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s}
+.term-block:hover{box-shadow:var(--shadow-lg)}
+.term-header{display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;cursor:pointer;user-select:none}
+.term-name{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);line-height:1.25;flex:1}
+.term-short{font-size:12.5px;color:var(--ink3);line-height:1.5;flex:1;font-style:italic;margin-top:3px}
+.term-toggle{font-family:var(--mono);font-size:11px;color:var(--ink4);border:1px solid var(--border);border-radius:3px;padding:2px 8px;flex-shrink:0;margin-top:2px;transition:all 0.15s;background:var(--cream)}
+.term-block.open .term-toggle{background:var(--charcoal);color:#fff;border-color:var(--charcoal)}
+.term-body{display:none;padding:0 24px 20px;border-top:1px solid var(--cream2)}
+.term-block.open .term-body{display:block}
+.field-row{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--cream3);align-items:baseline}
+.field-row:last-child{border-bottom:none}
+.field-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);font-weight:500;padding-top:1px}
+.field-value{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.field-value.formula{font-family:var(--mono);font-size:12.5px;background:var(--cream2);padding:10px 14px;border-radius:3px;color:var(--ink);line-height:1.65}
+.field-value.formula .formula-math{color:var(--charcoal2);font-weight:500;display:block;margin-bottom:4px;font-size:13px}
+.field-value.formula .formula-plain{color:var(--ink3);font-family:var(--serif);font-size:12.5px;font-style:italic}
+.redflag{color:var(--accent);font-size:13px}.redflag::before{content:'⚑ ';font-style:normal}
+.callout{padding:16px 20px;border-radius:4px;margin:20px 0;border-left:3px solid;font-size:13.5px;line-height:1.65}
+.callout-insight{background:var(--gold3);border-color:var(--gold2);color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:var(--blue3);border-color:var(--blue2);color:var(--ink2)}
+.callout-green{background:var(--green3);border-color:var(--green2);color:var(--ink2)}
+.callout strong{font-weight:600;display:block;margin-bottom:5px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.65}
+.pillar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}
+.pillar-card{background:#fff;border:1px solid var(--border);border-radius:6px;padding:16px 18px;box-shadow:var(--shadow);border-top:3px solid var(--charcoal)}
+.pillar-num{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--charcoal2);margin-bottom:8px;opacity:0.4}
+.pillar-name{font-family:var(--display);font-size:15px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.pillar-def{font-size:12.5px;color:var(--ink3);line-height:1.55}
+.final-callout{background:var(--charcoal);color:#fff;border-radius:6px;padding:32px 36px;margin-top:32px}
+.final-callout h3{font-family:var(--display);font-size:22px;font-weight:600;color:#fff;margin-bottom:16px;letter-spacing:-0.01em}
+.final-callout p{color:rgba(255,255,255,0.72);font-size:14px;line-height:1.75;margin-bottom:16px}
+.final-callout p:last-child{margin-bottom:0}
+.cheat-sheet{background:var(--charcoal);color:#fff;border-radius:6px;padding:28px 32px;margin-top:24px}
+.cheat-title{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(200,200,200,0.7);margin-bottom:16px}
+.cheat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cheat-item{padding:12px 14px;background:rgba(255,255,255,0.07);border-radius:4px;border-left:2px solid #d0d0d0}
+.cheat-item-title{font-size:11.5px;font-weight:600;color:#fff;margin-bottom:4px;font-family:var(--serif)}
+.cheat-item-body{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.55}
+.companion{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--charcoal2);text-decoration:none;border:1px solid currentColor;padding:5px 12px;border-radius:3px;margin-top:4px;transition:all 0.15s}
+.companion:hover{background:var(--charcoal2);color:#fff}
+@media(max-width:700px){.ch-hero,.narrative{padding:40px 24px}.ch-title{font-size:30px}.field-row{grid-template-columns:1fr;gap:4px}.pillar-grid,.cheat-grid{grid-template-columns:1fr}.ch-progress{padding:12px 24px}}
+</style>
+</head>
+<body>
+<div class="ch-progress">
+  <span>Chapter 18 of 18</span>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <span>Statistical Foundations for Strategy Professionals</span>
+</div>
+<div class="ch-hero">
+  <div class="ch-eyebrow">Part 10 — Responsible Analytics · Chapter 18 · Final Chapter</div>
+  <h1 class="ch-title">Model Governance, Explainability, and <em>Fairness</em></h1>
+  <p class="ch-intro">A statistically sound model deployed irresponsibly is worse than no model at all. This final chapter covers the institutional, regulatory, and ethical framework that transforms an analytically valid model into one that is trustworthy — and deployable.</p>
+  <div class="ch-meta">
+    <span>Terms covered: <em>18</em></span>
+    <span>Sections: <em>Model risk · Model cards · SHAP · Interpretability · Fairness metrics · Governance lifecycle</em></span>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 18.1</div>
+  <h2 class="section-title">The three pillars of responsible model deployment</h2>
+  <p class="section-intro">A model can be technically excellent and still fail on any one of three dimensions that determine whether it should be deployed and trusted. Governance ensures accountability and control. Explainability enables human oversight and contestation of decisions. Fairness ensures the model does not systematically harm groups in ways that are unjust or illegal.</p>
+
+  <div class="pillar-grid">
+    <div class="pillar-card">
+      <div class="pillar-num">01</div>
+      <div class="pillar-name">Governance</div>
+      <div class="pillar-def">Who owns the model, who validates it, who can change it, and how decisions are documented. Ensures accountability throughout the model lifecycle — from development through deprecation.</div>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-num">02</div>
+      <div class="pillar-name">Explainability</div>
+      <div class="pillar-def">Whether model predictions can be understood by the humans who act on them. Ranges from global feature importance to individual prediction explanations. Required for regulatory compliance and customer contestation rights.</div>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-num">03</div>
+      <div class="pillar-name">Fairness</div>
+      <div class="pillar-def">Whether the model treats different demographic groups equitably. Fairness cannot be fully formalised — different definitions are mathematically incompatible. The business must choose which definition reflects its values and obligations.</div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-model-risk">
+    <div class="term-header" onclick="toggleTerm('t-model-risk')">
+      <div style="flex:1"><div class="term-name">Model Risk</div><div class="term-short">The risk that a model produces incorrect outputs — due to errors in methodology, data, implementation, or inappropriate use — and those outputs drive wrong decisions.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you models can fail in ways that are not obvious until damage is done. Model risk is distinct from ordinary business risk: it is the additional risk created specifically by the decision to use a model rather than human judgment or simpler rules. Regulators in banking (SR 11-7), insurance, and healthcare have established formal model risk management frameworks precisely because model failures have caused systemic harm.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Model risk = P(model error) × impact of model error × breadth of model's use. Key controls: independent model validation by a team separate from the developer, periodic performance monitoring, tiering by materiality (Tier 1 models require more rigorous governance than Tier 3), and documented model inventory with owner accountability.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In financial services model risk management frameworks (SR 11-7, SS1/23), regulatory model validation requirements, internal audit reviews of analytical models, and any organisation deploying models at scale for material decisions.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the model has been independently validated and whether validation is periodic or one-time. A model validated at deployment but never reviewed after 3 years of environmental change carries material undocumented model risk.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A mortgage lender's automated valuation model (AVM) was validated in 2019 with excellent performance. Through the 2020–2022 housing market disruption, the model's accuracy deteriorated substantially — but annual performance review cycles did not catch the degradation until a regulatory review flagged systematic undervaluation in certain geographies, triggering a £12M remediation programme.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-model-card">
+    <div class="term-header" onclick="toggleTerm('t-model-card')">
+      <div style="flex:1"><div class="term-name">Model Card</div><div class="term-short">A standardised documentation artefact that describes a model's intended use, performance characteristics, limitations, and fairness evaluations.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you everything a user of the model's predictions needs to know to deploy it appropriately and understand its limitations. A model card is not a technical specification — it is a communication document for business stakeholders, compliance teams, and auditors. It makes implicit assumptions explicit and creates an accountability record.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Standard model card includes: model type and purpose, intended use cases (and explicitly, out-of-scope uses), training data description, performance metrics on multiple evaluation sets, performance by demographic subgroup, known failure modes and limitations, fairness evaluation methodology, and version/update history. Should be updated whenever the model is retrained or significantly changed.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In AI governance frameworks, regulatory submissions, model deployment approvals, and internal model inventory documentation. Required under EU AI Act for high-risk AI systems.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the model card documents out-of-scope use cases explicitly. The most dangerous deployments are models used for purposes their developers never anticipated — model cards that enumerate what the model is not appropriate for create a documented barrier to inappropriate use.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A fintech lender's credit score model card explicitly states: "Not validated for applicants with fewer than 6 months of income data; not appropriate for use in markets outside the UK; performance degrades for applicants over 70 years of age (training sample was less than 3% over-70 — see Appendix C)." These limitations are as important as the performance metrics for safe deployment.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 18.2</div>
+  <h2 class="section-title">Explainability — SHAP, interpretability, and reason codes</h2>
+  <p class="section-intro">Explainability is both a regulatory requirement and a practical necessity. Customers have a right to understand why they were declined. Risk managers need to challenge model outputs. Regulators need to audit decisions. SHAP values provide the most principled approach to model explanation — grounded in cooperative game theory and applicable to any model.</p>
+
+  <div class="term-block" id="t-shap">
+    <div class="term-header" onclick="toggleTerm('t-shap')">
+      <div style="flex:1"><div class="term-name">SHAP Values</div><div class="term-short">SHapley Additive exPlanations — a game-theoretic method that fairly attributes each prediction to each input feature, providing consistent local and global explanations for any model.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you each feature's contribution to a specific prediction, relative to a baseline (average prediction). If the model predicts 34% default probability but the average is 8%, SHAP decomposes that +26% difference into the contribution of each feature — income reduced probability by −12%, employment status increased it by +18%, prior defaults increased it by +20%. The sum of all SHAP values equals the total deviation from the baseline.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">φⱼ = Σ_{S⊆F\{j}} [|S|!(|F|−|S|−1)!/|F|!] × [f(S∪{j})−f(S)]</span><span class="formula-plain">Shapley value for feature j: the weighted average marginal contribution of feature j across all possible orderings of features. Key properties: efficiency (SHAP values sum to prediction), symmetry (identical features get equal attribution), and consistency (if a feature's impact increases, its SHAP value does not decrease). For tree models, TreeSHAP computes exact Shapley values efficiently.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In model explanation dashboards, adverse action notices (for regulatory compliance), model debugging, global feature importance reports, and any deployment where prediction explanations are required.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether permutation importance or SHAP was used for feature importance. SHAP values are individually additive and theoretically grounded. Permutation importance gives global averages but does not decompose individual predictions. For regulatory explanation purposes, SHAP is typically required.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A lender's adverse action system generates SHAP-based reason codes for declined applicants: "Your application was primarily affected by: (1) 2 missed payments in the past 24 months (+18% impact on probability), (2) High credit utilisation (+14% impact), (3) Limited credit history (+8% impact)." These SHAP-derived reason codes satisfy ECOA/Regulation B requirements for adverse action notices while providing actionable information to the declined applicant.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-pdp">
+    <div class="term-header" onclick="toggleTerm('t-pdp')">
+      <div style="flex:1"><div class="term-name">PDP and ICE Plots</div><div class="term-short">Partial Dependence Plots show the average effect of a feature across the population; Individual Conditional Expectation plots show the effect for each individual.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how the model's prediction responds to changes in a single feature across the range of observed values. A PDP showing a monotonically increasing risk score with age is intuitive for a health model; a non-monotonic shape revealing an unexpected dip at age 50 is a model quality concern that warrants investigation. ICE plots reveal whether the relationship is the same for all individuals or varies substantially across subgroups.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">PDP: for feature j, sweep it across its range while marginalising (averaging) over all other features. The y-axis shows average predicted outcome at each value of feature j. ICE: show individual prediction paths for each observation rather than the average. If ICE lines cross (heterogeneous effects), the PDP average is misleading — subgroup analysis is needed.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In model validation reviews, regulatory examinations of model behavior, and any model review process where the direction and shape of feature effects must be validated against domain expectations.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether ICE plots were inspected alongside PDPs. If ICE lines cross substantially, the PDP average is masking heterogeneous effects — the model is responding differently to the same feature depending on the values of other features, which may signal interactions the business needs to understand.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A vehicle insurer's claim frequency model shows a non-monotonic PDP for vehicle_age — risk increases from years 0–3, drops from 3–8, then rises again beyond 8 years. Domain experts expect a monotonic increase. Investigation reveals the model has learned a confound: cars aged 3–8 are primarily company cars with professional drivers, not a genuine age effect. A model respecification with driver_type controlled resolves the anomaly.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 18.3</div>
+  <h2 class="section-title">Fairness — definitions, tradeoffs, and measurement</h2>
+  <p class="section-intro">No single definition of fairness can be satisfied simultaneously — the Impossibility Theorem proves this mathematically. Every fairness definition represents a moral choice about what harm to prioritise avoiding. Business must make that choice explicitly, not by default, and must be prepared to defend it to regulators, customers, and the public.</p>
+
+  <div class="callout callout-warning">
+    <strong>The fairness impossibility result</strong>
+    Chouldechova (2017) and Kleinberg et al. (2017) independently proved that calibration, equalised false positive rates, and equalised false negative rates cannot all hold simultaneously when base rates differ between groups. A model calibrated for all groups will necessarily have unequal error rates across those groups, and vice versa. There is no technically neutral choice — every fairness definition makes a value judgement about which error is more acceptable.
+  </div>
+
+  <div class="term-block" id="t-demographic-parity">
+    <div class="term-header" onclick="toggleTerm('t-demographic-parity')">
+      <div style="flex:1"><div class="term-name">Demographic Parity</div><div class="term-short">Equal positive prediction rates across groups — regardless of actual outcome rates.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the model approves, scores positively, or recommends equal proportions from each demographic group. The moral basis: differences in outcome rates between groups reflect historical or structural disadvantages, not genuine differences in merit or risk. Demographic parity directly addresses disparate impact.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">P(ŷ=1|Group A) = P(ŷ=1|Group B)</span><span class="formula-plain">Also called statistical parity. Conflict: if Group A has genuinely higher risk (different historical outcomes), demographic parity forces false positives in the lower-risk group or false negatives in the higher-risk group — depending on the direction of the constraint. Cannot be achieved simultaneously with calibration when base rates differ.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In hiring algorithm audits, lending disparate impact analyses, and any model deployed in contexts with anti-discrimination law (Equal Credit Opportunity Act, Fair Housing Act, Employment Equality Act).</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether demographic parity was achieved by suppressing legitimate predictors or by post-processing predictions. Suppressing age in an age-related health risk model may satisfy demographic parity but produce miscalibrated scores that harm the population the regulation intended to protect.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A mortgage lender's model approves 71% of White applicants and 48% of Black applicants. Disparate impact ratio: 48/71 = 0.68 — below the 4/5 (0.80) rule of thumb used in US fair lending. The lender must either demonstrate that the factors driving the disparity are genuine business necessity predictors or adjust the model to reduce the disparity. The choice is a legal and values question, not a statistical one.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-equal-opportunity">
+    <div class="term-header" onclick="toggleTerm('t-equal-opportunity')">
+      <div style="flex:1"><div class="term-name">Equal Opportunity</div><div class="term-short">Equal true positive rates across groups — among those who would have benefited from a positive outcome, all groups get equal access.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you that qualified candidates from all groups are equally likely to be identified as qualified. Among creditworthy applicants, all groups have equal probability of being approved. Among genuinely recidivism-low prisoners, all groups have equal probability of being predicted low-risk. Equal opportunity is the standard used in Hardt et al. (2016) and is the most commonly used formal fairness definition in practice.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">P(ŷ=1|Y=1, Group A) = P(ŷ=1|Y=1, Group B)</span><span class="formula-plain">Equalised TPR (recall) across groups. Operationally: set group-specific classification thresholds that equate TPR while allowing different FPR across groups. Does not require equal positive prediction rates — allows different base rates. Conflicts with predictive parity (calibration) when base rates differ.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In hiring model audits (among qualified candidates, equal selection rates across gender/race), recidivism prediction audits (among genuinely low-risk individuals, equal release recommendations across race), and credit model fairness evaluations.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask how "qualified" or "positive outcome" was defined. Equal opportunity depends on the ground truth label — if historical labels were themselves biased (hiring rates reflected past discrimination), requiring equal TPR against biased labels preserves rather than corrects the discrimination.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A lender assesses their credit model: among applicants who were actually good credit risks (Y=1), approval rates are 92% for Group A and 74% for Group B — a 18-point TPR gap. Equal opportunity requires closing this gap. The team post-processes the model with group-specific thresholds: 0.62 for Group A and 0.45 for Group B achieve TPR parity at 91%, at the cost of a small increase in FPR for Group B.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-model-lifecycle">
+    <div class="term-header" onclick="toggleTerm('t-model-lifecycle')">
+      <div style="flex:1"><div class="term-name">Model Governance Lifecycle</div><div class="term-short">The end-to-end institutional process covering model development, validation, approval, deployment, monitoring, and retirement.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you model risk management is not a one-time validation event but an ongoing institutional process. A model approved in 2021 and forgotten in 2024 accumulates unacknowledged model risk from data drift, concept drift, changes in the regulatory environment, and changes in the population being modeled.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Lifecycle stages: (1) Scoping — define model purpose, owner, tier, and constraints. (2) Development — build, validate, document. (3) Independent validation — challenge methodology, data, assumptions, performance. (4) Approval — sign-off by risk and compliance. (5) Deployment — production monitoring established. (6) Ongoing monitoring — performance, stability, fairness metrics tracked. (7) Periodic review — formal revalidation (annually for Tier 1 models). (8) Retirement — documented deprecation when model is replaced or purpose ends.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In regulated financial institutions (required by SR 11-7/SS1/23), healthcare AI governance, large technology companies deploying models at scale, and any organisation with material exposure to model risk.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the model inventory includes a "last validated" date for every production model. Any model without a validation date within the past 12–24 months (depending on materiality tier) is an unmonitored risk. Most organisations are surprised by how large their unreviewed model inventory is.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A European bank's model inventory audit finds 340 models in production. Of these: 45% have not been formally validated since initial deployment; 22% have a documented owner; 8% have active monitoring dashboards. Following a regulatory examination, the bank implements a tiered governance framework: 18 Tier 1 models receive quarterly monitoring and annual independent validation; 120 Tier 2 models receive semi-annual monitoring; Tier 3 models receive annual performance reviews. Clear ownership is assigned to every model.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Closing</div>
+  <h2 class="section-title">Chapter 18 cheat sheet — and a closing note</h2>
+  <div class="cheat-sheet">
+    <div class="cheat-title">Model governance principles</div>
+    <div class="cheat-grid">
+      <div class="cheat-item"><div class="cheat-item-title">Three pillars: governance, explainability, fairness</div><div class="cheat-item-body">A model can pass all three statistical tests and still fail on any one of these. All three must be evaluated independently before deployment.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Model cards document the contract</div><div class="cheat-item-body">Document intended use, out-of-scope use, performance by subgroup, and known limitations. Out-of-scope uses are as important as performance metrics for safe deployment.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">SHAP for individual explanations</div><div class="cheat-item-body">Feature importance gives global averages. SHAP decomposes individual predictions. For adverse action notices and regulatory compliance, SHAP-based reason codes are the current standard.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Fairness definitions are incompatible</div><div class="cheat-item-body">Calibration, equal FPR, and equal FNR cannot all hold simultaneously when base rates differ. Choosing a fairness definition is a values decision, not a technical one.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Governance is ongoing, not one-time</div><div class="cheat-item-body">Validation at deployment without periodic review accumulates unacknowledged drift risk. Every production model needs an owner, a monitoring dashboard, and a scheduled review date.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Audit your model inventory</div><div class="cheat-item-body">Most organisations underestimate the number of models in production and the proportion without active governance. The first step to model risk management is a complete, honest inventory.</div></div>
+    </div>
+  </div>
+
+  <div class="final-callout" style="margin-top:32px">
+    <h3>A closing note on statistical thinking</h3>
+    <p>The 18 chapters of this guide cover the vocabulary of quantitative analysis — the language that connects data to decisions. But vocabulary is not fluency. Fluency develops through practice: examining real data, noticing when numbers do not add up, asking the uncomfortable question about how a finding could be wrong.</p>
+    <p>The instincts introduced in Chapter 1 — that variation is expected, that association is not causation, that uncertainty should be quantified — are not statistics techniques. They are ways of thinking that become more valuable the more you apply them, even when — especially when — you have no model output in front of you.</p>
+    <p>The best analytical professionals in strategy, finance, operations, and product are not the ones who know the most algorithms. They are the ones who ask the best questions about the data they are given — who see an impressive result and instinctively ask "what would have to be true for this to be wrong?" This guide is meant to make that instinct more systematic and more precise.</p>
+  </div>
+
+  <div style="margin-top:28px">
+    <a href="../ml-for-strategy-v2/ML_Strategy_Playbook.html" class="companion">↗ ML Strategy Playbook — companion reference</a>
+  </div>
+</div>
+<script>
+function toggleTerm(id){const b=document.getElementById(id);const o=b.classList.contains('open');b.classList.toggle('open',!o);b.querySelector('.term-toggle').textContent=o?'expand':'collapse';}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const all=document.querySelectorAll('.term-block');if(e.key==='e'){all.forEach(b=>{b.classList.add('open');b.querySelector('.term-toggle').textContent='collapse';})}if(e.key==='c'){all.forEach(b=>{b.classList.remove('open');b.querySelector('.term-toggle').textContent='expand';})}});
+</script>
+</body>
+</html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 7 — Comparing Groups | Stats Foundations for Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;
+  --cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;
+  --accent:#8b2500;--accent2:#c4440d;
+  --forest:#1a3a1a;--forest2:#2d7a2d;--forest3:#e0f0e0;
+  --gold:#7a5a00;--gold2:#c49a00;--gold3:#fdf5dc;
+  --blue2:#2d5f8a;--blue3:#ddeaf7;
+  --border:#d4cdc4;
+  --serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);--shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+@media(prefers-color-scheme:dark){
+  :root{--ink:#f0ece4;--ink2:#d8d0c4;--ink3:#a09488;--ink4:#6a6058;--cream:#181612;--cream2:#201e1a;--cream3:#2a2620;--accent2:#e8784a;--forest2:#4aaa4a;--forest3:#0a1e0a;--gold2:#e4c050;--gold3:#221e10;--blue3:#1a2a3a;--border:#38342e;}
+  body{background:#141210}.narrative{background:#141210;border-bottom-color:#2a2620}
+  .term-block{background:#1e1c18}.term-header{background:#1e1c18}.term-body{border-top-color:#2a2620}.field-row{border-bottom-color:#2a2620}.field-value.formula{background:#2a2620}
+  .callout-insight{background:#221e10;border-color:#e4c050}.callout-warning{background:#221410;border-color:#e8784a}.callout-rule{background:#0a1e0a;border-color:#4aaa4a}.callout-blue{background:#1a2a3a;border-color:#5a9fdf}
+  .illustration{background:#1e1c18;border-color:#38342e}.illustration-caption{border-top-color:#2a2620;background:#1e1c18}
+  .ch-progress{background:#1e1c18;border-bottom-color:#38342e}.progress-bar{background:#2a2620}.progress-fill{background:#4aaa4a}
+  .ch-hero{background:#0a1e0a}.cheat-sheet{background:#0a1e0a}.cheat-item{background:rgba(255,255,255,0.05);border-left-color:#4aaa4a}
+  .test-card{background:#1e1c18;border-color:#38342e}
+  .companion{color:#4aaa4a}.companion:hover{background:#4aaa4a;color:#141210}
+  p{color:var(--ink2)}.section-intro{color:var(--ink3);border-left-color:#4aaa4a}
+  .term-toggle{background:#2a2620;border-color:#38342e;color:var(--ink3)}.term-block.open .term-toggle{background:#f0ece4;color:#141210;border-color:#f0ece4}
+  .term-name{color:var(--ink)}.term-short{color:var(--ink3)}.section-title{color:var(--ink)}.section-label{color:#4aaa4a}.field-label{color:var(--ink4)}.field-value{color:var(--ink2)}
+  .field-value.formula .formula-math{color:#4aaa4a}.field-value.formula .formula-plain{color:var(--ink3)}.redflag{color:#e8784a}
+  .cheat-title{color:rgba(160,220,160,0.7)}.cheat-item-title{color:#f0ece4}.cheat-item-body{color:rgba(240,236,228,0.5)}
+  .ch-eyebrow{color:rgba(160,220,160,0.7)}.ch-title{color:#f4f0e8}.ch-intro{color:rgba(240,236,228,0.85)}.ch-meta{color:rgba(240,236,228,0.58)}.ch-meta span em{color:rgba(240,236,228,0.88)}.ch-progress span{color:#a09488}
+  .test-name{color:var(--ink)}.test-def{color:var(--ink3)}.test-badge{background:#0a1e0a;color:#4aaa4a}
+  svg text{fill:#6a6058 !important}
+}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.ch-hero{background:var(--forest);color:var(--cream);padding:72px 72px 56px;position:relative;overflow:hidden}
+.ch-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 80%,rgba(45,122,45,0.4) 0%,transparent 60%);pointer-events:none}
+.ch-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(160,220,160,0.7);margin-bottom:16px}
+.ch-title{font-family:var(--display);font-size:44px;font-weight:700;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin-bottom:20px;max-width:700px}
+.ch-title em{color:#a0e0a0;font-style:normal}
+.ch-intro{font-size:16px;color:rgba(255,255,255,0.75);max-width:600px;line-height:1.7;margin-bottom:36px}
+.ch-meta{display:flex;flex-wrap:wrap;gap:24px;font-size:10px;color:rgba(255,255,255,0.42);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono)}
+.ch-meta span em{color:rgba(255,255,255,0.72);font-style:normal}
+.ch-progress{display:flex;align-items:center;gap:12px;padding:16px 72px;background:var(--cream2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:0.05em}
+.progress-bar{flex:1;height:3px;background:var(--cream3);border-radius:2px;max-width:200px}
+.progress-fill{height:100%;background:var(--forest2);border-radius:2px;width:38.5%}
+.narrative{padding:56px 72px 48px;border-bottom:1px solid var(--border);max-width:960px}
+.narrative:last-child{border-bottom:none}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--forest2);margin-bottom:8px;font-weight:500}
+.section-title{font-family:var(--display);font-size:26px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:8px;letter-spacing:-0.01em}
+.section-intro{font-size:14.5px;color:var(--ink3);line-height:1.75;max-width:680px;margin-bottom:36px;padding-left:16px;border-left:3px solid var(--forest3)}
+.term-block{background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s}
+.term-block:hover{box-shadow:var(--shadow-lg)}
+.term-header{display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;cursor:pointer;user-select:none}
+.term-name{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);line-height:1.25;flex:1}
+.term-short{font-size:12.5px;color:var(--ink3);line-height:1.5;flex:1;font-style:italic;margin-top:3px}
+.term-toggle{font-family:var(--mono);font-size:11px;color:var(--ink4);border:1px solid var(--border);border-radius:3px;padding:2px 8px;flex-shrink:0;margin-top:2px;transition:all 0.15s;background:var(--cream)}
+.term-block.open .term-toggle{background:var(--forest);color:#fff;border-color:var(--forest)}
+.term-body{display:none;padding:0 24px 20px;border-top:1px solid var(--cream2)}
+.term-block.open .term-body{display:block}
+.field-row{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--cream3);align-items:baseline}
+.field-row:last-child{border-bottom:none}
+.field-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);font-weight:500;padding-top:1px}
+.field-value{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.field-value.formula{font-family:var(--mono);font-size:12.5px;background:var(--cream2);padding:10px 14px;border-radius:3px;color:var(--ink);line-height:1.65}
+.field-value.formula .formula-math{color:var(--forest2);font-weight:500;display:block;margin-bottom:4px;font-size:13px}
+.field-value.formula .formula-plain{color:var(--ink3);font-family:var(--serif);font-size:12.5px;font-style:italic}
+.redflag{color:var(--accent);font-size:13px}.redflag::before{content:'⚑ ';font-style:normal}
+.callout{padding:16px 20px;border-radius:4px;margin:20px 0;border-left:3px solid;font-size:13.5px;line-height:1.65}
+.callout-insight{background:var(--gold3);border-color:var(--gold2);color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:var(--forest3);border-color:var(--forest2);color:var(--ink2)}
+.callout-blue{background:var(--blue3);border-color:var(--blue2);color:var(--ink2)}
+.callout strong{font-weight:600;display:block;margin-bottom:5px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.65}
+.test-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:12.5px}
+.test-table th{font-family:var(--mono);font-size:9px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);background:var(--cream2);padding:10px 14px;text-align:left;border:1px solid var(--border)}
+.test-table td{padding:10px 14px;border:1px solid var(--cream3);color:var(--ink2);vertical-align:top;line-height:1.6}
+.test-table tr:nth-child(even) td{background:var(--cream)}
+.cheat-sheet{background:var(--forest);color:#fff;border-radius:6px;padding:28px 32px;margin-top:24px}
+.cheat-title{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(160,220,160,0.7);margin-bottom:16px}
+.cheat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cheat-item{padding:12px 14px;background:rgba(255,255,255,0.08);border-radius:4px;border-left:2px solid #a0e0a0}
+.cheat-item-title{font-size:11.5px;font-weight:600;color:#fff;margin-bottom:4px;font-family:var(--serif)}
+.cheat-item-body{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.55}
+.companion{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--forest2);text-decoration:none;border:1px solid currentColor;padding:5px 12px;border-radius:3px;margin-top:4px;transition:all 0.15s}
+.companion:hover{background:var(--forest2);color:#fff}
+@media(max-width:700px){.ch-hero,.narrative{padding:40px 24px}.ch-title{font-size:30px}.field-row{grid-template-columns:1fr;gap:4px}.cheat-grid{grid-template-columns:1fr}.ch-progress{padding:12px 24px}}
+</style>
+</head>
+<body>
+<div class="ch-progress">
+  <span>Chapter 7 of 18</span>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <span>Statistical Foundations for Strategy Professionals</span>
+</div>
+<div class="ch-hero">
+  <div class="ch-eyebrow">Part 4 — Inference · Chapter 7</div>
+  <h1 class="ch-title">Comparing Groups — <em>t-Tests, ANOVA, and When to Go Nonparametric</em></h1>
+  <p class="ch-intro">Most business hypotheses involve comparing groups: this region vs that one, before vs after, treatment vs control. This chapter covers the statistical tests that formalize those comparisons — and how to choose the right tool for the data type and design you have.</p>
+  <div class="ch-meta">
+    <span>Terms covered: <em>18</em></span>
+    <span>Sections: <em>t-tests · ANOVA · Chi-square · Nonparametric tests · Test selection</em></span>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 7.1</div>
+  <h2 class="section-title">Choosing the right test — a practical decision framework</h2>
+  <p class="section-intro">Statistical test selection is driven by three questions: what type of outcome variable do you have (continuous, binary, count)? How many groups are being compared (2 or more)? Is the data independent across groups or paired/matched? Getting these right determines the correct test — and applying the wrong test produces subtly or obviously wrong results.</p>
+
+  <table class="test-table">
+    <thead>
+      <tr><th>Outcome type</th><th>Groups</th><th>Design</th><th>Recommended test</th><th>Non-parametric alternative</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Continuous</td><td>2</td><td>Independent</td><td><strong>Two-sample t-test</strong></td><td>Mann-Whitney U</td></tr>
+      <tr><td>Continuous</td><td>2</td><td>Paired / matched</td><td><strong>Paired t-test</strong></td><td>Wilcoxon signed-rank</td></tr>
+      <tr><td>Continuous</td><td>3+</td><td>Independent</td><td><strong>One-way ANOVA</strong></td><td>Kruskal-Wallis</td></tr>
+      <tr><td>Continuous</td><td>3+ × 2+ factors</td><td>Factorial</td><td><strong>Two-way ANOVA</strong></td><td>—</td></tr>
+      <tr><td>Categorical (2)</td><td>2+</td><td>Independent</td><td><strong>Chi-square test</strong></td><td>Fisher's exact (small n)</td></tr>
+      <tr><td>Proportions</td><td>2</td><td>Independent</td><td><strong>Z-test for proportions</strong></td><td>—</td></tr>
+      <tr><td>Count data</td><td>2+</td><td>Independent</td><td><strong>Poisson rate test</strong></td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <div class="term-block" id="t-ttest">
+    <div class="term-header" onclick="toggleTerm('t-ttest')">
+      <div style="flex:1"><div class="term-name">Two-Sample t-Test</div><div class="term-short">Tests whether the means of two independent groups are significantly different.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you whether the observed difference in group means is larger than would be expected by chance given the variability and sample size. The t-test is the standard tool for A/B test analysis with a continuous metric (average revenue, session duration, conversion value). It accounts for both the size of the difference and the noise in the data.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">t = (x̄₁ − x̄₂) / √(s₁²/n₁ + s₂²/n₂)</span><span class="formula-plain">Assumptions: independent samples, approximately normal distribution of the test statistic (CLT applies for n &gt; 30 each), and comparable variances (Welch's t-test relaxes the equal variance assumption). Compare t against critical value or compute p-value from t-distribution.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In A/B test results for average revenue, session length, order value, load time, and any continuous business metric compared between two independent groups.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the metric is severely skewed. For right-skewed revenue metrics with small samples (n &lt; 200 per arm), the CLT may not yet apply and Welch's t-test may overstate significance. Use Mann-Whitney or bootstrap for skewed outcomes with limited data.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A subscription service A/B tests two onboarding flows, measuring days to first value action. Group A: n=850, mean=4.2 days, SD=3.1. Group B: n=840, mean=3.7 days, SD=2.9. t-test: t=2.84, p=0.005. The 0.5-day improvement is statistically significant. The team then checks whether half a day improvement in time-to-value is commercially meaningful enough to ship the change.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-paired-ttest">
+    <div class="term-header" onclick="toggleTerm('t-paired-ttest')">
+      <div style="flex:1"><div class="term-name">Paired t-Test</div><div class="term-short">Compares two measurements from the same subjects — eliminating between-subject variability to sharpen the comparison.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you each observation is its own control — you are measuring change within subjects, not comparing different subjects. Using a paired test when the data is truly paired (same store before/after, same customer measured twice) dramatically increases power by removing individual heterogeneity from the error term. Using an independent-samples test on paired data wastes this advantage.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">t = d̄ / (s_d / √n)  where d_i = x_i2 − x_i1</span><span class="formula-plain">Compute the per-subject difference, then run a one-sample t-test on those differences against zero. Requires the differences (not the raw measurements) to be approximately normally distributed.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In pre/post studies (same stores before and after a promotion), matched experiment designs (each treatment store paired with a similar control store), and clinical before/after measurements.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the pairing was determined by the design or added post-hoc. Pairing after data collection to achieve significance is a form of p-hacking — the pairing must be part of the pre-specified design to legitimately use the paired test.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A retailer measures weekly sales for 50 stores in the week before and week after launching a digital signage system. Paired t-test on the 50 differences yields t=3.12, p=0.003. An independent-samples t-test on the same data yields p=0.14 — non-significant — because between-store variability in sales (which the pairing removes) swamps the within-store signal.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-anova">
+    <div class="term-header" onclick="toggleTerm('t-anova')">
+      <div style="flex:1"><div class="term-name">ANOVA — Analysis of Variance</div><div class="term-short">Tests whether means differ across three or more groups by comparing variance between groups to variance within groups.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you whether at least one group mean differs from the others — but not which ones. ANOVA is the extension of the t-test to three or more groups. Running multiple t-tests instead of ANOVA inflates the family-wise error rate (the multiple testing problem from Chapter 6) — ANOVA tests all groups simultaneously with a single test statistic at the stated α level.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">F = (Between-group variance) / (Within-group variance)</span><span class="formula-plain">High F means group means differ more than chance would produce. If F is significant: run post-hoc tests (Tukey HSD, Bonferroni) to identify which specific pairs of groups differ. A significant ANOVA only tells you "at least one pair differs" — not where.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In multi-variant testing (3+ variants), regional performance comparison, pricing tier analysis, and any analysis comparing a continuous outcome across more than two groups.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether post-hoc tests were run and corrected for multiple comparisons. A significant ANOVA followed by uncorrected pairwise t-tests inflates the false positive rate for the specific pairwise comparisons exactly as much as running multiple t-tests would have.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A fast food chain tests four promotional offers (A, B, C, D) across stores. ANOVA yields F=6.84, p&lt;0.001 — at least one offer performs differently. Tukey HSD post-hoc tests reveal: A vs D and B vs D are significantly different; C does not significantly differ from any. The chain ranks the offers D &gt; C ≈ B ≈ A and selects D for rollout.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-chisq">
+    <div class="term-header" onclick="toggleTerm('t-chisq')">
+      <div style="flex:1"><div class="term-name">Chi-Square Test</div><div class="term-short">Tests whether observed frequencies in categories differ from expected — the standard test for categorical data independence.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you whether the distribution of a categorical variable differs across groups — or whether two categorical variables are associated. The test works by comparing observed cell counts in a contingency table to what you would expect if the variables were independent. It is the appropriate tool when the outcome is a category, not a number.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">χ² = Σ [(Observed − Expected)² / Expected]</span><span class="formula-plain">Build a contingency table (rows = groups, columns = categories). Expected count = (row total × column total) / grand total. Rule of thumb: all expected cell counts must be ≥ 5. Use Fisher's exact test for small samples where this assumption fails.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In conversion rate testing (purchased/not purchased by variant), customer segment composition comparisons, demographic breakdowns by group, and any comparison of categorical proportions across groups.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether expected cell counts are all ≥ 5. For rare events or small samples, chi-square provides unreliable results. Fisher's exact test is the appropriate alternative when cells are sparse.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">An insurer checks whether claim filing rate (claim/no claim) differs by distribution channel (direct, broker, comparison site). Chi-square test on a 3×2 contingency table: χ²=18.4, df=2, p&lt;0.001. Channel and claim propensity are not independent — broker channel has significantly higher claim rates, informing underwriting and pricing strategy.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 7.2</div>
+  <h2 class="section-title">Non-parametric tests — when distribution assumptions fail</h2>
+  <p class="section-intro">Parametric tests (t-test, ANOVA) assume approximately normal sampling distributions. When this assumption fails — heavily skewed data, small samples, ordinal outcomes, or extreme outliers — non-parametric tests use ranks rather than raw values, making them robust to distributional violations at some cost to power.</p>
+
+  <div class="callout callout-rule">
+    <strong>When to choose non-parametric</strong>
+    Use non-parametric tests when: (1) sample size is small (&lt; 30 per group) and data is clearly non-normal, (2) outcome variable is ordinal (satisfaction ratings, risk bands), (3) data has extreme outliers that cannot be removed, (4) comparison is of medians rather than means. If sample size is large (&gt; 100 per group), CLT makes parametric tests robust even for skewed data — non-parametric tests offer little advantage and lose some power.
+  </div>
+
+  <div class="term-block" id="t-mannwhitney">
+    <div class="term-header" onclick="toggleTerm('t-mannwhitney')">
+      <div style="flex:1"><div class="term-name">Mann-Whitney U Test</div><div class="term-short">Non-parametric alternative to the two-sample t-test — tests whether one group's values tend to be larger than the other's using ranks.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you whether one group consistently produces higher values than another — without assuming any particular distribution. The test replaces raw values with their ranks across both groups combined, then checks whether the ranks are randomly mixed or systematically concentrated in one group.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">U = n₁n₂ + n₁(n₁+1)/2 − R₁</span><span class="formula-plain">Rank all observations from both groups combined. U counts the number of times a value from group 1 precedes a value from group 2 in the ranking. Large U (or small U) indicates one group tends to dominate. For large samples, U is approximately normal.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In A/B tests with right-skewed metrics and moderate sample sizes, clinical outcome comparisons where normality fails, and satisfaction score comparisons between groups.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether statistical significance came from the ranks shifting or from the top quantile behaving differently. Mann-Whitney tests the central tendency of the rank distribution — it may miss important changes that are concentrated in the top 10% of the distribution.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A gaming company tests two monetization prompts measuring revenue per user. Revenue is highly right-skewed with 90% of users paying nothing. With n=300 per arm, CLT is insufficient for the mean. Mann-Whitney U test shows no significant difference in the rank distribution (p=0.41) — but a separate analysis of top-decile spenders shows the new prompt generates 23% more from high spenders. The tests are answering different questions.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-kruskal">
+    <div class="term-header" onclick="toggleTerm('t-kruskal')">
+      <div style="flex:1"><div class="term-name">Kruskal-Wallis Test</div><div class="term-short">Non-parametric alternative to one-way ANOVA — tests whether at least one group tends to produce higher ranks than others.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you whether the rank distributions of three or more groups are consistent with all being drawn from the same population. It is the natural extension of Mann-Whitney to multiple groups, and the appropriate choice when ANOVA assumptions are violated in a multi-group comparison.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">H = [12/N(N+1)] × Σ(Rⱼ²/nⱼ) − 3(N+1)</span><span class="formula-plain">Rank all observations from all groups. Compute the rank sum for each group. H follows a chi-square distribution with k−1 degrees of freedom. Significant result: at least one group differs. Follow up with pairwise Dunn tests with multiple comparison correction.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In comparing satisfaction scores, NPS distributions, or skewed performance metrics across 3+ customer segments, regions, or product tiers.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the test was followed by appropriate post-hoc pairwise comparisons. A significant Kruskal-Wallis test only identifies that differences exist somewhere — not where.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A logistics company compares driver satisfaction scores across five regions on a 1–10 ordinal scale. ANOVA would assume equal-interval scaling of the ordinal ratings. Kruskal-Wallis (H=14.3, p=0.006) reveals significant differences across regions. Dunn post-hoc tests identify Region 3 vs Region 1 and Region 5 vs Region 1 as the significant pairs driving the overall result.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-wilcoxon">
+    <div class="term-header" onclick="toggleTerm('t-wilcoxon')">
+      <div style="flex:1"><div class="term-name">Wilcoxon Signed-Rank Test</div><div class="term-short">Non-parametric alternative to the paired t-test — tests whether matched differences are systematically positive or negative using signed ranks.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you whether the within-subject differences tend to be positive or negative — the paired version of Mann-Whitney. It ranks the absolute values of the differences and then checks whether the positive and negative differences are balanced. More powerful than Mann-Whitney when pairing genuinely reduces noise, and robust when the differences are skewed.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Compute per-pair differences. Rank by absolute value. Sum positive ranks (T+) and negative ranks (T−). Under H₀ of no difference, T+ and T− should be roughly equal. The test statistic is min(T+, T−) compared to critical values. Zero differences are excluded.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In before/after studies with small samples or non-normal differences, matched experiment designs, and clinical repeated measurements where normality cannot be assumed.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether there are many zero differences in the data. The Wilcoxon test excludes tied zero differences, which can reduce effective sample size substantially and affect power when a large portion of pairs show no change.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A healthcare provider tests whether a care pathway change reduces 30-day readmission rates, matching 40 hospitals by size and acuity. Readmission differences are skewed right. Wilcoxon signed-rank: W=112, p=0.028 — the care pathway significantly reduces readmissions across matched pairs, consistent with what a paired t-test would have found but more robust to the asymmetric distribution of differences.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 7.3</div>
+  <h2 class="section-title">Variance decomposition and effect attribution</h2>
+  <p class="section-intro">ANOVA is more than a test — it is a framework for partitioning total variability into explained and unexplained components. Understanding this decomposition connects hypothesis testing to regression, experimental design, and model evaluation.</p>
+
+  <div class="term-block" id="t-r2-anova">
+    <div class="term-header" onclick="toggleTerm('t-r2-anova')">
+      <div style="flex:1"><div class="term-name">R² and Eta-Squared (η²)</div><div class="term-short">The proportion of total variability explained by group membership — the effect size analogue for ANOVA.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you not just that groups differ, but how much of the total outcome variation is attributable to group differences. η² = 0.10 means 10% of variance in the outcome is explained by which group an observation belongs to. This is the ANOVA equivalent of R² in regression and provides the effect size needed to assess practical significance.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">η² = SS_between / SS_total</span><span class="formula-plain">Cohen's conventions: η² ≈ 0.01 = small effect, 0.06 = medium, 0.14 = large. Partial η² controls for other factors in factorial ANOVA. With large samples, even η² = 0.001 can be statistically significant — always report alongside F-statistic and p-value.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In ANOVA result tables, multi-variant test reports, and experimental analysis where the goal is to quantify how much a factor explains outcome variance.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask for η² alongside the F-statistic. A highly significant F with η² = 0.003 means the group difference is real but explains almost nothing commercially — the effect may be statistically detectable but operationally irrelevant.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A retail chain tests three store layouts with 200 stores each. ANOVA: F=12.3, p&lt;0.001, η²=0.04. The layout explains 4% of sales variability — statistically significant, medium effect by convention. But store location, footfall, and demographics explain far more variance than layout does. The team concludes layout matters at the margin but is not a primary sales driver.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-ttest-assumptions">
+    <div class="term-header" onclick="toggleTerm('t-ttest-assumptions')">
+      <div style="flex:1"><div class="term-name">Test Assumptions and Robustness</div><div class="term-short">The conditions under which a statistical test's results are valid — and how far violations can be tolerated before switching to alternatives.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you statistical tests are not universally valid — they produce reliable results only under stated conditions. Violating assumptions does not always break the test badly, but it can invalidate p-values, inflate Type I errors, or reduce power. Knowing which assumptions matter most for which violations is what makes test selection practically useful.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">t-test critical assumptions: (1) Independence of observations — most important, rarely robust to violation. (2) Approximate normality of sampling distribution — robust for n &gt; 30 (CLT). (3) Equal variances — use Welch's t-test to relax this. ANOVA adds: (4) Homogeneity of variances across groups — use Welch's ANOVA or Kruskal-Wallis if violated.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In methodology audits, experimental design reviews, and any analysis where results seem counterintuitive or where assumptions need to be documented for governance purposes.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether independence of observations holds. Customers from the same household, stores in the same region, or patients from the same hospital cluster — violating independence inflates effective sample size and understates p-values. Clustered standard errors or mixed models are required.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A retailer tests a promotion across 200 stores but 15 regional managers each influence 8–20 stores within their region. Stores within the same region are not independent — their sales correlate through regional manager decisions, local events, and shared demographics. A standard ANOVA treating all 200 stores as independent units overstates significance. Clustering standard errors at the regional level gives the honest result.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Chapter Summary</div>
+  <h2 class="section-title">Chapter 7 cheat sheet</h2>
+  <div class="cheat-sheet">
+    <div class="cheat-title">Test selection quick reference</div>
+    <div class="cheat-grid">
+      <div class="cheat-item"><div class="cheat-item-title">Two independent groups, continuous outcome</div><div class="cheat-item-body">Welch's t-test (default). Mann-Whitney if small n and severely skewed. Bootstrap for composite or non-standard metrics.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Paired/matched observations, continuous</div><div class="cheat-item-body">Paired t-test. Wilcoxon signed-rank if differences are non-normal. Pairing must be pre-specified, not chosen post-hoc.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Three or more groups, continuous</div><div class="cheat-item-body">One-way ANOVA + Tukey post-hoc. Kruskal-Wallis if ANOVA assumptions fail. Never run multiple t-tests — inflate Type I error.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Categorical outcome, 2+ groups</div><div class="cheat-item-body">Chi-square test. Fisher's exact test for sparse cells (expected count &lt; 5). Z-test for proportions for two-group binary outcomes.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Report effect size, not just p-value</div><div class="cheat-item-body">Always accompany test results with η², Cohen's d, or business-unit effect. Statistical significance is necessary but not sufficient for a decision.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Check independence of observations</div><div class="cheat-item-body">Clustering by region, manager, or household violates independence. Cluster standard errors or use mixed models when observations are grouped.</div></div>
+    </div>
+  </div>
+  <div style="margin-top:28px">
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:12px">Chapter 8 moves from testing differences in means to testing relationships between continuous variables — correlation, its traps, and the association measures appropriate for different data types.</p>
+    <a href="../ml-for-strategy-v2/ML_Strategy_Playbook.html" class="companion">↗ ML Strategy Playbook — companion reference</a>
+  </div>
+</div>
+<script>
+function toggleTerm(id){const b=document.getElementById(id);const o=b.classList.contains('open');b.classList.toggle('open',!o);b.querySelector('.term-toggle').textContent=o?'expand':'collapse';}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const all=document.querySelectorAll('.term-block');if(e.key==='e'){all.forEach(b=>{b.classList.add('open');b.querySelector('.term-toggle').textContent='collapse';})}if(e.key==='c'){all.forEach(b=>{b.classList.remove('open');b.querySelector('.term-toggle').textContent='expand';})}});
+</script>
+</body>
+</html>

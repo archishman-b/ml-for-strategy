@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 1 — Statistical Thinking | Stats Foundations for Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;
+  --ink2:#3d3830;
+  --ink3:#7a7060;
+  --ink4:#b0a898;
+  --cream:#f7f4ef;
+  --cream2:#ede8df;
+  --cream3:#e2dbd0;
+  --accent:#8b2500;
+  --accent2:#c4440d;
+  --accent3:#e8c4a0;
+  --blue:#1a3a5c;
+  --blue2:#2d5f8a;
+  --blue3:#ddeaf7;
+  --green:#1a4a2e;
+  --green2:#2d7a4a;
+  --green3:#ddf0e5;
+  --gold:#7a5a00;
+  --gold2:#c49a00;
+  --gold3:#fdf5dc;
+  --border:#d4cdc4;
+  --border2:#c4bdb4;
+  --serif:'Source Serif 4',Georgia,serif;
+  --display:'Playfair Display',Georgia,serif;
+  --mono:'JetBrains Mono',monospace;
+  --radius:4px;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);
+  --shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+/* ── DARK MODE OVERRIDES ── */
+@media(prefers-color-scheme:dark){
+  :root{
+    --ink:#f0ece4;
+    --ink2:#d8d0c4;
+    --ink3:#a09488;
+    --ink4:#6a6058;
+    --cream:#181612;
+    --cream2:#201e1a;
+    --cream3:#2a2620;
+    --accent:#e86030;
+    --accent2:#e8784a;
+    --accent3:#c4845a;
+    --blue:#3a7abf;
+    --blue2:#5a9fdf;
+    --blue3:#1a2a3a;
+    --green:#3a9a5a;
+    --green2:#5aba7a;
+    --green3:#1a2a20;
+    --gold:#d4aa30;
+    --gold2:#e4c050;
+    --gold3:#221e10;
+    --border:#38342e;
+    --border2:#48443e;
+    --shadow:0 1px 3px rgba(0,0,0,0.3),0 4px 12px rgba(0,0,0,0.2);
+    --shadow-lg:0 4px 16px rgba(0,0,0,0.35),0 1px 4px rgba(0,0,0,0.25);
+  }
+  body{background:#141210}
+  .term-block{background:#1e1c18}
+  .term-header{background:#1e1c18}
+  .term-body{border-top-color:#2a2620}
+  .field-row{border-bottom-color:#2a2620}
+  .field-value.formula{background:#2a2620}
+  .bias-card{background:#1e1c18}
+  .bias-eg{border-top-color:#2a2620}
+  .callout-insight{background:#221e10;border-color:#d4aa30}
+  .callout-warning{background:#221410;border-color:#e8784a}
+  .callout-rule{background:#10181e;border-color:#5a9fdf}
+  .callout-green{background:#101e14;border-color:#5aba7a}
+  .illustration{background:#1e1c18;border-color:#38342e}
+  .illustration svg{background:#1e1c18 !important}
+  .ch-progress{background:#1e1c18;border-bottom-color:#38342e}
+  .progress-bar{background:#2a2620}
+  .progress-fill{background:#e8784a}
+  .ch-hero{background:#0e0c0a}
+  .ch-hero::before{background:radial-gradient(ellipse at 80% 50%,rgba(232,120,74,0.15) 0%,transparent 65%)}
+  .cheat-sheet{background:#0e0c0a}
+  .cheat-item{background:rgba(255,255,255,0.04);border-left-color:#e8784a}
+  .companion{color:#e8784a}
+  .companion:hover{background:#e8784a;color:#141210}
+  .narrative{background:#141210;border-bottom-color:#2a2620}
+  p{color:var(--ink2)}
+  .section-intro{color:var(--ink3);border-left-color:#c4845a}
+  .term-toggle{background:#2a2620;border-color:#38342e;color:var(--ink3)}
+  .term-block.open .term-toggle{background:#f0ece4;color:#141210;border-color:#f0ece4}
+  .term-name{color:var(--ink)}
+  .term-short{color:var(--ink3)}
+  .section-title{color:var(--ink)}
+  .section-label{color:#e8784a}
+  .field-label{color:var(--ink4)}
+  .field-value{color:var(--ink2)}
+  .field-value.formula .formula-math{color:#e8784a}
+  .field-value.formula .formula-plain{color:var(--ink3)}
+  .redflag{color:#e8784a}
+  .bias-name{color:var(--ink)}
+  .bias-def{color:var(--ink3)}
+  .bias-eg{color:var(--ink4)}
+  .cheat-title{color:#c4845a}
+  .cheat-item-title{color:#f0ece4}
+  .cheat-item-body{color:rgba(240,236,228,0.5)}
+  .ch-eyebrow{color:#e8a070}
+  .ch-title{color:#f4f0e8}
+  .ch-intro{color:rgba(240,236,228,0.85)}
+  .ch-meta{color:rgba(240,236,228,0.58)}
+  .ch-meta span em{color:rgba(240,236,228,0.88)}
+  .ch-progress span{color:#a09488}
+  /* SVG dark mode: fix text and lines */
+  svg text{fill:#6a6058 !important}
+  svg text[fill="#c4440d"]{fill:#e8784a !important}
+  svg line[stroke="#e2dbd0"]{stroke:#2a2620 !important}
+  svg line[stroke="#f0ebe4"]{stroke:#252118 !important}
+  svg polyline{stroke:#3a3630 !important}
+  svg path[stroke="#c4440d"]{stroke:#e8784a !important}
+  svg path[stroke="#e8c4a0"]{stroke:#c4845a !important}
+  svg line[stroke="#b0a898"]{stroke:#484440 !important}
+  svg line[stroke="#d4a070"]{stroke:#6a5040 !important}
+  svg polygon{fill:#6a6058 !important}
+}
+
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+
+/* ── CHAPTER HEADER ── */
+.ch-hero{
+  background:var(--ink);color:var(--cream);
+  padding:72px 72px 56px;position:relative;overflow:hidden;
+}
+.ch-hero::before{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:radial-gradient(ellipse at 80% 50%,rgba(196,68,13,0.12) 0%,transparent 65%);
+  pointer-events:none;
+}
+.ch-eyebrow{
+  font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--accent3);margin-bottom:16px;opacity:0.8;
+}
+.ch-title{
+  font-family:var(--display);font-size:44px;font-weight:700;line-height:1.15;
+  letter-spacing:-0.02em;color:#fff;margin-bottom:20px;max-width:700px;
+}
+.ch-title em{color:var(--accent3);font-style:normal}
+.ch-intro{
+  font-size:16px;color:rgba(255,255,255,0.62);max-width:600px;line-height:1.7;
+  margin-bottom:36px;
+}
+.ch-meta{
+  display:flex;flex-wrap:wrap;gap:24px;
+  font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.06em;
+  text-transform:uppercase;font-family:var(--mono);
+}
+.ch-meta span em{color:rgba(255,255,255,0.65);font-style:normal}
+
+/* ── NARRATIVE SECTIONS ── */
+.narrative{
+  padding:56px 72px 48px;border-bottom:1px solid var(--border);
+  max-width:960px;
+}
+.narrative:last-child{border-bottom:none}
+
+.section-label{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--accent2);margin-bottom:8px;font-weight:500;
+}
+.section-title{
+  font-family:var(--display);font-size:26px;font-weight:600;color:var(--ink);
+  line-height:1.25;margin-bottom:8px;letter-spacing:-0.01em;
+}
+.section-intro{
+  font-size:14.5px;color:var(--ink3);line-height:1.75;max-width:680px;
+  margin-bottom:36px;padding-left:16px;border-left:3px solid var(--accent3);
+}
+
+/* ── TERM ENTRIES ── */
+.term-block{
+  background:#fff;border:1px solid var(--border);border-radius:6px;
+  margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);
+  transition:box-shadow 0.2s;
+}
+.term-block:hover{box-shadow:var(--shadow-lg)}
+.term-header{
+  display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;
+  cursor:pointer;user-select:none;
+}
+.term-header::-webkit-details-marker{display:none}
+.term-name{
+  font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);
+  line-height:1.25;flex:1;
+}
+.term-short{
+  font-size:12.5px;color:var(--ink3);line-height:1.5;flex:1;
+  font-style:italic;margin-top:3px;
+}
+.term-toggle{
+  font-family:var(--mono);font-size:11px;color:var(--ink4);
+  border:1px solid var(--border);border-radius:3px;padding:2px 8px;
+  flex-shrink:0;margin-top:2px;transition:all 0.15s;
+  background:var(--cream);
+}
+.term-block.open .term-toggle{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+
+.term-body{
+  display:none;padding:0 24px 20px;border-top:1px solid var(--cream2);
+}
+.term-block.open .term-body{display:block}
+
+.field-row{
+  display:grid;grid-template-columns:140px 1fr;gap:12px;
+  padding:11px 0;border-bottom:1px solid var(--cream3);
+  align-items:baseline;
+}
+.field-row:last-child{border-bottom:none}
+.field-label{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;
+  color:var(--ink4);font-weight:500;padding-top:1px;
+}
+.field-value{
+  font-size:13.5px;color:var(--ink2);line-height:1.7;
+}
+.field-value.formula{
+  font-family:var(--mono);font-size:12.5px;background:var(--cream2);
+  padding:10px 14px;border-radius:3px;color:var(--ink);line-height:1.65;
+}
+.field-value.formula .formula-math{
+  color:var(--accent);font-weight:500;display:block;margin-bottom:4px;font-size:13px;
+}
+.field-value.formula .formula-plain{
+  color:var(--ink3);font-family:var(--serif);font-size:12.5px;font-style:italic;
+}
+
+.redflag{color:var(--accent);font-size:13px}
+.redflag::before{content:'⚑ ';font-style:normal}
+
+/* ── CALLOUT BOXES ── */
+.callout{
+  padding:16px 20px;border-radius:var(--radius);margin:20px 0;
+  border-left:3px solid;font-size:13.5px;line-height:1.65;
+}
+.callout-insight{background:var(--gold3);border-color:var(--gold2);color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:var(--blue3);border-color:var(--blue2);color:var(--ink2)}
+.callout-green{background:var(--green3);border-color:var(--green2);color:var(--ink2)}
+.callout strong{
+  font-weight:600;display:block;margin-bottom:5px;font-size:10px;
+  letter-spacing:0.08em;text-transform:uppercase;opacity:0.65;
+}
+
+/* ── SVG ILLUSTRATIONS ── */
+.illustration{
+  margin:28px 0;border-radius:6px;overflow:hidden;
+  border:1px solid var(--border);background:#fff;
+}
+.illustration-caption{
+  font-family:var(--mono);font-size:10.5px;color:var(--ink4);
+  text-align:center;padding:10px;border-top:1px solid var(--cream2);
+  letter-spacing:0.04em;
+}
+
+/* ── BIAS GRID ── */
+.bias-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:24px 0;
+}
+.bias-card{
+  background:#fff;border:1px solid var(--border);border-radius:6px;
+  padding:16px 18px;box-shadow:var(--shadow);
+}
+.bias-name{
+  font-family:var(--display);font-size:13.5px;font-weight:600;
+  color:var(--ink);margin-bottom:5px;
+}
+.bias-def{font-size:12.5px;color:var(--ink3);line-height:1.6;margin-bottom:8px}
+.bias-eg{
+  font-size:11.5px;color:var(--ink4);border-top:1px solid var(--cream2);
+  padding-top:7px;font-style:italic;line-height:1.5;
+}
+
+/* ── CHEAT SHEET ── */
+.cheat-sheet{
+  background:var(--ink);color:var(--cream);border-radius:6px;
+  padding:28px 32px;margin-top:24px;
+}
+.cheat-title{
+  font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--accent3);margin-bottom:16px;
+}
+.cheat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cheat-item{
+  padding:12px 14px;background:rgba(255,255,255,0.06);border-radius:4px;
+  border-left:2px solid var(--accent2);
+}
+.cheat-item-title{
+  font-size:11.5px;font-weight:600;color:#fff;
+  margin-bottom:4px;font-family:var(--serif);
+}
+.cheat-item-body{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.55}
+
+/* ── COMPANION LINK ── */
+.companion{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:11px;color:var(--accent2);
+  text-decoration:none;border:1px solid currentColor;
+  padding:5px 12px;border-radius:3px;margin-top:4px;
+  transition:all 0.15s;
+}
+.companion:hover{background:var(--accent2);color:#fff}
+
+/* ── PROGRESS BAR ── */
+.ch-progress{
+  display:flex;align-items:center;gap:12px;padding:16px 72px;
+  background:var(--cream2);border-bottom:1px solid var(--border);
+  font-family:var(--mono);font-size:10px;color:var(--ink4);
+  letter-spacing:0.05em;
+}
+.progress-bar{
+  flex:1;height:3px;background:var(--cream3);border-radius:2px;max-width:200px;
+}
+.progress-fill{
+  height:100%;background:var(--accent2);border-radius:2px;width:5.5%; /* ch1/18 */
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  .ch-hero,.narrative{padding:40px 24px}
+  .ch-title{font-size:30px}
+  .field-row{grid-template-columns:1fr;gap:4px}
+  .bias-grid,.cheat-grid{grid-template-columns:1fr}
+  .ch-progress{padding:12px 24px}
+}
+</style>
+</head>
+<body>
+
+<!-- Progress indicator -->
+<div class="ch-progress">
+  <span>Chapter 1 of 18</span>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <span>Statistical Foundations for Strategy Professionals</span>
+</div>
+
+<!-- Chapter hero -->
+<div class="ch-hero">
+  <div class="ch-eyebrow">Part 1 — Thinking With Data · Chapter 1</div>
+  <h1 class="ch-title">Statistical Thinking and the <em>Analytics Mindset</em></h1>
+  <p class="ch-intro">Before touching a number, strategy professionals need a mental model for what data can and cannot tell them. This chapter builds that foundation — the instincts that separate people who use data to make better decisions from those who use data to confirm decisions they've already made.</p>
+  <div class="ch-meta">
+    <span>Terms covered: <em>19</em></span>
+    <span>Companion: <em>All 19 ML Playbook Notebooks</em></span>
+    <span>Audience: <em>Strategy, PM, Analytics-adjacent</em></span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 1: THE CORE FRAMING -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="narrative">
+  <div class="section-label">Section 1.1</div>
+  <h2 class="section-title">Why statistical thinking matters</h2>
+  <p class="section-intro">Data does not speak for itself. The same numbers can support wildly different conclusions depending on how they are framed, what is left out, and what assumptions are hidden. Statistical thinking is the discipline of asking those questions before drawing conclusions.</p>
+
+  <p>Every analytics project starts with a business question — but most business questions arrive framed in a way that makes analysis harder than it needs to be. "Why are we losing customers?" is not an analytical question. "Among customers acquired in Q1 who had at least one support contact in their first 90 days, is the 12-month retention rate lower than the overall cohort?" is. The translation between those two — that work of sharpening a fuzzy business concern into a question that data can actually answer — is statistical thinking before a single number is touched.</p>
+
+  <p>This chapter introduces the vocabulary and mental models that make every subsequent chapter in this guide more useful. None of it requires mathematics. All of it requires careful thinking.</p>
+
+  <!-- Term: Statistical Thinking -->
+  <div class="term-block" id="t-statistical-thinking">
+    <div class="term-header" onclick="toggleTerm('t-statistical-thinking')">
+      <div style="flex:1">
+        <div class="term-name">Statistical Thinking</div>
+        <div class="term-short">The disciplined approach to understanding variation, uncertainty, and evidence in business data.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you that numbers are always imperfect summaries of a messier reality. Statistical thinking means asking what the data is actually measuring, how it was collected, what is being left out, and how much you should trust the patterns you see. For a strategy professional, it is the mental habit of treating every dashboard number as a question, not an answer.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-math">No formula — this is a mindset, not a calculation.</span>
+          <span class="formula-plain">Apply by asking three questions before acting on any data: (1) Where did this number come from? (2) What does it leave out? (3) Could a different framing tell a different story?</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">Everywhere — in how a business question gets translated into an analytical brief, in how results are communicated upward, and in how strategy teams decide what evidence is sufficient to act.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask whether the analysis was designed to answer a question or to support a conclusion that was already in the room. If the metrics chosen, the time window selected, or the comparison group picked all happen to make the case stronger, someone may be using data rhetorically rather than analytically.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A retail bank's marketing team reports that customers who open a second product within 90 days have a retention rate 22 percentage points higher than average. Before acting on this to push cross-sell, a statistician asks: are those customers already more engaged before the second product, or does the product itself cause retention? The number is real. The causal story is not yet established.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Term: Data-Driven Decision Making -->
+  <div class="term-block" id="t-dddm">
+    <div class="term-header" onclick="toggleTerm('t-dddm')">
+      <div style="flex:1">
+        <div class="term-name">Data-Driven Decision Making</div>
+        <div class="term-short">Using empirical evidence rather than intuition alone to guide business choices.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you decisions should be grounded in observed patterns rather than pure gut feel — but it does not mean data replaces judgment. The practical goal is data-informed decision making: using evidence to sharpen and challenge intuitions, not to eliminate them.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">Combine: (available evidence) + (quality of that evidence) + (judgment about what the evidence does not cover). When data and intuition conflict, investigate why — do not simply override one with the other.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In strategy decks, investment committee materials, product roadmap reviews, and any business context where "the data shows" is used as a closing argument.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask whether the decision would have been made differently if the data had come back the other way. If the answer is no, the data is decorative, not decision-relevant.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">An automotive OEM's strategy team uses customer satisfaction survey scores to allocate dealer support budgets. Dealers with the lowest scores get more resources — but the team also checks whether low scores reflect structural market issues rather than dealer performance, so money is not wasted on irreversible problems.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 2: VARIATION AND UNCERTAINTY -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="narrative">
+  <div class="section-label">Section 1.2</div>
+  <h2 class="section-title">Variation, uncertainty, and randomness</h2>
+  <p class="section-intro">The world is not stable. Customers behave differently from one week to the next, store performance fluctuates even with no management change, and the same campaign produces different results in different markets. Before asking "why did this change?", a statistician asks "is this change larger than the variation I would expect by chance?"</p>
+
+  <p>This is probably the single most important instinct a strategy professional can develop. Most business conversations treat every observed movement in a metric as meaningful. Most observed movements are not. The discipline of separating signal from noise — of asking whether what you see is real before asking what caused it — prevents enormous amounts of misdirected effort.</p>
+
+  <!-- Illustration: Signal vs Noise -->
+  <div class="illustration">
+    <svg viewBox="0 0 780 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fff">
+      <defs>
+        <marker id="arrowhead" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto">
+          <polygon points="0 0, 6 2, 0 4" fill="#b0a898"/>
+        </marker>
+      </defs>
+      <!-- Grid lines -->
+      <line x1="60" y1="40" x2="60" y2="180" stroke="#e2dbd0" stroke-width="1"/>
+      <line x1="60" y1="180" x2="720" y2="180" stroke="#e2dbd0" stroke-width="1"/>
+      <!-- Horizontal guide lines -->
+      <line x1="60" y1="80" x2="720" y2="80" stroke="#f0ebe4" stroke-width="1" stroke-dasharray="4,4"/>
+      <line x1="60" y1="130" x2="720" y2="130" stroke="#f0ebe4" stroke-width="1" stroke-dasharray="4,4"/>
+
+      <!-- Noisy line (underlying signal + noise) -->
+      <polyline points="60,140 100,118 140,145 180,110 220,138 260,105 300,125 340,92 380,118 420,88 460,112 500,82 540,100 580,72 620,95 660,68 700,88 720,75"
+        fill="none" stroke="#d4cdc4" stroke-width="1.5"/>
+
+      <!-- True signal (smooth trend) -->
+      <path d="M60,138 Q200,120 380,108 Q560,88 720,76"
+        fill="none" stroke="#c4440d" stroke-width="2.5"/>
+
+      <!-- Noise bands (shaded region) -->
+      <path d="M60,125 Q200,107 380,95 Q560,75 720,63" fill="none" stroke="#e8c4a0" stroke-width="1" stroke-dasharray="3,3"/>
+      <path d="M60,151 Q200,133 380,121 Q560,101 720,89" fill="none" stroke="#e8c4a0" stroke-width="1" stroke-dasharray="3,3"/>
+
+      <!-- Annotations -->
+      <text x="76" y="36" font-family="'JetBrains Mono',monospace" font-size="9" fill="#b0a898" letter-spacing="0.05em" text-transform="uppercase">METRIC VALUE</text>
+      <text x="340" y="198" font-family="'JetBrains Mono',monospace" font-size="9" fill="#b0a898" letter-spacing="0.05em">TIME →</text>
+
+      <!-- Signal label -->
+      <text x="620" y="62" font-family="'JetBrains Mono',monospace" font-size="9" fill="#c4440d">SIGNAL</text>
+      <text x="620" y="73" font-family="'JetBrains Mono',monospace" font-size="9" fill="#c4440d">(true trend)</text>
+
+      <!-- Noise label -->
+      <text x="76" y="110" font-family="'JetBrains Mono',monospace" font-size="9" fill="#b0a898">NOISE</text>
+      <text x="76" y="121" font-family="'JetBrains Mono',monospace" font-size="9" fill="#b0a898">(random variation)</text>
+      <line x1="120" y1="116" x2="155" y2="125" stroke="#b0a898" stroke-width="0.8" marker-end="url(#arrowhead)"/>
+
+      <!-- Expected range band label -->
+      <text x="490" y="60" font-family="'JetBrains Mono',monospace" font-size="8.5" fill="#d4a070">expected range</text>
+      <line x1="490" y1="64" x2="490" y2="88" stroke="#d4a070" stroke-width="0.8" stroke-dasharray="2,2"/>
+    </svg>
+    <div class="illustration-caption">Most metric movements stay inside the expected noise band. Only movements that break clearly above or below that band are candidates for causal investigation.</div>
+  </div>
+
+  <!-- Term: Variation -->
+  <div class="term-block" id="t-variation">
+    <div class="term-header" onclick="toggleTerm('t-variation')">
+      <div style="flex:1">
+        <div class="term-name">Variation</div>
+        <div class="term-short">The natural differences observed in any business metric across customers, time periods, regions, or products.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you that fluctuation is expected, not exceptional. Sales will be higher some weeks and lower others even if nothing changes in the business. Variation is the baseline reality that all analysis must account for before declaring that something is wrong or something is working.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">Before acting on a metric change, ask: is this larger than the typical fluctuation I see in stable periods? If not, the change may be variation, not signal. Quantify typical variation using standard deviation or historical range before investigating causes.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In weekly business reviews, forecasting discussions, quality control, and any conversation that begins "our numbers dropped last week."</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask for the historical range before treating any single period's result as significant. A 5 percent drop in a metric that normally swings 8 percent week to week is not a crisis; it is noise.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A SaaS company's weekly active user count drops 3 percent. The product team wants to investigate. An analyst checks the past 20 weeks and finds the metric varies plus or minus 4 percent in stable periods with no product changes. The drop is within normal variation and does not warrant a root cause investigation.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Term: Uncertainty -->
+  <div class="term-block" id="t-uncertainty">
+    <div class="term-header" onclick="toggleTerm('t-uncertainty')">
+      <div style="flex:1">
+        <div class="term-name">Uncertainty</div>
+        <div class="term-short">The inherent incompleteness of knowledge when working with samples or making predictions.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you any estimate based on partial data comes with a range of plausible alternatives, not a single certain value. Communicating uncertainty honestly — "our best estimate is 14 percent, but it could reasonably be anywhere from 10 to 18 percent" — is more useful than false precision.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">Always accompany a point estimate with a range that captures likely alternatives. The narrower the range, the more certain the estimate. Wide ranges are not a failure — they are honest. Suppressing uncertainty to appear confident creates worse decisions.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In forecast outputs, model predictions, experiment results, survey estimates, and any analysis where a single number is reported as if it were fact.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask whether the uncertainty range changes the decision. If the bottom of the range would lead to a different action than the top, the uncertainty is decision-relevant and should not be hidden in a footnote.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A healthcare payer's analytics team forecasts a new care management programme will reduce readmissions by 15 percent. The honest version of that estimate is 15 percent with a plausible range of 6 to 24 percent — wide enough that the programme's cost-effectiveness is genuinely uncertain. Presenting only the 15 percent leads to overconfident budget commitments.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Term: Signal vs Noise -->
+  <div class="term-block" id="t-signal-noise">
+    <div class="term-header" onclick="toggleTerm('t-signal-noise')">
+      <div style="flex:1">
+        <div class="term-name">Signal vs Noise</div>
+        <div class="term-short">Signal is the meaningful pattern worth acting on; noise is random variation that obscures it.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you that most observed fluctuations in business metrics are not meaningful — they are the expected randomness of a complex system. The question before any analysis is whether what you see is real or whether it could easily have appeared by chance even if nothing changed.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-math">Signal-to-Noise Ratio = (size of effect) ÷ (typical random variation)</span>
+          <span class="formula-plain">A high ratio means the effect is large relative to background noise and is likely real. A low ratio means you need more data or a better measurement approach to see through the noise.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In A/B test planning (how large does the effect need to be to detect it?), model evaluation, anomaly detection thresholds, and any discussion of whether a business change has "worked."</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask what the signal-to-noise ratio would need to be for a real effect to show up in your current data. If the metric is very noisy and the expected effect is small, a non-finding tells you almost nothing.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A media subscription company runs a two-week test on a new homepage. Daily churn metrics swing 15 percent just from day-of-week effects. A 2 percent churn reduction — commercially meaningful — is invisible in that noise. The test needs to run four to six weeks to have any chance of detecting it.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Term: Randomness -->
+  <div class="term-block" id="t-randomness">
+    <div class="term-header" onclick="toggleTerm('t-randomness')">
+      <div style="flex:1">
+        <div class="term-name">Randomness</div>
+        <div class="term-short">The unpredictable component in data that cannot be explained by known factors.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you that some portion of every outcome is irreducibly unpredictable — not because the system is badly understood, but because the world genuinely has stochastic elements. Treating randomness as something that should be explained leads to invented causal stories for events that were simply chance.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">When a metric moves, consider three possibilities before looking for causes: (1) it is within normal random variation, (2) it reflects a systematic change, or (3) it is a measurement artifact. Randomness belongs in category 1 and should be ruled out first.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In post-mortems, weekly reviews, and any context where leadership asks "why did this happen?" about a single event or short-run movement.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask whether this same outcome could easily have happened in the opposite direction with equal probability. If yes, you may be constructing a story around a coin flip.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A financial services firm's top-performing sales team has a bad quarter. Leadership commissions a review. The analyst finds the team's results over 8 quarters are consistent with normal variation around the company average — the strong prior quarters were regression to the mean, not exceptional performance that has now deteriorated.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 3: POPULATIONS, SAMPLES, INFERENCE -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="narrative">
+  <div class="section-label">Section 1.3</div>
+  <h2 class="section-title">Populations, samples, and inference</h2>
+  <p class="section-intro">Almost no business analysis works with complete data. You survey a sample of customers, not all of them. You run an A/B test on a fraction of your traffic. You look at last year's transactions as a proxy for all future transactions. The jump from the data you have to the population you care about is called inference — and doing it honestly requires understanding what you can and cannot claim from a sample.</p>
+
+  <!-- Term: Population -->
+  <div class="term-block" id="t-population">
+    <div class="term-header" onclick="toggleTerm('t-population')">
+      <div style="flex:1">
+        <div class="term-name">Population</div>
+        <div class="term-short">The complete group of interest about which conclusions are desired.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you who or what the analysis is really about. Defining the population precisely matters because a sample can only generalize to the population it represents. The right population definition is a business decision, not a statistical one.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">State the population explicitly before designing any analysis: all customers currently active, all transactions in the past 12 months, all potential buyers in a target segment. Vague population definitions lead to results that cannot be reliably acted upon.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In survey design, experiment scope, model deployment decisions, and any context where results from one group are being applied to a broader group.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask whether the population the analysis was designed for matches the population the decision affects. A model trained on premium customers should not be deployed on all customers without revalidation.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A grocery retailer runs a loyalty survey and reports satisfaction scores across "all customers." The population surveyed is loyalty card holders — roughly 60 percent of shoppers. Occasional cash payers, a segment with systematically different satisfaction, are excluded entirely from the conclusion.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Term: Sample -->
+  <div class="term-block" id="t-sample">
+    <div class="term-header" onclick="toggleTerm('t-sample')">
+      <div style="flex:1">
+        <div class="term-name">Sample</div>
+        <div class="term-short">A subset of the population actually observed and measured.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you the analysis is working with part of the full picture. Whether conclusions from the sample apply to the whole population depends entirely on how the sample was collected — not on how large it is.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">A representative sample has no systematic reason for excluding or over-including any part of the population. Size helps precision; representativeness is about how the sample was selected.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In any analysis that does not use complete population data — surveys, pilots, A/B tests, audit samples, model training sets.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask how the sample was collected and whether the process that generated it could be related to the outcome being measured. A large but biased sample is worse than a smaller representative one.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">An e-commerce platform surveys 50,000 customers about product discovery preferences. The survey goes only to users who opened an email in the last 30 days. Lapsed users — likely a different behavior profile — are absent from the sample entirely.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Term: Inference -->
+  <div class="term-block" id="t-inference">
+    <div class="term-header" onclick="toggleTerm('t-inference')">
+      <div style="flex:1">
+        <div class="term-name">Inference</div>
+        <div class="term-short">The logical process of drawing conclusions about a population based on sample data.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you how to make the jump from "this is what we saw in our data" to "this is what is probably true in the world." Inference is valid only when the sample is representative, when the uncertainty is honestly quantified, and when the conclusion does not go further than the evidence supports.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">Valid inference = representative sample + honest uncertainty quantification + conclusion limited to the population the sample represents. Generalizing beyond those three conditions is speculation, not inference.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In all results that claim to represent a broader population than was directly measured — most surveys, most model outputs, most A/B test conclusions.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask whether the conclusion extends beyond the data that was actually collected. A finding from a pilot in two European markets should not be presented as evidence for global rollout without acknowledging the generalization gap.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A fintech lender tests a new underwriting model on applications from January to March. The model performs well. Before production deployment, the team checks whether that quarter's applicant mix is typical — if March volumes were unusually prime-heavy due to a promotional campaign, the inference to the full year population may not hold.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 4: ASSOCIATION VS CAUSATION -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="narrative">
+  <div class="section-label">Section 1.4</div>
+  <h2 class="section-title">Association vs causation — the most important distinction in analytics</h2>
+  <p class="section-intro">Two things moving together does not mean one causes the other. This principle is so routinely violated in business analytics that it deserves its own section, its own terms, and repeated emphasis. The entire field of causal inference — covered later in Chapter 12 — exists because this distinction is harder to maintain in practice than it sounds in theory.</p>
+
+  <div class="callout callout-warning">
+    <strong>The core problem</strong>
+    Every predictive model finds associations. Almost none of them tell you what would happen if you intervened. A churn model can identify customers likely to leave — but acting on that score by calling them may help some, do nothing for others, and actually accelerate churn in customers who were not really at risk (the "Sleeping Dogs" problem covered in Chapter 18). The association tells you who is at risk. Only a well-designed experiment tells you whether calling them helps.
+  </div>
+
+  <!-- Term: Association -->
+  <div class="term-block" id="t-association">
+    <div class="term-header" onclick="toggleTerm('t-association')">
+      <div style="flex:1">
+        <div class="term-name">Association</div>
+        <div class="term-short">A statistical relationship where two variables tend to move together.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you two things are correlated — that knowing one tells you something about the other. Association is valuable for prediction but insufficient for decisions about what to change, because it does not tell you why the relationship exists.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">Association: if I know X, I can better predict Y. This is useful. Causation: if I change X, Y will change. This requires additional evidence — experimental or quasi-experimental.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In correlation analyses, model feature importance, customer behavior patterns, and any dashboard showing two metrics that tend to move together over time.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask whether the business intends to use this finding for prediction or intervention. Prediction can be grounded in association alone; intervention requires establishing causation.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A retail bank finds that customers who use the mobile app more than 4 times per week have a 30 percent lower churn rate. That association is useful for scoring churn risk. But pushing notifications to force low-engagement customers to open the app more often may not reduce churn at all if low engagement is a symptom of dissatisfaction rather than its cause.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Term: Causation -->
+  <div class="term-block" id="t-causation">
+    <div class="term-header" onclick="toggleTerm('t-causation')">
+      <div style="flex:1">
+        <div class="term-name">Causation</div>
+        <div class="term-short">A relationship where changing one variable directly produces a change in another.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you an intervention will work — that if you change X, you will actually move Y. This is a higher standard than association and requires either a randomized experiment or a sophisticated observational design. Most business analytics findings are associations, not causal claims, even when they are presented as if they were.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">Causation requires: (1) association, (2) the cause precedes the effect in time, and (3) alternative explanations have been ruled out. All three conditions must hold. Randomized experiments satisfy condition 3 by design; observational studies require explicit controls.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In experiment results, causal inference analyses, and any business case that claims an investment will produce a specific outcome.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask what evidence rules out the explanation that the observed relationship is driven by a third factor — a confounding variable that affects both the proposed cause and the outcome.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">An insurer observes that customers who buy multiple products have lower claims costs. Before assuming cross-sell reduces risk, they check: do lower-risk customers select into multi-product bundles to begin with? If yes, the causation runs the other way — risk profile drives product adoption, not the reverse.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Term: The Causation Trap -->
+  <div class="term-block" id="t-causation-trap">
+    <div class="term-header" onclick="toggleTerm('t-causation-trap')">
+      <div style="flex:1">
+        <div class="term-name">The Causation Trap</div>
+        <div class="term-short">The common error of assuming observed correlations imply causal relationships.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you that pattern-finding tools — including machine learning models — are optimized to find associations, not causes. If results are used to justify interventions without establishing causation, those interventions may be ineffective or harmful. The causation trap is one of the most expensive analytical errors in business.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">When an analytics finding is used to justify a budget allocation, a policy change, or a product decision, stop and ask: is this finding causal or merely associational? If associational, what experiment or design would establish causality before scaling the intervention?</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In strategy decks that use regression output to justify investment decisions, in marketing attribution models, and in any product analytics claim that "feature X drives outcome Y."</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask whether anyone ran an experiment before scaling. "We see that customers who do X have better outcomes" is not evidence that making all customers do X will improve outcomes — it may select customers who were already better off.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A SaaS company finds that customers who complete onboarding module 4 have 40 percent better 6-month retention. They invest heavily in pushing module 4 completion. Retention does not improve. On investigation, module 4 completers were already highly engaged customers — completion was a symptom of engagement, not its cause.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 5: FRAMING ANALYTICAL QUESTIONS -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="narrative">
+  <div class="section-label">Section 1.5</div>
+  <h2 class="section-title">Framing good analytical questions</h2>
+  <p class="section-intro">The quality of an analysis is bounded by the quality of the question it was designed to answer. Vague questions produce findings that cannot drive decisions. Well-framed questions specify what decision the analysis will inform, what comparison is being made, and what time window and population are in scope.</p>
+
+  <!-- Term: Analytical Question Framing -->
+  <div class="term-block" id="t-question-framing">
+    <div class="term-header" onclick="toggleTerm('t-question-framing')">
+      <div style="flex:1">
+        <div class="term-name">Analytical Question Framing</div>
+        <div class="term-short">Translating a business problem into a precise question that data can answer.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you that a fuzzy business concern must be converted into something specific enough to be analyzed before any data work begins. The act of sharpening the question often surfaces disagreements about scope, causation, and decision criteria that would otherwise surface as arguments about methodology after the analysis is done.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">A well-framed analytical question specifies: (1) the unit of analysis (customer, transaction, store, week), (2) the population in scope, (3) the outcome being measured, (4) the comparison or baseline, and (5) the decision the finding will inform.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In analytics briefs, data science scoping documents, experiment design conversations, and any meeting where someone says "can we look into why X is happening?"</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask what decision will be made differently based on the findings. If no one can answer that question, the analysis may be producing information rather than insight — and information without a decision context is expensive noise.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A telecom operator wants to "understand customer satisfaction." The analyst reframes: among postpaid customers with 24-month contracts coming up for renewal in the next 90 days, what factors measured in the prior 12 months are most predictive of contract renewal? That version has a decision attached — prioritize which customers to proactively contact.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Term: Operationalization -->
+  <div class="term-block" id="t-operationalization">
+    <div class="term-header" onclick="toggleTerm('t-operationalization')">
+      <div style="flex:1">
+        <div class="term-name">Operationalization</div>
+        <div class="term-short">Translating an abstract business concept into a measurable variable.</div>
+      </div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row">
+        <div class="field-label">Intuition</div>
+        <div class="field-value">It tells you the gap between "what we care about" and "what we can measure." Customer engagement, brand health, and employee satisfaction are concepts. Login frequency, Net Promoter Score, and absenteeism rate are operationalizations of those concepts. Poor operationalization is one of the most common and least-acknowledged sources of misleading analysis.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Formula / Rule</div>
+        <div class="field-value formula">
+          <span class="formula-plain">Ask: does this variable actually capture the concept I care about, or is it a proxy that might miss important dimensions? A proxy that is easy to measure and poorly correlated with the real concept produces analyses that are technically correct and strategically useless.</span>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">When you see it</div>
+        <div class="field-value">In KPI design, survey instrument construction, model target variable definition, and any context where an abstract strategic goal is being turned into a trackable metric.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Red flag</div>
+        <div class="field-value redflag">Ask whether the proxy measure could be improved on paper while the underlying concept gets worse. If so, the metric will mislead — teams will optimize the proxy and declare success while the real problem goes unresolved.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Business example</div>
+        <div class="field-value">A media company operationalizes "content quality" as average session duration. Teams then create artificially long content formats to hit that metric. Real content quality — whether users find valuable information — may actually decline while session duration rises.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 6: COGNITIVE BIASES -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="narrative">
+  <div class="section-label">Section 1.6</div>
+  <h2 class="section-title">Common decision biases that distort analytical judgment</h2>
+  <p class="section-intro">Statistical thinking requires overriding some deeply ingrained cognitive tendencies. The biases below are not signs of poor intelligence — they are systematic features of how human minds process information under uncertainty. Being aware of them does not eliminate them, but it creates a checkpoint before acting on compromised reasoning.</p>
+
+  <div class="bias-grid">
+    <div class="bias-card">
+      <div class="bias-name">Confirmation Bias</div>
+      <div class="bias-def">The tendency to seek, interpret, and remember information that confirms existing beliefs while discounting contradictory evidence.</div>
+      <div class="bias-eg">Strategy teams building a market entry case cite research supporting the opportunity. Studies showing competitive barriers or low addressable market are noted briefly, then set aside.</div>
+    </div>
+    <div class="bias-card">
+      <div class="bias-name">Survivorship Bias</div>
+      <div class="bias-def">Drawing conclusions from only the survivors or successes while ignoring failures that are no longer visible in the data.</div>
+      <div class="bias-eg">A consulting firm studies characteristics of high-growth companies. The sample excludes companies that tried the same strategies and failed. Conclusions are systematically optimistic.</div>
+    </div>
+    <div class="bias-card">
+      <div class="bias-name">Base Rate Neglect</div>
+      <div class="bias-def">Ignoring the underlying frequency of an event when evaluating new evidence, leading to overconfidence in rare event predictions.</div>
+      <div class="bias-eg">A fraud model flags a transaction as 90% likely to be fraudulent. If only 0.5% of transactions are fraud, even a very accurate model will generate many false positives. The base rate changes what that 90% means in practice.</div>
+    </div>
+    <div class="bias-card">
+      <div class="bias-name">Anchoring Bias</div>
+      <div class="bias-def">Over-relying on the first piece of information encountered, which disproportionately influences subsequent estimates.</div>
+      <div class="bias-eg">A strategy team is told the market is "worth $2 billion." Subsequent analysis, even if genuinely independent, tends to produce estimates that cluster around that anchor rather than being built from first principles.</div>
+    </div>
+    <div class="bias-card">
+      <div class="bias-name">Overfitting to History</div>
+      <div class="bias-def">Treating patterns in historical data as more reliable predictors of the future than they are, especially when conditions may change.</div>
+      <div class="bias-eg">A demand forecasting model trained on pre-pandemic retail patterns catastrophically fails after a shift in shopping behavior — the historical signal no longer maps onto future dynamics.</div>
+    </div>
+    <div class="bias-card">
+      <div class="bias-name">Gambler's Fallacy</div>
+      <div class="bias-def">The mistaken belief that past independent random events influence future probabilities — that after a run of losses, a win is "due."</div>
+      <div class="bias-eg">A product team observes five consecutive weeks of below-average conversion and concludes a rebound is overdue. If the drop reflects a real shift in user behavior, no rebound is coming — but if it is random variation, no pattern was ever present to revert from.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-rule">
+    <strong>The common thread</strong>
+    All of these biases share a structure: they cause people to see pattern, meaning, or trend where none exists — or to miss it where it does exist. The antidote is not to eliminate intuition but to pair it with explicit checks: pre-registration of hypotheses, systematic consideration of disconfirming evidence, and quantified uncertainty rather than point estimates.
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- CHAPTER CHEAT SHEET -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="narrative">
+  <div class="section-label">Chapter Summary</div>
+  <h2 class="section-title">Chapter 1 cheat sheet</h2>
+
+  <div class="cheat-sheet">
+    <div class="cheat-title">Key instincts from this chapter</div>
+    <div class="cheat-grid">
+      <div class="cheat-item">
+        <div class="cheat-item-title">Variation is expected</div>
+        <div class="cheat-item-body">Most metric movements are within normal random variation. Ask for historical range before treating any change as significant.</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-item-title">Association ≠ causation</div>
+        <div class="cheat-item-body">Predictive models find associations. Causal claims require experiments or causal inference designs. The difference determines whether an intervention will work.</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-item-title">Samples generalize only if representative</div>
+        <div class="cheat-item-body">Size does not save a biased sample. How the data was collected determines what conclusions can be drawn about the broader population.</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-item-title">Quantify uncertainty honestly</div>
+        <div class="cheat-item-body">A point estimate without a range suppresses information. Wide intervals are honest. Narrow false precision leads to overconfident decisions.</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-item-title">Frame questions before touching data</div>
+        <div class="cheat-item-body">What decision will this analysis inform? What population? What comparison? Answering these before analysis prevents post-hoc narrative building.</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-item-title">Know your cognitive biases</div>
+        <div class="cheat-item-body">Confirmation bias, survivorship bias, base rate neglect, and overfitting to history are the most costly in strategy work. Build explicit checks for each into your analytical process.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:28px">
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:12px">This chapter provides the mindset foundation. All subsequent chapters build on these instincts — in particular, Chapter 8 (Hypothesis Testing), Chapter 12 (Causal Inference), and Chapter 18 (Business Analytics Applications) return repeatedly to the association/causation distinction and the honest treatment of uncertainty.</p>
+    <a href="../ml-for-strategy-v2/ML_Strategy_Playbook.html" class="companion">↗ ML Strategy Playbook — companion reference</a>
+  </div>
+</div>
+
+<script>
+function toggleTerm(id) {
+  const block = document.getElementById(id);
+  const isOpen = block.classList.contains('open');
+  block.classList.toggle('open', !isOpen);
+  const toggle = block.querySelector('.term-toggle');
+  toggle.textContent = isOpen ? 'expand' : 'collapse';
+}
+
+// Keyboard shortcut: press 'e' to expand all, 'c' to collapse all
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'e') {
+    document.querySelectorAll('.term-block').forEach(b => {
+      b.classList.add('open');
+      b.querySelector('.term-toggle').textContent = 'collapse';
+    });
+  }
+  if (e.key === 'c') {
+    document.querySelectorAll('.term-block').forEach(b => {
+      b.classList.remove('open');
+      b.querySelector('.term-toggle').textContent = 'expand';
+    });
+  }
+});
+</script>
+</body>
+</html>

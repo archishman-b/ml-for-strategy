@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 17 — Business Analytics Applications | Stats Foundations for Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;
+  --cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;
+  --accent:#8b2500;--accent2:#c4440d;
+  --moss:#2a3a10;--moss2:#5a8a20;--moss3:#eaf4d0;
+  --gold:#7a5a00;--gold2:#c49a00;--gold3:#fdf5dc;
+  --blue2:#2d5f8a;--blue3:#ddeaf7;
+  --border:#d4cdc4;
+  --serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);--shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+@media(prefers-color-scheme:dark){
+  :root{--ink:#f0ece4;--ink2:#d8d0c4;--ink3:#a09488;--ink4:#6a6058;--cream:#181612;--cream2:#201e1a;--cream3:#2a2620;--accent2:#e8784a;--moss2:#8aba40;--moss3:#101808;--gold2:#e4c050;--gold3:#221e10;--blue3:#1a2a3a;--border:#38342e;}
+  body{background:#141210}.narrative{background:#141210;border-bottom-color:#2a2620}
+  .term-block{background:#1e1c18}.term-header{background:#1e1c18}.term-body{border-top-color:#2a2620}.field-row{border-bottom-color:#2a2620}.field-value.formula{background:#2a2620}
+  .callout-insight{background:#221e10;border-color:#e4c050}.callout-warning{background:#221410;border-color:#e8784a}.callout-rule{background:#101808;border-color:#8aba40}.callout-blue{background:#1a2a3a;border-color:#5a9fdf}
+  .app-card{background:#1e1c18;border-color:#38342e}
+  .ch-progress{background:#1e1c18;border-bottom-color:#38342e}.progress-bar{background:#2a2620}.progress-fill{background:#8aba40}
+  .ch-hero{background:#151e08}.cheat-sheet{background:#151e08}.cheat-item{background:rgba(255,255,255,0.05);border-left-color:#8aba40}
+  .companion{color:#8aba40}.companion:hover{background:#8aba40;color:#141210}
+  p{color:var(--ink2)}.section-intro{color:var(--ink3);border-left-color:#8aba40}
+  .term-toggle{background:#2a2620;border-color:#38342e;color:var(--ink3)}.term-block.open .term-toggle{background:#f0ece4;color:#141210;border-color:#f0ece4}
+  .term-name{color:var(--ink)}.term-short{color:var(--ink3)}.section-title{color:var(--ink)}.section-label{color:#8aba40}.field-label{color:var(--ink4)}.field-value{color:var(--ink2)}
+  .field-value.formula .formula-math{color:#8aba40}.field-value.formula .formula-plain{color:var(--ink3)}.redflag{color:#e8784a}
+  .cheat-title{color:rgba(180,230,120,0.7)}.cheat-item-title{color:#f0ece4}.cheat-item-body{color:rgba(240,236,228,0.5)}
+  .ch-eyebrow{color:rgba(180,230,120,0.7)}.ch-title{color:#f4f0e8}.ch-intro{color:rgba(240,236,228,0.85)}.ch-meta{color:rgba(240,236,228,0.58)}.ch-meta span em{color:rgba(240,236,228,0.88)}.ch-progress span{color:#a09488}
+  .app-name{color:var(--ink)}.app-def{color:var(--ink3)}
+}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.ch-hero{background:var(--moss);color:var(--cream);padding:72px 72px 56px;position:relative;overflow:hidden}
+.ch-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 80%,rgba(90,138,32,0.4) 0%,transparent 55%);pointer-events:none}
+.ch-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(180,230,120,0.7);margin-bottom:16px}
+.ch-title{font-family:var(--display);font-size:44px;font-weight:700;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin-bottom:20px;max-width:700px}
+.ch-title em{color:#c0f080;font-style:normal}
+.ch-intro{font-size:16px;color:rgba(255,255,255,0.75);max-width:600px;line-height:1.7;margin-bottom:36px}
+.ch-meta{display:flex;flex-wrap:wrap;gap:24px;font-size:10px;color:rgba(255,255,255,0.42);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono)}
+.ch-meta span em{color:rgba(255,255,255,0.72);font-style:normal}
+.ch-progress{display:flex;align-items:center;gap:12px;padding:16px 72px;background:var(--cream2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:0.05em}
+.progress-bar{flex:1;height:3px;background:var(--cream3);border-radius:2px;max-width:200px}
+.progress-fill{height:100%;background:var(--moss2);border-radius:2px;width:94.5%}
+.narrative{padding:56px 72px 48px;border-bottom:1px solid var(--border);max-width:960px}
+.narrative:last-child{border-bottom:none}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--moss2);margin-bottom:8px;font-weight:500}
+.section-title{font-family:var(--display);font-size:26px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:8px;letter-spacing:-0.01em}
+.section-intro{font-size:14.5px;color:var(--ink3);line-height:1.75;max-width:680px;margin-bottom:36px;padding-left:16px;border-left:3px solid var(--moss3)}
+.term-block{background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s}
+.term-block:hover{box-shadow:var(--shadow-lg)}
+.term-header{display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;cursor:pointer;user-select:none}
+.term-name{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);line-height:1.25;flex:1}
+.term-short{font-size:12.5px;color:var(--ink3);line-height:1.5;flex:1;font-style:italic;margin-top:3px}
+.term-toggle{font-family:var(--mono);font-size:11px;color:var(--ink4);border:1px solid var(--border);border-radius:3px;padding:2px 8px;flex-shrink:0;margin-top:2px;transition:all 0.15s;background:var(--cream)}
+.term-block.open .term-toggle{background:var(--moss);color:#fff;border-color:var(--moss)}
+.term-body{display:none;padding:0 24px 20px;border-top:1px solid var(--cream2)}
+.term-block.open .term-body{display:block}
+.field-row{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--cream3);align-items:baseline}
+.field-row:last-child{border-bottom:none}
+.field-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);font-weight:500;padding-top:1px}
+.field-value{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.field-value.formula{font-family:var(--mono);font-size:12.5px;background:var(--cream2);padding:10px 14px;border-radius:3px;color:var(--ink);line-height:1.65}
+.field-value.formula .formula-math{color:var(--moss2);font-weight:500;display:block;margin-bottom:4px;font-size:13px}
+.field-value.formula .formula-plain{color:var(--ink3);font-family:var(--serif);font-size:12.5px;font-style:italic}
+.redflag{color:var(--accent);font-size:13px}.redflag::before{content:'⚑ ';font-style:normal}
+.callout{padding:16px 20px;border-radius:4px;margin:20px 0;border-left:3px solid;font-size:13.5px;line-height:1.65}
+.callout-insight{background:var(--gold3);border-color:var(--gold2);color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:var(--moss3);border-color:var(--moss2);color:var(--ink2)}
+.callout-blue{background:var(--blue3);border-color:var(--blue2);color:var(--ink2)}
+.callout strong{font-weight:600;display:block;margin-bottom:5px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.65}
+.app-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0}
+.app-card{background:#fff;border:1px solid var(--border);border-radius:6px;padding:16px 18px;box-shadow:var(--shadow)}
+.app-domain{font-family:var(--mono);font-size:9px;letter-spacing:0.07em;text-transform:uppercase;background:var(--moss3);color:var(--moss2);padding:2px 7px;border-radius:3px;display:inline-block;margin-bottom:8px}
+.app-name{font-family:var(--display);font-size:14px;font-weight:600;color:var(--ink);margin-bottom:5px}
+.app-def{font-size:12px;color:var(--ink3);line-height:1.55;margin-bottom:6px}
+.app-methods{font-family:var(--mono);font-size:10px;color:var(--moss2)}
+.cheat-sheet{background:var(--moss);color:#fff;border-radius:6px;padding:28px 32px;margin-top:24px}
+.cheat-title{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(180,230,120,0.7);margin-bottom:16px}
+.cheat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cheat-item{padding:12px 14px;background:rgba(255,255,255,0.08);border-radius:4px;border-left:2px solid #c0f080}
+.cheat-item-title{font-size:11.5px;font-weight:600;color:#fff;margin-bottom:4px;font-family:var(--serif)}
+.cheat-item-body{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.55}
+.companion{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--moss2);text-decoration:none;border:1px solid currentColor;padding:5px 12px;border-radius:3px;margin-top:4px;transition:all 0.15s}
+.companion:hover{background:var(--moss2);color:#fff}
+@media(max-width:700px){.ch-hero,.narrative{padding:40px 24px}.ch-title{font-size:30px}.field-row{grid-template-columns:1fr;gap:4px}.app-grid,.cheat-grid{grid-template-columns:1fr}.ch-progress{padding:12px 24px}}
+</style>
+</head>
+<body>
+<div class="ch-progress">
+  <span>Chapter 17 of 18</span>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <span>Statistical Foundations for Strategy Professionals</span>
+</div>
+<div class="ch-hero">
+  <div class="ch-eyebrow">Part 9 — Applied Analytics · Chapter 17</div>
+  <h1 class="ch-title">Business Analytics <em>Applications</em></h1>
+  <p class="ch-intro">Statistics in isolation is vocabulary without sentences. This chapter shows how the methods from earlier chapters combine into the integrated analytical workflows that drive real business decisions — in marketing, credit, pricing, operations, and customer analytics.</p>
+  <div class="ch-meta">
+    <span>Terms covered: <em>16</em></span>
+    <span>Sections: <em>Customer analytics · Credit &amp; risk · Marketing mix · Pricing · Operations · A/B testing at scale</em></span>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 17.1</div>
+  <h2 class="section-title">Common analytical workflows across business domains</h2>
+  <p class="section-intro">The same statistical toolkit appears across different business domains under different names and with different operational stakes. Customer lifetime value, credit scoring, demand forecasting, and pricing elasticity are analytically analogous problems. Recognising the structure beneath the domain-specific vocabulary accelerates both learning and cross-functional communication.</p>
+
+  <div class="app-grid">
+    <div class="app-card">
+      <span class="app-domain">Customer</span>
+      <div class="app-name">Customer Lifetime Value (CLV)</div>
+      <div class="app-def">Expected total net revenue from a customer over their relationship lifetime. Informs acquisition spend limits, retention investment, and segment-level strategy.</div>
+      <div class="app-methods">Regression + survival analysis + segmentation</div>
+    </div>
+    <div class="app-card">
+      <span class="app-domain">Credit</span>
+      <div class="app-name">Credit Scoring</div>
+      <div class="app-def">Probability of default estimated from application and bureau data. Drives accept/decline decisions, pricing, and expected loss calculations for capital provisioning.</div>
+      <div class="app-methods">Logistic regression / GBM + calibration + Gini</div>
+    </div>
+    <div class="app-card">
+      <span class="app-domain">Marketing</span>
+      <div class="app-name">Marketing Mix Modeling</div>
+      <div class="app-def">Attribution of revenue to marketing activities and external factors. Estimates media elasticities and ROI to guide budget allocation.</div>
+      <div class="app-methods">Ridge regression + Bayesian + time series decomposition</div>
+    </div>
+    <div class="app-card">
+      <span class="app-domain">Pricing</span>
+      <div class="app-name">Price Elasticity Modeling</div>
+      <div class="app-def">Percentage change in demand for a 1% change in price. Estimates the revenue-optimal price point and informs promotional strategy.</div>
+      <div class="app-methods">Log-log regression + DiD + RCT</div>
+    </div>
+    <div class="app-card">
+      <span class="app-domain">Operations</span>
+      <div class="app-name">Anomaly Detection</div>
+      <div class="app-def">Identifying observations that deviate materially from expected patterns — fraud, defects, equipment failures, operational incidents.</div>
+      <div class="app-methods">Isolation Forest + DBSCAN + z-score + PSI</div>
+    </div>
+    <div class="app-card">
+      <span class="app-domain">Survival</span>
+      <div class="app-name">Survival Analysis</div>
+      <div class="app-def">Models time-to-event (churn, default, failure) when some observations have not yet experienced the event (censoring). Captures when things happen, not just whether.</div>
+      <div class="app-methods">Kaplan-Meier + Cox proportional hazards + log-rank test</div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 17.2</div>
+  <h2 class="section-title">Customer lifetime value — the unifying customer metric</h2>
+  <p class="section-intro">CLV is the single metric that connects customer acquisition, retention, and monetisation into one coherent framework. It converts behavioral predictions (will this customer churn? how much will they spend?) into financial projections that directly inform strategy. It is also the metric most commonly built on shaky statistical foundations — wrong discount rates, ignored censoring, or unstated horizon assumptions.</p>
+
+  <div class="term-block" id="t-clv">
+    <div class="term-header" onclick="toggleTerm('t-clv')">
+      <div style="flex:1"><div class="term-name">Customer Lifetime Value (CLV)</div><div class="term-short">The expected net present value of a customer's future contribution — the central metric for acquisition economics, retention investment, and portfolio strategy.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how much a customer relationship is worth in financial terms — enabling rational decisions about how much to spend acquiring, retaining, and serving them. A customer worth £4,200 CLV can support up to £4,200 in acquisition cost and still be profitable. Without CLV, acquisition budgets are set on unit economics that ignore long-run relationship value.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">CLV = Σₜ (Revenue_t − Cost_t) × Retention_t / (1+r)ᵗ</span><span class="formula-plain">Key components: expected revenue per period, expected cost to serve, probability of remaining a customer at each future period (survival function), and discount rate r. Three approaches: simple (margin × retention / (1 − retention + discount_rate)), probabilistic (BG/NBD model), and ML regression on historical outcomes.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In acquisition economics (max CPA = CLV × margin%), retention ROI calculation (contact cost &lt; CLV preserved × churn rate reduction), segmentation (value-based tiers), and M&A due diligence (customer asset valuation).</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what horizon, discount rate, and retention curve were assumed. CLV is extremely sensitive to all three. A 24-month CLV with 10% annual discount and observed retention will differ 3–4× from a 60-month CLV with 5% discount and extrapolated retention. Always state assumptions explicitly.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A subscription software company calculates CLV across acquisition cohorts. Monthly revenue: £120. Monthly churn rate: 2.8%. Monthly cost to serve: £22. Discount rate: 8% annual. CLV = (£120−£22) × (1/(0.028+0.08/12)) = £98 / 0.0347 ≈ £2,825. The company can profitably spend up to £2,825 acquiring a customer who will generate average expected margin — 3.4× their current £825 average CPA, suggesting significant headroom to invest in growth channels.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-survival">
+    <div class="term-header" onclick="toggleTerm('t-survival')">
+      <div style="flex:1"><div class="term-name">Survival Analysis</div><div class="term-short">Statistical framework for modeling time-to-event outcomes — accounting for censored observations where the event has not yet occurred.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how to analyze outcomes that involve both whether and when an event occurs. Standard regression discards censored observations (customers still active at the analysis date) — wasting information and biasing survival estimates. Survival analysis correctly handles the fact that an active customer provides information: they have survived at least this long.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">S(t) = P(T > t) = exp(−∫₀ᵗ h(u)du)</span><span class="formula-plain">S(t) = survival function: probability of surviving past time t. h(t) = hazard rate: instantaneous rate of event at time t. Kaplan-Meier: non-parametric estimate of S(t) from data, handling censored observations correctly. Cox proportional hazards: semi-parametric model estimating how covariates scale the hazard rate while leaving baseline hazard unspecified.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In subscription churn analysis (time-to-cancel), credit default modeling (time-to-default), equipment maintenance (time-to-failure), clinical trials (time-to-event), and customer cohort analyses where time dimension matters.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the analysis used survival methods or simply discarded censored observations. Dropping active customers from churn analysis produces biased estimates — typically overstating churn rate by excluding the survivors.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A SaaS company analyzes 12-month subscription retention. Standard logistic regression classifying "churned by 12 months" drops the 40% of customers still active at analysis date — biasing estimates toward shorter-tenured customers. Kaplan-Meier survival analysis correctly incorporates all customers, estimating 12-month survival at 68% — a materially different estimate from the naive 48% from the biased logistic approach.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-anomaly">
+    <div class="term-header" onclick="toggleTerm('t-anomaly')">
+      <div style="flex:1"><div class="term-name">Anomaly Detection</div><div class="term-short">Identifying observations that deviate significantly from expected patterns — used in fraud, quality control, cybersecurity, and operational monitoring.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you something has occurred that the normal-operation model does not explain. Anomaly detection is distinct from classification: in classification, you know what the anomalous class looks like and can learn from examples. In anomaly detection, you often have only normal data and must identify deviations from it — making it inherently one-class.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Statistical: flag observations beyond ±3 SD or past Q3+3×IQR. Isolation Forest: anomaly score based on average path length in random trees — anomalous points are isolated with fewer splits. DBSCAN: points not belonging to any dense cluster are anomalies. PSI and rolling z-score for time series metric monitoring. Contamination rate: the assumed fraction of anomalies in the dataset (typically 0.5–5%).</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In fraud detection, network intrusion, manufacturing defect identification, KPI monitoring dashboards, and any operational system requiring automated identification of unusual events.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what contamination rate was assumed and whether it was validated. Isolation Forest requires specifying the expected fraction of anomalies — setting this too high flags normal operations as anomalous, overwhelming analysts with false alarms.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A payment network's transaction monitoring uses Isolation Forest with contamination=0.002 (0.2% expected fraud rate, calibrated on historical data). Daily alert volume: ~1,400 transactions from 700,000 processed. Investigation confirms 38% of alerts are genuine fraud (precision 0.38 — see Chapter 13). The contamination rate calibration directly determines the operational alert burden on the investigations team.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-price-elasticity">
+    <div class="term-header" onclick="toggleTerm('t-price-elasticity')">
+      <div style="flex:1"><div class="term-name">Price Elasticity</div><div class="term-short">The percentage change in demand for a 1% change in price — the core statistic for pricing strategy and revenue optimization.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how sensitive demand is to price changes. Elasticity of −2.3 means a 1% price increase reduces demand by 2.3% (elastic — price increase reduces revenue). Elasticity of −0.6 means a 1% price increase reduces demand by only 0.6% (inelastic — price increase raises revenue). Understanding elasticity is the foundation of evidence-based pricing — without it, price changes are guesses.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">ε = % change in quantity / % change in price = (∂Q/Q) / (∂P/P)</span><span class="formula-plain">Estimated via log-log regression: log(Q) = α + ε×log(P) + controls. |ε| > 1: elastic (price increase reduces revenue). |ε| &lt; 1: inelastic (price increase raises revenue). Revenue-maximising price is where ε = −1. Causal identification requires a price instrument or randomised price experiment — observational price variation is often confounded by demand-driven pricing.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In pricing strategy, revenue management, promotional evaluation, and the marketing mix model's price coefficient.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the elasticity estimate was corrected for endogeneity. If prices were set higher when demand was high (standard revenue management), the naive regression estimate understates the true price sensitivity. Instrumental variables or randomised pricing experiments are needed for credible causal estimates.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A grocery retailer estimates price elasticity for premium cereal using log-log regression with store fixed effects: ε = −1.84. Current price: £4.20. Revenue-maximising price: where ε = −1, estimated at approximately £2.90 — substantially below current price, suggesting premium pricing is above the revenue-maximising point. The team runs a randomised price test across 120 stores to validate before any rollout.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-mmm">
+    <div class="term-header" onclick="toggleTerm('t-mmm')">
+      <div style="flex:1"><div class="term-name">Marketing Mix Modeling (MMM)</div><div class="term-short">A time series regression that attributes revenue to marketing inputs and external factors — estimating channel ROI and budget allocation recommendations.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how much of observed sales came from TV, digital, promotions, price changes, and macro factors — versus baseline. By estimating each channel's contribution and the shape of its response curve (typically with diminishing returns), MMM directly informs how to allocate the marketing budget to maximise revenue per pound spent.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Sales_t = baseline + Σ β_c × f(spend_c,t) + γ × seasonality + ε_t</span><span class="formula-plain">f(spend) typically = Adstock transformation (exponentially decayed carry-over effect) + saturation function (Hill/diminishing returns). Bayesian MMM: incorporates prior knowledge about elasticities and carry-over to stabilise estimates in the presence of multicollinearity. Requires 2–3 years of weekly data minimum.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In annual media planning, budget allocation reviews, "what-if" scenario modeling for channel mix changes, and brand effectiveness measurement.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the model was validated with holdout tests. MMM collinearity between channels means attribution is often non-unique — multiple channel combinations can explain the same historical data equally well. Holdout experiments on specific channels provide causal validation that the model-derived attributions cannot.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A UK FMCG brand runs a Bayesian MMM on 3 years of weekly data. Results: TV ROI = 1.42x, digital ROI = 2.18x, OOH ROI = 1.05x. Budget reallocation from OOH (−£2M) to digital (+£2M) is projected to increase attributed revenue by £2.3M. Before implementing, the team runs an incrementality test — suppressing digital in a matched market group — to validate the digital elasticity estimate. Results confirm 1.9× ROI, close to model estimate.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Chapter Summary</div>
+  <h2 class="section-title">Chapter 17 cheat sheet</h2>
+  <div class="cheat-sheet">
+    <div class="cheat-title">Key principles from this chapter</div>
+    <div class="cheat-grid">
+      <div class="cheat-item"><div class="cheat-item-title">CLV requires explicit assumptions</div><div class="cheat-item-body">Horizon, discount rate, and retention curve assumptions change CLV by 3–4×. Always state them. CLV comparisons across studies are meaningless unless assumptions match.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Survival analysis for time-to-event</div><div class="cheat-item-body">Discarding censored observations (active customers) biases churn and retention estimates. Kaplan-Meier and Cox correctly handles the fact that "still active" is informative data.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Price elasticity requires causal identification</div><div class="cheat-item-body">Naive regression on price confounds demand-driven pricing with price sensitivity. Randomised price tests or instrumental variables are needed for credible elasticity estimates.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Anomaly detection requires contamination calibration</div><div class="cheat-item-body">Setting the expected anomaly rate (contamination) determines alert volume. Too high = analyst overload from false alarms. Calibrate on historical confirmed anomaly rates.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">MMM attribution requires holdout validation</div><div class="cheat-item-body">Collinearity between channels makes model-derived attribution non-unique. Validate high-stakes channel elasticities with geo-level holdout experiments before budget reallocation.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Match method to business decision</div><div class="cheat-item-body">Prediction for targeting → ML + AUC. Causal attribution for ROI → RCT/MMM/DiD. Segmentation for strategy → clustering + interpretability review. Survival for time-valued metrics → Kaplan-Meier + Cox.</div></div>
+    </div>
+  </div>
+  <div style="margin-top:28px">
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:12px">Chapter 18 closes the guidebook with model governance, explainability, and fairness — the institutional and ethical framework that determines whether analytically sound models are also trustworthy and appropriate to deploy.</p>
+    <a href="../ml-for-strategy-v2/ML_Strategy_Playbook.html" class="companion">↗ ML Strategy Playbook — companion reference</a>
+  </div>
+</div>
+<script>
+function toggleTerm(id){const b=document.getElementById(id);const o=b.classList.contains('open');b.classList.toggle('open',!o);b.querySelector('.term-toggle').textContent=o?'expand':'collapse';}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const all=document.querySelectorAll('.term-block');if(e.key==='e'){all.forEach(b=>{b.classList.add('open');b.querySelector('.term-toggle').textContent='collapse';})}if(e.key==='c'){all.forEach(b=>{b.classList.remove('open');b.querySelector('.term-toggle').textContent='expand';})}});
+</script>
+</body>
+</html>

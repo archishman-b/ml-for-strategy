@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 13 — Classification Metrics | Stats Foundations for Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;
+  --cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;
+  --accent:#8b2500;--accent2:#c4440d;
+  --olive:#3a4a10;--olive2:#6a8a20;--olive3:#eef4d0;
+  --gold:#7a5a00;--gold2:#c49a00;--gold3:#fdf5dc;
+  --blue2:#2d5f8a;--blue3:#ddeaf7;
+  --border:#d4cdc4;
+  --serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);--shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+@media(prefers-color-scheme:dark){
+  :root{--ink:#f0ece4;--ink2:#d8d0c4;--ink3:#a09488;--ink4:#6a6058;--cream:#181612;--cream2:#201e1a;--cream3:#2a2620;--accent2:#e8784a;--olive2:#90b840;--olive3:#0e1808;--gold2:#e4c050;--gold3:#221e10;--blue3:#1a2a3a;--border:#38342e;}
+  body{background:#141210}.narrative{background:#141210;border-bottom-color:#2a2620}
+  .term-block{background:#1e1c18}.term-header{background:#1e1c18}.term-body{border-top-color:#2a2620}.field-row{border-bottom-color:#2a2620}.field-value.formula{background:#2a2620}
+  .callout-insight{background:#221e10;border-color:#e4c050}.callout-warning{background:#221410;border-color:#e8784a}.callout-rule{background:#0e1808;border-color:#90b840}
+  .ch-progress{background:#1e1c18;border-bottom-color:#38342e}.progress-bar{background:#2a2620}.progress-fill{background:#90b840}
+  .ch-hero{background:#1a2008}.cheat-sheet{background:#1a2008}.cheat-item{background:rgba(255,255,255,0.05);border-left-color:#90b840}
+  .confusion-matrix td,.confusion-matrix th{border-color:#38342e}
+  .cm-tp{background:#0e1e08}.cm-fp{background:#201408}.cm-fn{background:#201408}.cm-tn{background:#0e1808}
+  .companion{color:#90b840}.companion:hover{background:#90b840;color:#141210}
+  p{color:var(--ink2)}.section-intro{color:var(--ink3);border-left-color:#90b840}
+  .term-toggle{background:#2a2620;border-color:#38342e;color:var(--ink3)}.term-block.open .term-toggle{background:#f0ece4;color:#141210;border-color:#f0ece4}
+  .term-name{color:var(--ink)}.term-short{color:var(--ink3)}.section-title{color:var(--ink)}.section-label{color:#90b840}.field-label{color:var(--ink4)}.field-value{color:var(--ink2)}
+  .field-value.formula .formula-math{color:#90b840}.field-value.formula .formula-plain{color:var(--ink3)}.redflag{color:#e8784a}
+  .cheat-title{color:rgba(180,220,100,0.7)}.cheat-item-title{color:#f0ece4}.cheat-item-body{color:rgba(240,236,228,0.5)}
+  .ch-eyebrow{color:rgba(180,220,100,0.7)}.ch-title{color:#f4f0e8}.ch-intro{color:rgba(240,236,228,0.85)}.ch-meta{color:rgba(240,236,228,0.58)}.ch-meta span em{color:rgba(240,236,228,0.88)}.ch-progress span{color:#a09488}
+}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.ch-hero{background:var(--olive);color:var(--cream);padding:72px 72px 56px;position:relative;overflow:hidden}
+.ch-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 30%,rgba(106,138,32,0.4) 0%,transparent 55%);pointer-events:none}
+.ch-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(180,220,100,0.7);margin-bottom:16px}
+.ch-title{font-family:var(--display);font-size:44px;font-weight:700;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin-bottom:20px;max-width:700px}
+.ch-title em{color:#c8e870;font-style:normal}
+.ch-intro{font-size:16px;color:rgba(255,255,255,0.75);max-width:600px;line-height:1.7;margin-bottom:36px}
+.ch-meta{display:flex;flex-wrap:wrap;gap:24px;font-size:10px;color:rgba(255,255,255,0.42);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono)}
+.ch-meta span em{color:rgba(255,255,255,0.72);font-style:normal}
+.ch-progress{display:flex;align-items:center;gap:12px;padding:16px 72px;background:var(--cream2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:0.05em}
+.progress-bar{flex:1;height:3px;background:var(--cream3);border-radius:2px;max-width:200px}
+.progress-fill{height:100%;background:var(--olive2);border-radius:2px;width:72%}
+.narrative{padding:56px 72px 48px;border-bottom:1px solid var(--border);max-width:960px}
+.narrative:last-child{border-bottom:none}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--olive2);margin-bottom:8px;font-weight:500}
+.section-title{font-family:var(--display);font-size:26px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:8px;letter-spacing:-0.01em}
+.section-intro{font-size:14.5px;color:var(--ink3);line-height:1.75;max-width:680px;margin-bottom:36px;padding-left:16px;border-left:3px solid var(--olive3)}
+.term-block{background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s}
+.term-block:hover{box-shadow:var(--shadow-lg)}
+.term-header{display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;cursor:pointer;user-select:none}
+.term-name{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);line-height:1.25;flex:1}
+.term-short{font-size:12.5px;color:var(--ink3);line-height:1.5;flex:1;font-style:italic;margin-top:3px}
+.term-toggle{font-family:var(--mono);font-size:11px;color:var(--ink4);border:1px solid var(--border);border-radius:3px;padding:2px 8px;flex-shrink:0;margin-top:2px;transition:all 0.15s;background:var(--cream)}
+.term-block.open .term-toggle{background:var(--olive);color:#fff;border-color:var(--olive)}
+.term-body{display:none;padding:0 24px 20px;border-top:1px solid var(--cream2)}
+.term-block.open .term-body{display:block}
+.field-row{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--cream3);align-items:baseline}
+.field-row:last-child{border-bottom:none}
+.field-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);font-weight:500;padding-top:1px}
+.field-value{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.field-value.formula{font-family:var(--mono);font-size:12.5px;background:var(--cream2);padding:10px 14px;border-radius:3px;color:var(--ink);line-height:1.65}
+.field-value.formula .formula-math{color:var(--olive2);font-weight:500;display:block;margin-bottom:4px;font-size:13px}
+.field-value.formula .formula-plain{color:var(--ink3);font-family:var(--serif);font-size:12.5px;font-style:italic}
+.redflag{color:var(--accent);font-size:13px}.redflag::before{content:'⚑ ';font-style:normal}
+.callout{padding:16px 20px;border-radius:4px;margin:20px 0;border-left:3px solid;font-size:13.5px;line-height:1.65}
+.callout-insight{background:var(--gold3);border-color:var(--gold2);color:var(--ink2)}
+.callout-warning{background:#fef5f0;border-color:var(--accent2);color:var(--ink2)}
+.callout-rule{background:var(--olive3);border-color:var(--olive2);color:var(--ink2)}
+.callout strong{font-weight:600;display:block;margin-bottom:5px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.65}
+.confusion-matrix{border-collapse:collapse;margin:20px 0;font-size:13px}
+.confusion-matrix th,.confusion-matrix td{border:1px solid var(--border);padding:12px 18px;text-align:center;min-width:120px}
+.confusion-matrix th{background:var(--cream2);font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:0.07em;color:var(--ink4)}
+.cm-tp{background:#e8f8e0;font-weight:600;color:#2d7a2d}
+.cm-fp{background:#fef0e8;font-weight:600;color:#c4440d}
+.cm-fn{background:#fef0e8;font-weight:600;color:#c4440d}
+.cm-tn{background:#e8f8e0;font-weight:600;color:#2d7a2d}
+.cm-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:0.07em;color:var(--ink4);display:block;margin-bottom:4px}
+.cheat-sheet{background:var(--olive);color:#fff;border-radius:6px;padding:28px 32px;margin-top:24px}
+.cheat-title{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(180,220,100,0.7);margin-bottom:16px}
+.cheat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cheat-item{padding:12px 14px;background:rgba(255,255,255,0.08);border-radius:4px;border-left:2px solid #c8e870}
+.cheat-item-title{font-size:11.5px;font-weight:600;color:#fff;margin-bottom:4px;font-family:var(--serif)}
+.cheat-item-body{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.55}
+.companion{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--olive2);text-decoration:none;border:1px solid currentColor;padding:5px 12px;border-radius:3px;margin-top:4px;transition:all 0.15s}
+.companion:hover{background:var(--olive2);color:#fff}
+@media(max-width:700px){.ch-hero,.narrative{padding:40px 24px}.ch-title{font-size:30px}.field-row{grid-template-columns:1fr;gap:4px}.cheat-grid{grid-template-columns:1fr}.ch-progress{padding:12px 24px}.confusion-matrix{font-size:11px}.confusion-matrix th,.confusion-matrix td{padding:8px 10px;min-width:80px}}
+</style>
+</head>
+<body>
+<div class="ch-progress">
+  <span>Chapter 13 of 18</span>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <span>Statistical Foundations for Strategy Professionals</span>
+</div>
+<div class="ch-hero">
+  <div class="ch-eyebrow">Part 6 — Prediction · Chapter 13</div>
+  <h1 class="ch-title">Classification Metrics — <em>Beyond Accuracy</em></h1>
+  <p class="ch-intro">Accuracy is almost never the right metric for business classification models. When outcomes are rare, classes are asymmetric in cost, or ranking matters more than labeling, a whole toolkit of metrics — precision, recall, AUC, Gini, KS — becomes essential. This chapter makes them intuitive and usable.</p>
+  <div class="ch-meta">
+    <span>Terms covered: <em>17</em></span>
+    <span>Sections: <em>Confusion matrix · Precision/Recall · AUC · Gini · KS · Calibration · F1</em></span>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 13.1</div>
+  <h2 class="section-title">The confusion matrix — the foundation of all classification metrics</h2>
+  <p class="section-intro">Every classification metric derives from the same 2×2 table of actual versus predicted outcomes. Understanding this table deeply makes the relationships between all derived metrics clear — and makes it obvious why some metrics are appropriate for some business goals and not others.</p>
+
+  <table class="confusion-matrix">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Predicted Positive</th>
+        <th>Predicted Negative</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>Actual Positive</th>
+        <td class="cm-tp"><span class="cm-label">True Positive (TP)</span>Correctly flagged as positive. Model is right, event occurred.</td>
+        <td class="cm-fn"><span class="cm-label">False Negative (FN)</span>Missed positive. Event occurred but model said no.</td>
+      </tr>
+      <tr>
+        <th>Actual Negative</th>
+        <td class="cm-fp"><span class="cm-label">False Positive (FP)</span>False alarm. Model said yes but event did not occur.</td>
+        <td class="cm-tn"><span class="cm-label">True Negative (TN)</span>Correctly passed as negative. Model is right, no event.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="term-block" id="t-precision">
+    <div class="term-header" onclick="toggleTerm('t-precision')">
+      <div style="flex:1"><div class="term-name">Precision</div><div class="term-short">Of all predicted positives, what fraction were actually positive? Measures false alarm rate among model flags.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how trustworthy a positive prediction is. Precision = 0.30 means 70% of fraud alerts are false alarms. Precision = 0.85 means 85% of the model's positive predictions are correct. High precision is most important when the cost of acting on a false alarm is high — contacting a customer who does not need retention outreach, investigating a legitimate transaction.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Precision = TP / (TP + FP)</span><span class="formula-plain">Increasing the decision threshold increases precision (fewer false alarms) at the cost of lower recall (more misses). At threshold=1.0: precision=1.0, recall=0.0. The precision-recall tradeoff is the core of threshold selection in business applications.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In fraud alert prioritisation, customer outreach targeting, medical diagnosis, content recommendation, and any context where the cost of a false alarm is high.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what precision is at the operational threshold, not just at AUC level. A model with AUC=0.92 deployed at a threshold that generates 3,000 alerts per day may have precision of only 12% if the fraud rate is 1% — 2,640 legitimate transactions are being disrupted daily.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A card issuer's fraud model has precision of 0.34 at the operating threshold. Analysts review 1,000 alerts per day; 340 are genuine fraud; 660 are false positives. The team's target is precision ≥ 0.50 — achieved by raising the threshold, which drops daily alert volume to 620 with 310 true fraud (same fraud caught, half the manual review workload).</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-recall">
+    <div class="term-header" onclick="toggleTerm('t-recall')">
+      <div style="flex:1"><div class="term-name">Recall (Sensitivity / True Positive Rate)</div><div class="term-short">Of all actual positives, what fraction were correctly identified? Measures how much of the target the model catches.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how much of the event the model captures. Recall = 0.80 means 80% of all actual fraud cases are flagged — 20% slip through. High recall is most important when the cost of missing a positive is high — a missed cancer diagnosis, an undetected fraud transaction, a churning customer who was never contacted. The tradeoff: increasing recall usually decreases precision.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Recall = TP / (TP + FN)</span><span class="formula-plain">Also called sensitivity or true positive rate. Used alongside specificity (true negative rate = TN/(TN+FP)) in diagnostic testing. Recall of 1.0 means all positives are found — but at threshold 0, precision would be equal to the base rate (all observations flagged).</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In fraud detection, cancer screening, churn prevention, compliance monitoring, and any context where missing a positive outcome has high cost.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask what recall is at the operational threshold and what the cost of a miss is. A fraud model with 0.90 precision but 0.30 recall is catching only 30% of fraud — the 70% it misses may far exceed the cost of the false alarms the team is working to eliminate.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A healthcare payer's readmission risk model has recall of 0.65 at its current threshold — meaning 35% of readmissions are not flagged for care management intervention. The medical director calculates that each missed readmission costs $4,200 in avoidable expense. Lowering the threshold raises recall to 0.82 at the cost of a precision drop from 0.72 to 0.58 — generating more care management calls, most of which are still genuinely useful interventions.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-f1">
+    <div class="term-header" onclick="toggleTerm('t-f1')">
+      <div style="flex:1"><div class="term-name">F1 Score and Fβ</div><div class="term-short">The harmonic mean of precision and recall — a single-number metric that balances both, with Fβ allowing weighting toward the more important one.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you a combined measure that penalises extreme imbalances between precision and recall. F1 = 0 if either precision or recall is 0, and F1 = 1 only when both are perfect. The harmonic mean is more sensitive to the lower of the two values than the arithmetic mean — making it harder to game by maximizing one at the expense of the other.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">F1 = 2 × (Precision × Recall) / (Precision + Recall)</span><span class="formula-plain">Fβ = (1+β²) × P × R / (β²P + R). β=2 weights recall twice as heavily (useful when misses are costly). β=0.5 weights precision twice as heavily (useful when false alarms are costly). F1 assumes equal cost — rarely valid in business. Fβ makes the cost asymmetry explicit.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In NLP model evaluation, medical diagnosis benchmarking, and any application where a single metric combining precision and recall is needed for model comparison or threshold selection.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether F1 is the right balance for the business context. F1 assumes equal weighting of false positives and false negatives — which is almost never true. F2 or F0.5 may better reflect actual operational cost asymmetry.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A cybersecurity firm compares two intrusion detection models. Model A: Precision=0.90, Recall=0.60, F1=0.72. Model B: Precision=0.70, Recall=0.85, F2=0.82. For critical infrastructure monitoring where every missed intrusion is catastrophic, Model B's higher recall (and F2) makes it operationally superior — even though Model A has better F1.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 13.2</div>
+  <h2 class="section-title">Ranking metrics — AUC, Gini, and KS</h2>
+  <p class="section-intro">Many business models are used for ranking rather than labeling. A churn model scores customers so the top decile can be contacted first — the exact threshold does not matter, only whether the model correctly orders them. AUC, Gini, and KS statistics all measure ranking quality, independent of any specific threshold.</p>
+
+  <div class="term-block" id="t-auc">
+    <div class="term-header" onclick="toggleTerm('t-auc')">
+      <div style="flex:1"><div class="term-name">AUC-ROC — Area Under the ROC Curve</div><div class="term-short">The probability that a randomly selected positive ranks higher than a randomly selected negative — a threshold-independent measure of ranking quality.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how well the model separates positives from negatives across all possible thresholds. AUC = 0.5 is random chance (coin flip). AUC = 1.0 is perfect separation. AUC = 0.85 means: pick a random positive and a random negative — there is an 85% chance the model ranks the positive higher. For business models, AUC above 0.80 is typically considered strong; 0.70–0.80 is usable; below 0.70 questions whether the model adds value over heuristics.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">AUC = P(score(pos) > score(neg))</span><span class="formula-plain">The ROC curve plots TPR (recall) vs FPR (1-specificity) at all thresholds. AUC is the area under this curve. Weakness: AUC averages performance across all thresholds equally, including very low and very high thresholds that may never be used operationally. PR-AUC (precision-recall area) is often more informative for rare events.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In credit scorecard evaluation, churn model validation, fraud model performance reports, and any binary classification model comparison.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether AUC was computed on temporal holdout data or random split data. For time series applications, AUC from a random split is optimistic — the model was tested on contemporaneous data it would never have access to in production.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A consumer lender benchmarks its application fraud model: AUC improves from 0.838 (logistic regression, legacy) to 0.892 (gradient boosting, new). The 5.4-point AUC improvement represents better rank ordering of fraud risk across all customers. At the same false positive rate (5%), the new model detects 18% more fraud — estimated at £1.4M additional fraud prevented annually at current application volumes.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-gini">
+    <div class="term-header" onclick="toggleTerm('t-gini')">
+      <div style="flex:1"><div class="term-name">Gini Coefficient</div><div class="term-short">Rescaled AUC: Gini = 2×AUC − 1. The standard performance metric for credit scorecards, ranging from 0 (random) to 1 (perfect).</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the same discrimination quality as AUC but on a 0–1 scale where 0 is "no better than random" and 1 is "perfect." The credit industry standardised on Gini because the 0–1 scale is more intuitive for governance reporting — "our scorecard has Gini 0.63" is easier to benchmark than "AUC 0.815."</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">Gini = 2 × AUC − 1</span><span class="formula-plain">Credit scorecard benchmarks: Gini &gt;0.60 = strong, 0.45–0.60 = acceptable, &lt;0.45 = weak. Gini is also a measure of income inequality (Lorenz curve area) — same mathematical concept, different application. In model governance: Gini is tracked monthly; declines of &gt;5 Gini points trigger review.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In credit scorecard documentation, model performance reports for lenders and insurers, and any regulatory capital model validation context where AUC is the underlying metric.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether Gini is being compared across models trained on different populations. A Gini of 0.58 in a prime lending population and 0.58 in a subprime population represent very different levels of actual predictive value — the subprime population has more heterogeneity, making separation easier.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A bank's annual scorecard governance review shows Gini declining from 0.64 to 0.55 over 18 months. This 9-point decline triggers a redevelopment project. Investigation reveals the decline is driven by a new digital acquisition channel (different customer risk profile) that the model was not trained on — a combination of data drift and concept drift requiring full model rebuild.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-ks">
+    <div class="term-header" onclick="toggleTerm('t-ks')">
+      <div style="flex:1"><div class="term-name">KS Statistic</div><div class="term-short">The maximum separation between the cumulative distributions of positive and negative scores — measures the best possible discrimination point.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the single threshold where the model most cleanly separates positives from negatives. KS = 0.42 means at the optimal threshold, 42% more positives than negatives are correctly classified. KS is useful as a quick diagnostic and threshold-selection tool, but it summarises only the best separation point — unlike AUC which averages across all thresholds.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">KS = max|F_positive(t) − F_negative(t)| over all thresholds t</span><span class="formula-plain">Plot cumulative % of positives and negatives captured at each score threshold. KS is the maximum vertical gap between these two curves. The KS threshold is a natural operating point candidate — not always optimal, but often a reasonable starting point for threshold selection.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In credit scorecard validation tables, model comparison reports, and threshold selection analyses in the financial services industry.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the KS threshold is operationally feasible. The KS-optimal threshold maximizes separation but may correspond to a recall or precision level that is commercially impractical — the operating threshold should be selected based on business cost function, not purely KS maximization.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A credit model shows KS=0.48 at a score cutoff of 620. At this cutoff: 74% of bad loans are above the cutoff (would be declined), and only 26% of good loans are above the cutoff (would be incorrectly declined). The team uses KS to identify the approximate cutoff zone, then fine-tunes using expected loss optimisation to find the profit-maximizing threshold within 10 score points of the KS point.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-calibration">
+    <div class="term-header" onclick="toggleTerm('t-calibration')">
+      <div style="flex:1"><div class="term-name">Calibration</div><div class="term-short">Whether predicted probabilities match actual outcome rates — a model that predicts 30% should be right 30% of the time among those predictions.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you whether the model's probabilities can be trusted as actual probabilities rather than just relative rankings. A perfectly calibrated model: among all predictions of 20%, 20% of cases actually experience the event. Most models are well-calibrated for ranking but poorly calibrated in absolute terms — gradient boosting and random forests are typically poorly calibrated out of the box.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Calibration plot (reliability diagram): bin predicted probabilities into deciles. Plot (mean predicted probability, observed event rate) for each bin. Perfect calibration: all points on the diagonal. Brier score: mean squared error of probability predictions (lower = better). Calibration can be corrected with isotonic regression or Platt scaling post-training.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In credit default provisioning (must calculate expected loss from predicted probabilities), insurance pricing, medical risk assessment, and any business use case where probabilities are multiplied by costs to make financial decisions.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether calibration was checked separately from discrimination (AUC/Gini). A model can rank perfectly (AUC=0.95) but be badly miscalibrated — reporting 50% default probability when the true rate is 8%. Using miscalibrated probabilities in expected loss calculations will over-provision by 6× and misallocate capital.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A lender's gradient boosting default model has Gini=0.71 — excellent discrimination. But the calibration plot shows systematic overstatement of probabilities: at predicted 40% default probability, actual rate is 22%. The model is recalibrated using Platt scaling on a held-out calibration set — bringing predicted probabilities within 2% of actual rates across all deciles, making the model suitable for regulatory expected loss calculation.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Chapter Summary</div>
+  <h2 class="section-title">Chapter 13 cheat sheet</h2>
+  <div class="cheat-sheet">
+    <div class="cheat-title">Classification metrics quick reference</div>
+    <div class="cheat-grid">
+      <div class="cheat-item"><div class="cheat-item-title">Accuracy: almost never the right metric</div><div class="cheat-item-body">A model predicting "not fraud" for everyone is 99.8% accurate when fraud rate is 0.2%. Use precision, recall, or AUC instead.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Precision: cost of false alarms</div><div class="cheat-item-body">TP/(TP+FP). Matters most when investigating a false positive is expensive — fraud review teams, medical follow-up, customer outreach.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Recall: cost of misses</div><div class="cheat-item-body">TP/(TP+FN). Matters most when missing a positive is costly — undetected fraud, missed diagnosis, uncontacted churner.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">AUC: ranking quality across all thresholds</div><div class="cheat-item-body">0.5 = random, 1.0 = perfect. AUC > 0.95 on real data almost always signals leakage. Evaluate on temporal holdout for time series models.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Gini = 2×AUC − 1</div><div class="cheat-item-body">Industry standard for credit models. Gini > 0.60 = strong. Monitor monthly; >5 point decline triggers model review.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Calibration ≠ discrimination</div><div class="cheat-item-body">A model can rank perfectly but produce wrong probabilities. Always check calibration separately if probabilities will be used in financial calculations.</div></div>
+    </div>
+  </div>
+  <div style="margin-top:28px">
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:12px">Chapter 14 covers regression and forecast evaluation metrics — RMSE, MAE, MAPE, and the metrics specific to probabilistic forecasting. Chapter 15 covers clustering and segmentation metrics.</p>
+    <a href="../ml-for-strategy-v2/ML_Strategy_Playbook.html" class="companion">↗ ML Strategy Playbook — companion reference</a>
+  </div>
+</div>
+<script>
+function toggleTerm(id){const b=document.getElementById(id);const o=b.classList.contains('open');b.classList.toggle('open',!o);b.querySelector('.term-toggle').textContent=o?'expand':'collapse';}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const all=document.querySelectorAll('.term-block');if(e.key==='e'){all.forEach(b=>{b.classList.add('open');b.querySelector('.term-toggle').textContent='collapse';})}if(e.key==='c'){all.forEach(b=>{b.classList.remove('open');b.querySelector('.term-toggle').textContent='expand';})}});
+</script>
+</body>
+</html>

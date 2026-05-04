@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch 5 — Sampling & Estimation | Stats Foundations for Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1714;--ink2:#3d3830;--ink3:#7a7060;--ink4:#b0a898;
+  --cream:#f7f4ef;--cream2:#ede8df;--cream3:#e2dbd0;
+  --accent:#8b2500;--accent2:#c4440d;
+  --rust:#8a3020;--rust2:#c4500d;--rust3:#faeae4;
+  --gold:#7a5a00;--gold2:#c49a00;--gold3:#fdf5dc;
+  --blue2:#2d5f8a;--blue3:#ddeaf7;
+  --green2:#2d7a4a;--green3:#ddf0e5;
+  --border:#d4cdc4;
+  --serif:'Source Serif 4',Georgia,serif;--display:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);--shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+}
+@media(prefers-color-scheme:dark){
+  :root{--ink:#f0ece4;--ink2:#d8d0c4;--ink3:#a09488;--ink4:#6a6058;--cream:#181612;--cream2:#201e1a;--cream3:#2a2620;--accent2:#e8784a;--rust2:#e06030;--rust3:#2a1208;--gold2:#e4c050;--gold3:#221e10;--blue3:#1a2a3a;--green3:#1a2a20;--border:#38342e;}
+  body{background:#141210}.narrative{background:#141210;border-bottom-color:#2a2620}
+  .term-block{background:#1e1c18}.term-header{background:#1e1c18}.term-body{border-top-color:#2a2620}.field-row{border-bottom-color:#2a2620}.field-value.formula{background:#2a2620}
+  .callout-insight{background:#221e10;border-color:#e4c050}.callout-warning{background:#221410;border-color:#e8784a}.callout-rule{background:#1a2a3a;border-color:#5a9fdf}.callout-green{background:#1a2a20;border-color:#5aba7a}
+  .illustration{background:#1e1c18;border-color:#38342e}.illustration-caption{border-top-color:#2a2620;background:#1e1c18}
+  .ch-progress{background:#1e1c18;border-bottom-color:#38342e}.progress-bar{background:#2a2620}.progress-fill{background:#e06030}
+  .ch-hero{background:#2a1008}.cheat-sheet{background:#2a1008}.cheat-item{background:rgba(255,255,255,0.05);border-left-color:#e06030}
+  .companion{color:#e06030}.companion:hover{background:#e06030;color:#141210}
+  .samp-card{background:#1e1c18;border-color:#38342e}
+  p{color:var(--ink2)}.section-intro{color:var(--ink3);border-left-color:#e06030}
+  .term-toggle{background:#2a2620;border-color:#38342e;color:var(--ink3)}.term-block.open .term-toggle{background:#f0ece4;color:#141210;border-color:#f0ece4}
+  .term-name{color:var(--ink)}.term-short{color:var(--ink3)}.section-title{color:var(--ink)}.section-label{color:#e06030}.field-label{color:var(--ink4)}.field-value{color:var(--ink2)}
+  .field-value.formula .formula-math{color:#e06030}.field-value.formula .formula-plain{color:var(--ink3)}.redflag{color:#e8784a}
+  .cheat-title{color:rgba(255,180,140,0.7)}.cheat-item-title{color:#f0ece4}.cheat-item-body{color:rgba(240,236,228,0.5)}
+  .ch-eyebrow{color:rgba(255,180,140,0.7)}.ch-title{color:#f4f0e8}.ch-intro{color:rgba(240,236,228,0.85)}.ch-meta{color:rgba(240,236,228,0.58)}.ch-meta span em{color:rgba(240,236,228,0.88)}.ch-progress span{color:#a09488}
+  .samp-name{color:var(--ink)}.samp-def{color:var(--ink3)}.samp-badge{background:#2a1208;color:#e06030}
+  svg text{fill:#6a6058 !important}
+}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:var(--serif);background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.ch-hero{background:var(--rust);color:var(--cream);padding:72px 72px 56px;position:relative;overflow:hidden}
+.ch-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 70%,rgba(196,80,13,0.4) 0%,transparent 60%);pointer-events:none}
+.ch-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,180,140,0.7);margin-bottom:16px}
+.ch-title{font-family:var(--display);font-size:44px;font-weight:700;line-height:1.15;letter-spacing:-0.02em;color:#fff;margin-bottom:20px;max-width:700px}
+.ch-title em{color:#ffcaaa;font-style:normal}
+.ch-intro{font-size:16px;color:rgba(255,255,255,0.75);max-width:600px;line-height:1.7;margin-bottom:36px}
+.ch-meta{display:flex;flex-wrap:wrap;gap:24px;font-size:10px;color:rgba(255,255,255,0.42);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono)}
+.ch-meta span em{color:rgba(255,255,255,0.72);font-style:normal}
+.ch-progress{display:flex;align-items:center;gap:12px;padding:16px 72px;background:var(--cream2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--ink4);letter-spacing:0.05em}
+.progress-bar{flex:1;height:3px;background:var(--cream3);border-radius:2px;max-width:200px}
+.progress-fill{height:100%;background:var(--rust2);border-radius:2px;width:27.5%}
+.narrative{padding:56px 72px 48px;border-bottom:1px solid var(--border);max-width:960px}
+.narrative:last-child{border-bottom:none}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--rust2);margin-bottom:8px;font-weight:500}
+.section-title{font-family:var(--display);font-size:26px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:8px;letter-spacing:-0.01em}
+.section-intro{font-size:14.5px;color:var(--ink3);line-height:1.75;max-width:680px;margin-bottom:36px;padding-left:16px;border-left:3px solid var(--rust3)}
+.term-block{background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow 0.2s}
+.term-block:hover{box-shadow:var(--shadow-lg)}
+.term-header{display:flex;align-items:flex-start;gap:16px;padding:20px 24px 16px;cursor:pointer;user-select:none}
+.term-name{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);line-height:1.25;flex:1}
+.term-short{font-size:12.5px;color:var(--ink3);line-height:1.5;flex:1;font-style:italic;margin-top:3px}
+.term-toggle{font-family:var(--mono);font-size:11px;color:var(--ink4);border:1px solid var(--border);border-radius:3px;padding:2px 8px;flex-shrink:0;margin-top:2px;transition:all 0.15s;background:var(--cream)}
+.term-block.open .term-toggle{background:var(--rust);color:#fff;border-color:var(--rust)}
+.term-body{display:none;padding:0 24px 20px;border-top:1px solid var(--cream2)}
+.term-block.open .term-body{display:block}
+.field-row{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--cream3);align-items:baseline}
+.field-row:last-child{border-bottom:none}
+.field-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink4);font-weight:500;padding-top:1px}
+.field-value{font-size:13.5px;color:var(--ink2);line-height:1.7}
+.field-value.formula{font-family:var(--mono);font-size:12.5px;background:var(--cream2);padding:10px 14px;border-radius:3px;color:var(--ink);line-height:1.65}
+.field-value.formula .formula-math{color:var(--rust2);font-weight:500;display:block;margin-bottom:4px;font-size:13px}
+.field-value.formula .formula-plain{color:var(--ink3);font-family:var(--serif);font-size:12.5px;font-style:italic}
+.redflag{color:var(--accent);font-size:13px}.redflag::before{content:'⚑ ';font-style:normal}
+.callout{padding:16px 20px;border-radius:4px;margin:20px 0;border-left:3px solid;font-size:13.5px;line-height:1.65}
+.callout-insight{background:var(--gold3);border-color:var(--gold2);color:var(--ink2)}
+.callout-warning{background:var(--rust3);border-color:var(--rust2);color:var(--ink2)}
+.callout-rule{background:var(--blue3);border-color:var(--blue2);color:var(--ink2)}
+.callout-green{background:var(--green3);border-color:var(--green2);color:var(--ink2)}
+.callout strong{font-weight:600;display:block;margin-bottom:5px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.65}
+.illustration{margin:28px 0;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:#fff}
+.illustration-caption{font-family:var(--mono);font-size:10.5px;color:var(--ink4);text-align:center;padding:10px;border-top:1px solid var(--cream2);letter-spacing:0.04em;background:var(--cream)}
+.samp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0}
+.samp-card{background:#fff;border:1px solid var(--border);border-radius:6px;padding:14px 16px;box-shadow:var(--shadow)}
+.samp-badge{font-family:var(--mono);font-size:9px;letter-spacing:0.07em;text-transform:uppercase;background:var(--rust3);color:var(--rust2);padding:2px 7px;border-radius:3px;display:inline-block;margin-bottom:8px}
+.samp-name{font-family:var(--display);font-size:14px;font-weight:600;color:var(--ink);margin-bottom:5px}
+.samp-def{font-size:12px;color:var(--ink3);line-height:1.55;margin-bottom:6px}
+.samp-eg{font-size:11px;color:var(--ink4);font-style:italic}
+.cheat-sheet{background:var(--rust);color:#fff;border-radius:6px;padding:28px 32px;margin-top:24px}
+.cheat-title{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,180,140,0.7);margin-bottom:16px}
+.cheat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cheat-item{padding:12px 14px;background:rgba(255,255,255,0.08);border-radius:4px;border-left:2px solid #ffcaaa}
+.cheat-item-title{font-size:11.5px;font-weight:600;color:#fff;margin-bottom:4px;font-family:var(--serif)}
+.cheat-item-body{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.55}
+.companion{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--rust2);text-decoration:none;border:1px solid currentColor;padding:5px 12px;border-radius:3px;margin-top:4px;transition:all 0.15s}
+.companion:hover{background:var(--rust2);color:#fff}
+@media(max-width:700px){.ch-hero,.narrative{padding:40px 24px}.ch-title{font-size:30px}.field-row{grid-template-columns:1fr;gap:4px}.samp-grid,.cheat-grid{grid-template-columns:1fr}.ch-progress{padding:12px 24px}}
+</style>
+</head>
+<body>
+<div class="ch-progress">
+  <span>Chapter 5 of 18</span>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <span>Statistical Foundations for Strategy Professionals</span>
+</div>
+<div class="ch-hero">
+  <div class="ch-eyebrow">Part 4 — Inference: From Sample to Truth · Chapter 5</div>
+  <h1 class="ch-title">Sampling, Estimation, and <em>Confidence Intervals</em></h1>
+  <p class="ch-intro">Almost every business analysis works from a sample. Whether conclusions from that sample apply to the broader population depends entirely on how the data was collected — not how large it is. This chapter covers what you can and cannot claim from partial data, and how to communicate uncertainty honestly.</p>
+  <div class="ch-meta">
+    <span>Terms covered: <em>20</em></span>
+    <span>Sections: <em>Sampling design · Bias · CLT · Confidence intervals · MLE</em></span>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 5.1</div>
+  <h2 class="section-title">Sampling design — how you collect data determines what you can conclude</h2>
+  <p class="section-intro">Size is not representativeness. A survey of 100,000 self-selected online respondents is less reliable than a carefully designed random sample of 2,000 — because representativeness is determined by how observations are selected, not how many. This distinction is the most persistently misunderstood aspect of data collection in business analytics.</p>
+
+  <div class="samp-grid">
+    <div class="samp-card">
+      <span class="samp-badge">Gold standard</span>
+      <div class="samp-name">Simple Random Sampling</div>
+      <div class="samp-def">Every member of the population has an equal probability of selection. Produces an unbiased sample when properly executed.</div>
+      <div class="samp-eg">Random selection of account numbers from the full customer database for a satisfaction survey.</div>
+    </div>
+    <div class="samp-card">
+      <span class="samp-badge">Subgroup control</span>
+      <div class="samp-name">Stratified Sampling</div>
+      <div class="samp-def">Divide the population into subgroups (strata), then randomly sample within each. Ensures important segments are represented.</div>
+      <div class="samp-eg">Sample separately from each customer tier so small but high-value segments are not underrepresented.</div>
+    </div>
+    <div class="samp-card">
+      <span class="samp-badge">Cost-efficient</span>
+      <div class="samp-name">Cluster Sampling</div>
+      <div class="samp-def">Randomly select entire groups (clusters), then sample within selected groups. Efficient for geographically dispersed populations.</div>
+      <div class="samp-eg">Randomly select 50 stores from 500, then survey all customers at selected stores.</div>
+    </div>
+    <div class="samp-card">
+      <span class="samp-badge">Convenience — use with caution</span>
+      <div class="samp-name">Non-Probability Sampling</div>
+      <div class="samp-def">Convenience, judgement, or quota-based selection. Cannot quantify sampling error. Prone to systematic bias.</div>
+      <div class="samp-eg">Surveying customers who emailed support, testing a feature only with early-adopter volunteers.</div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-sampling-bias">
+    <div class="term-header" onclick="toggleTerm('t-sampling-bias')">
+      <div style="flex:1"><div class="term-name">Sampling Bias</div><div class="term-short">A systematic distortion where the sample is not representative of the target population — a design problem, not a size problem.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the sample is tilted in a way that will mislead any conclusion drawn from it. Sampling bias cannot be fixed by collecting more data — it requires fixing the collection mechanism. A biased sample of 1 million is worse than an unbiased sample of 1,000.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Bias arises when the probability of being included in the sample is related to the outcome being measured. Ask: could the type of person most likely to respond to this survey, appear in this dataset, or be included in this test be systematically different from those who are not included?</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In surveys with low response rates, opt-in user research, pilots using self-selected early adopters, and any analysis where the data generation process selects for motivated or engaged users.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask who is systematically absent from the sample and whether their absence is related to the outcome. A customer satisfaction survey sent only to loyalty app users will exclude the least engaged customers — who are probably the least satisfied.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">An e-commerce platform surveys users who completed a purchase in the last 30 days about checkout experience. Non-purchasers — including those who abandoned the checkout — are excluded entirely. The survey reports 82% satisfaction. That figure is conditioned on having completed the journey successfully; the population with the most friction is unobserved.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-selection-bias">
+    <div class="term-header" onclick="toggleTerm('t-selection-bias')">
+      <div style="flex:1"><div class="term-name">Selection Bias</div><div class="term-short">Bias arising when the process selecting observations into a sample or study is related to the outcome of interest.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the groups being compared did not start on equal footing — and the difference in outcomes may reflect who was selected, not whether the intervention worked. Selection bias is the primary reason observational studies mislead and why randomization is so valuable.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Selection bias: units end up in treated vs control groups for reasons correlated with the outcome. The observed difference in outcomes = true treatment effect + selection bias. Randomization eliminates selection bias by making treatment assignment independent of potential outcomes.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In any comparison of customers who opted in versus those who didn't, employees who participated in a programme versus those who didn't, or stores that implemented a change versus those that didn't.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask why some units were exposed to the intervention and others were not. If it is because better-performing units self-selected into the programme, comparing them against non-participants will overstate the programme's benefit.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A private insurer evaluates a wellness programme by comparing participants with non-participants after 12 months. Participants are 18% healthier on key metrics. Problem: participation required signing up voluntarily — healthier, more engaged members were more likely to join. The 18% gap may entirely reflect pre-existing differences rather than programme effect.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-stratified-sampling">
+    <div class="term-header" onclick="toggleTerm('t-stratified-sampling')">
+      <div style="flex:1"><div class="term-name">Stratified Sampling</div><div class="term-short">Sampling separately within defined subgroups to ensure each is adequately represented — especially for small but important segments.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the sampling design intentionally controls representation by stratum — so that rare but commercially critical segments (enterprise customers, high-risk patients, minority product users) appear in sufficient numbers to draw conclusions about them. Without stratification, simple random sampling will under-represent small segments in proportion to their share.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">Proportionate stratification: sample each stratum proportional to its population share. Disproportionate (over)sampling: sample rare-but-important strata more heavily than their share, then apply post-hoc weights to restore overall representativeness. Always disclose the weighting scheme in reported results.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In customer research, market surveys, clinical trials with important demographic subgroups, and any study needing reliable conclusions about minority segments.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether oversampled strata were re-weighted before computing population-level statistics. If a survey oversampled enterprise accounts and reports unweighted averages, the results will misrepresent the typical customer experience.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A healthcare payer surveys members about care access. Simple random sampling would allocate only 3% of responses to Medicare members, making subgroup analysis unreliable. Stratified oversampling of Medicare members to 20% of the sample, with post-hoc weighting, provides reliable Medicare insights while still producing valid overall estimates.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 5.2</div>
+  <h2 class="section-title">Standard error, the Central Limit Theorem, and why size helps precision</h2>
+  <p class="section-intro">Larger samples do not eliminate uncertainty — they reduce it in a predictable way. The Central Limit Theorem is the reason most statistical inference works even when we do not know the distribution of the underlying data. Understanding this connection explains why A/B tests need minimum sample sizes and why point estimates without confidence intervals are incomplete.</p>
+
+  <div class="illustration">
+    <svg viewBox="0 0 760 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fff">
+      <!-- Shows how sampling distribution narrows with larger n -->
+      <text x="380" y="20" font-family="'JetBrains Mono',monospace" font-size="9" fill="#b0a898" text-anchor="middle" letter-spacing="0.06em">SAMPLING DISTRIBUTION OF THE MEAN — EFFECT OF SAMPLE SIZE</text>
+      <!-- n=10 wide curve -->
+      <path d="M60,145 Q100,145 130,60 Q160,145 220,145" fill="rgba(196,80,13,0.1)" stroke="#c4500d" stroke-width="1.5"/>
+      <text x="140" y="155" font-family="'JetBrains Mono',monospace" font-size="8.5" fill="#c4500d" text-anchor="middle">n = 10</text>
+      <text x="140" y="167" font-family="'JetBrains Mono',monospace" font-size="8" fill="#b0a898" text-anchor="middle">SE = σ/√10</text>
+
+      <!-- n=100 medium curve -->
+      <path d="M260,145 Q300,145 330,80 Q360,145 430,145" fill="rgba(45,95,138,0.1)" stroke="#2d5f8a" stroke-width="1.5"/>
+      <text x="345" y="155" font-family="'JetBrains Mono',monospace" font-size="8.5" fill="#2d5f8a" text-anchor="middle">n = 100</text>
+      <text x="345" y="167" font-family="'JetBrains Mono',monospace" font-size="8" fill="#b0a898" text-anchor="middle">SE = σ/√100</text>
+
+      <!-- n=1000 narrow curve -->
+      <path d="M490,145 Q520,145 540,95 Q560,145 610,145" fill="rgba(45,122,74,0.1)" stroke="#2d7a4a" stroke-width="1.5"/>
+      <text x="550" y="155" font-family="'JetBrains Mono',monospace" font-size="8.5" fill="#2d7a4a" text-anchor="middle">n = 1,000</text>
+      <text x="550" y="167" font-family="'JetBrains Mono',monospace" font-size="8" fill="#b0a898" text-anchor="middle">SE = σ/√1000</text>
+
+      <!-- All centered on same mean -->
+      <line x1="140" y1="55" x2="140" y2="148" stroke="#c4500d" stroke-width="0.8" stroke-dasharray="2,2"/>
+      <line x1="345" y1="75" x2="345" y2="148" stroke="#2d5f8a" stroke-width="0.8" stroke-dasharray="2,2"/>
+      <line x1="550" y1="90" x2="550" y2="148" stroke="#2d7a4a" stroke-width="0.8" stroke-dasharray="2,2"/>
+
+      <!-- Arrow showing narrowing -->
+      <text x="660" y="90" font-family="'Source Serif 4',serif" font-size="10" fill="#b0a898" font-style="italic">Precision ↑</text>
+      <text x="660" y="105" font-family="'Source Serif 4',serif" font-size="10" fill="#b0a898" font-style="italic">as n ↑</text>
+    </svg>
+    <div class="illustration-caption">All three sampling distributions are centred on the true population mean — sampling is unbiased. But standard error (width) decreases as √n — doubling precision requires quadrupling the sample size.</div>
+  </div>
+
+  <div class="term-block" id="t-standard-error">
+    <div class="term-header" onclick="toggleTerm('t-standard-error')">
+      <div style="flex:1"><div class="term-name">Standard Error</div><div class="term-short">How much a sample statistic would vary across repeated samples — a measure of estimation precision, not data variability.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how noisy the estimate itself is — not how variable the raw data is. High data variability (large σ) and small sample size both increase the standard error, meaning the estimate is less precise. A standard deviation of £500 in customer spend and a sample of 100 gives a standard error of £50 for the mean — that £50 is the precision of the estimate.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">SE(x̄) = s / √n</span><span class="formula-plain">For a sample mean: divide the sample standard deviation by the square root of the sample size. Precision improves with more data but at diminishing returns: going from n=100 to n=400 cuts SE in half. Going from n=400 to n=1,600 cuts it in half again. Each halving requires 4× the data.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In regression coefficient tables, confidence interval calculations, A/B test power analysis, and survey methodology sections — always paired with a point estimate to convey precision.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the reported number is a standard deviation (data variability) or a standard error (estimate precision). Confusing the two makes uncertainty look 10× smaller or larger depending on sample size — a common reporting error in executive summaries.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">An e-commerce team estimates mean order value from 10,000 transactions at £84.50. Individual order values have standard deviation of £60. Standard error = £60/√10,000 = £0.60. The estimate is precise to within about £1.20 (±2 SE). A team working from a 100-transaction pilot would have SE = £6.00 — 10× less precise despite using the same underlying data distribution.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-clt">
+    <div class="term-header" onclick="toggleTerm('t-clt')">
+      <div style="flex:1"><div class="term-name">Central Limit Theorem (CLT)</div><div class="term-short">For sufficiently large samples, the sampling distribution of the mean is approximately normal — regardless of the population's shape.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you that even if the underlying data is highly skewed, heavy-tailed, or weirdly shaped, the distribution of sample means will tend toward a bell curve as sample size grows. This is why normal-distribution-based inference (t-tests, confidence intervals, regression) works on business data that is emphatically not normally distributed — as long as sample sizes are adequate.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">x̄ ~ N(μ, σ²/n) approximately for large n</span><span class="formula-plain">Traditional guidance: n ≥ 30 for moderately skewed data. For highly skewed distributions (revenue, claim size): n ≥ 100–200 is safer. For comparing proportions near 0 or 1: np ≥ 10 and n(1−p) ≥ 10. Bootstrap resampling is an alternative when these conditions fail.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">Underpinning all t-tests, z-tests, confidence intervals, and regression inference. It is the theoretical justification for using normal-based methods on non-normal data when sample sizes are sufficient.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether sample sizes are adequate for the CLT to apply given the data's skewness. An A/B test on average revenue per user with a highly skewed revenue distribution may need 10,000+ observations per arm before mean-based inference is reliable.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A subscription business tests two pricing tiers with 1,500 users per arm. Revenue per user is heavily right-skewed. The CLT does not apply reliably at this sample size for the mean of a heavily skewed distribution. The team uses bootstrap confidence intervals instead — resampling the observed data 10,000 times to empirically estimate the sampling distribution without relying on normality assumptions.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-bootstrap">
+    <div class="term-header" onclick="toggleTerm('t-bootstrap')">
+      <div style="flex:1"><div class="term-name">Bootstrap Resampling</div><div class="term-short">A computational method that estimates the sampling distribution by repeatedly resampling from observed data — no distributional assumptions required.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the team is using the observed data itself as a stand-in for the population — repeatedly drawing new samples from it to see how much the statistic of interest varies. Bootstrap works when theoretical formulas fail: for median, IQR, complex composite metrics, or whenever the CLT is insufficient. It is the most practically useful approach for custom business metrics that do not have standard distributional theory.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-plain">1. From n observed values, draw n values at random with replacement (some will repeat). 2. Compute the statistic of interest on this bootstrap sample. 3. Repeat 1,000–10,000 times. 4. The distribution of bootstrap statistics approximates the sampling distribution. 95% CI: take the 2.5th and 97.5th percentiles of bootstrap statistics.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In A/B test analysis for non-standard metrics, marketing attribution, model evaluation for complex metrics, and any setting where standard SE formulas are unavailable or unreliable.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the original sample is large and representative enough for bootstrapping to be meaningful. Bootstrapping a biased sample produces biased bootstrap intervals — it estimates the sampling distribution of the biased estimator, not an unbiased one.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A media company wants a confidence interval for the median revenue per subscriber from an A/B test. No closed-form formula exists for the standard error of a median. Bootstrap resampling 5,000 times from each arm produces empirical confidence intervals: median increases from £18.40 to £21.20 with a 95% CI of [£1.20, £4.10] for the difference — decisively positive and not crossing zero.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Section 5.3</div>
+  <h2 class="section-title">Confidence intervals — the honest way to report estimates</h2>
+  <p class="section-intro">A confidence interval is a range constructed so that across many repetitions of the same sampling procedure, a stated percentage of intervals would contain the true parameter. This is technically different from — and less intuitive than — what most people think it means. Understanding the correct interpretation prevents a pervasive class of analytical communication errors.</p>
+
+  <div class="callout callout-warning">
+    <strong>The most common CI misinterpretation</strong>
+    "There is a 95% probability that the true value lies in this interval" — this sounds right but is technically wrong for frequentist confidence intervals. The correct interpretation: "If we repeated this sampling procedure many times, 95% of the resulting intervals would contain the true parameter." The true parameter is fixed — it either is or is not in any specific interval. The probability applies to the procedure, not to this specific interval. Bayesian credible intervals do have the intuitive interpretation most people want — see Chapter 4.
+  </div>
+
+  <div class="term-block" id="t-ci">
+    <div class="term-header" onclick="toggleTerm('t-ci')">
+      <div style="flex:1"><div class="term-name">Confidence Interval</div><div class="term-short">A range of plausible values for a population parameter, constructed so that the stated percentage of such intervals would contain the true value across repeated sampling.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you not just the best estimate but how much uncertainty surrounds it. A 95% CI of [+1.2%, +4.8%] for a conversion lift is more informative than just "+3%": it tells you the effect is likely positive (both ends above zero) but the exact magnitude is uncertain. A CI that crosses zero cannot rule out no effect at all.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">CI = x̄ ± t* × (s/√n)  [for a mean]</span><span class="formula-plain">t* is the critical value from the t-distribution for the chosen confidence level and degrees of freedom (≈1.96 for 95% CI with large n). Width is determined by: confidence level (higher → wider), sample size (larger → narrower), and data variability (more variable → wider).</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In A/B test results, survey findings, forecast outputs, model performance reports, and any summary of an estimate from sample data.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the confidence interval is narrow enough to support the proposed business decision. A statistically significant result with a CI of [+0.1%, +5.9%] for a conversion rate change leaves huge uncertainty about the true magnitude — the decision rule should depend on where in that range the effect actually lies.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A retailer tests a new promotion and observes +3.2% basket size lift. 95% CI: [+1.8%, +4.6%]. The interval is entirely positive — the team is confident the promotion works. A separate test shows +2.1% lift with CI [−0.4%, +4.6%]. Despite a similar point estimate, this result cannot rule out zero effect. The decision to roll out should differ between these two cases.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-margin-of-error">
+    <div class="term-header" onclick="toggleTerm('t-margin-of-error')">
+      <div style="flex:1"><div class="term-name">Margin of Error</div><div class="term-short">The expected sampling uncertainty around a point estimate — what the CI width becomes when expressed as ± a single number.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you how far off an estimate could reasonably be due to sampling alone. A survey result of "62% satisfaction ± 3 percentage points" means the true satisfaction could be anywhere from 59% to 65%. This range should inform how much you act on the specific number versus treating it as an approximate signal.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">MOE = z* × SE  =  z* × √(p(1-p)/n)</span><span class="formula-plain">For proportions at 95% confidence: MOE ≈ 1/√n (when p ≈ 0.5). A sample of 400 gives MOE ≈ ±5%. A sample of 1,000 gives MOE ≈ ±3%. A sample of 10,000 gives MOE ≈ ±1%. Halving the MOE requires 4× the sample size.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In opinion polls, customer satisfaction surveys, NPS reporting, and any research that makes estimates from a sample and must communicate uncertainty.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the margin of error accounts for sampling error only or also for non-response bias, measurement error, and coverage gaps. Survey margin of error formulas address only random sampling variation — systematic biases can be much larger and are not captured.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A telecom provider reports NPS of +34 from a survey of 800 customers. Margin of error ≈ ±3.5 points at 95% confidence. A change from +34 to +36 in the next quarter is within the margin of error — it cannot be concluded the score improved. A change to +42 is 8 points above the prior estimate — significantly outside the margin, suggesting a real shift.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-mle">
+    <div class="term-header" onclick="toggleTerm('t-mle')">
+      <div style="flex:1"><div class="term-name">MLE — Maximum Likelihood Estimation</div><div class="term-short">Finding parameter values that make the observed data most probable under the assumed model — the dominant estimation principle in statistics.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you the model is being fit by asking: "which parameter values would have made this observed data most likely to occur?" It is the estimation logic behind logistic regression, Poisson models, survival models, and most machine learning loss functions. You do not need to compute it — but recognising when a model is MLE-based tells you it is producing parameter estimates that are asymptotically efficient and consistent.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">θ̂_MLE = argmax L(θ; data) = argmax Σ log P(xᵢ|θ)</span><span class="formula-plain">Find the parameters θ that maximise the likelihood of the observed data. In practice: maximise the log-likelihood (sum of log probabilities), which is mathematically equivalent and numerically more stable. Almost every modern model you use is fitted by some variant of MLE or a regularised version of it.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In model documentation, regression fitting methodology, neural network training (cross-entropy loss = negative log-likelihood), and any technical description of how model parameters are estimated.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask whether the model assumptions justifying MLE are appropriate for the data. MLE finds the best estimates under a specific assumed model — if the model is mis-specified, estimates can be biased even in large samples. "Maximum likelihood" does not mean "correct" — it means "best given our assumptions."</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A lender's logistic regression model for default prediction is fitted by maximising the log-likelihood of the observed 0/1 default outcomes. The resulting coefficients are those that make the actual pattern of defaults most probable under a logistic link function. If the true relationship is nonlinear or has interactions the model cannot capture, MLE will faithfully estimate the wrong model.</div></div>
+    </div>
+  </div>
+
+  <div class="term-block" id="t-bias-precision">
+    <div class="term-header" onclick="toggleTerm('t-bias-precision')">
+      <div style="flex:1"><div class="term-name">Bias and Precision in Estimation</div><div class="term-short">Bias measures systematic deviation from the true value; precision measures how tightly estimates cluster — both matter for good estimation.</div></div>
+      <div class="term-toggle">expand</div>
+    </div>
+    <div class="term-body">
+      <div class="field-row"><div class="field-label">Intuition</div><div class="field-value">It tells you that accuracy has two distinct failure modes. A biased estimator is systematically wrong in one direction — it hits the wrong target on average, regardless of how many observations you add. An imprecise estimator is right on average but highly variable — individual estimates are noisy even if they average out over many samples. The best estimators are both unbiased and precise.</div></div>
+      <div class="field-row"><div class="field-label">Formula / Rule</div><div class="field-value formula"><span class="formula-math">MSE = Bias² + Variance</span><span class="formula-plain">Mean Squared Error of an estimator = squared bias + variance. This decomposition is also the bias-variance tradeoff for models (Chapter 13). More complex models reduce bias but increase variance; simpler models do the reverse. Optimal estimators minimise MSE, sometimes accepting small bias to achieve large variance reduction.</span></div></div>
+      <div class="field-row"><div class="field-label">When you see it</div><div class="field-value">In estimation methodology, model evaluation, survey quality assessment, and the bias-variance tradeoff discussion in machine learning.</div></div>
+      <div class="field-row"><div class="field-label">Red flag</div><div class="field-value redflag">Ask which type of error is more problematic for the decision. Systematic bias (always overestimating demand by 15%) is often more damaging than imprecision (being off by ±15% randomly) — because bias cannot be averaged away and consistently drives wrong decisions in the same direction.</div></div>
+      <div class="field-row"><div class="field-label">Business example</div><div class="field-value">A demand forecasting team compares two models. Model A has near-zero average error but individual forecasts vary by ±30% (unbiased, imprecise). Model B consistently over-forecasts by 12% with ±8% variation (biased, precise). For inventory management, Model B's systematic overstock is costly but predictable and manageable; Model A's random swings create unpredictable stockout-overstock cycles. Neither is universally better — it depends on the business's ability to manage each type of error.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="narrative">
+  <div class="section-label">Chapter Summary</div>
+  <h2 class="section-title">Chapter 5 cheat sheet</h2>
+  <div class="cheat-sheet">
+    <div class="cheat-title">Key principles from this chapter</div>
+    <div class="cheat-grid">
+      <div class="cheat-item"><div class="cheat-item-title">Size ≠ representativeness</div><div class="cheat-item-body">A biased sample of 1 million is worse than an unbiased sample of 2,000. Ask how the data was collected before asking how much there is.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Standard error measures estimate precision</div><div class="cheat-item-body">SE = σ/√n. Doubling precision requires 4× the data. SE measures how variable the estimate is, not how variable the raw data is.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">CLT enables normal inference for means</div><div class="cheat-item-body">For large enough samples, the sampling distribution of the mean is approximately normal — even for skewed data. But "large enough" depends on the skewness of the data.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Confidence intervals should inform decisions</div><div class="cheat-item-body">A CI that crosses zero cannot support a claim that an effect is positive. A CI that is entirely positive but wide should still inform how aggressively to act on the estimate.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Bootstrap for non-standard metrics</div><div class="cheat-item-body">When no formula exists for the standard error of a metric (median, composite score), bootstrap resampling provides empirical confidence intervals without distributional assumptions.</div></div>
+      <div class="cheat-item"><div class="cheat-item-title">Bias and variance are distinct failure modes</div><div class="cheat-item-body">Bias is systematic error — adding more data doesn't fix it. Variance is random error — adding more data reduces it. MSE = Bias² + Variance; both must be managed.</div></div>
+    </div>
+  </div>
+  <div style="margin-top:28px">
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:12px">Chapter 6 extends this into hypothesis testing — which uses the sampling distributions and confidence interval logic developed here to make yes/no decisions about effects. The bias-variance tradeoff introduced here becomes the central concept in Chapter 13 on predictive modeling.</p>
+    <a href="../ml-for-strategy-v2/ML_Strategy_Playbook.html" class="companion">↗ ML Strategy Playbook — companion reference</a>
+  </div>
+</div>
+
+<script>
+function toggleTerm(id){const b=document.getElementById(id);const o=b.classList.contains('open');b.classList.toggle('open',!o);b.querySelector('.term-toggle').textContent=o?'expand':'collapse';}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const all=document.querySelectorAll('.term-block');if(e.key==='e'){all.forEach(b=>{b.classList.add('open');b.querySelector('.term-toggle').textContent='collapse';})}if(e.key==='c'){all.forEach(b=>{b.classList.remove('open');b.querySelector('.term-toggle').textContent='expand';})}});
+</script>
+</body>
+</html>
